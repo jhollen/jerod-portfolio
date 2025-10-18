@@ -16,6 +16,20 @@ export default function Navbar() {
       </Link>
       {/* Navigation links on the right */}
       <div className="flex gap-4 items-center">
+        {/* Resume Link */}
+        <Link
+          href="/resume"
+          className="font-semibold text-[#7a9c7d] hover:underline transition"
+        >
+          Resume
+        </Link>
+        {/* Contact Link */}
+        <Link
+          href="/contact"
+          className="font-semibold text-[#7a9c7d] hover:underline transition"
+        >
+          Contact
+        </Link>
         {/* GitHub Icon */}
         <Link
           href="https://github.com/jhollen"
@@ -52,9 +66,10 @@ export default function Navbar() {
             stroke="none"
             xmlns="http://www.w3.org/2000/svg"
           >
-            <rect x="2" y="2" width="20" height="20" rx="4" fill="none" />
-            {/* 'in' letters fully transparent, no fill or stroke */}
-            <rect x="2" y="2" width="20" height="20" rx="4" fill="#7a9c7d" />
+            <path
+              fill="#7a9c7d"
+              d="M4.983 3.5C3.343 3.5 2 4.844 2 6.484c0 1.64 1.343 2.984 2.983 2.984 1.64 0 2.984-1.344 2.984-2.984C7.967 4.844 6.623 3.5 4.983 3.5zM2.4 8.25h5.167v13.5H2.4v-13.5zM9.75 8.25h4.958v1.842h.07c.69-1.31 2.377-2.692 4.895-2.692C22.083 7.4 24 9.318 24 12.542v9.208h-5.167v-8.168c0-1.947-.035-4.448-2.708-4.448-2.71 0-3.125 2.116-3.125 4.306v8.31H9.75v-13.5z"
+            />
           </svg>
         </Link>
       </div>

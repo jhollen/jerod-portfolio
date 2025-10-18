@@ -65,9 +65,9 @@ export default function HeroSection() {
       >
         {/* Images, split and animated */}
         {(() => {
-          const maxSlide = 160;
-          const offset = split - 50;
-          const slide = (offset / 50) * maxSlide;
+          const maxSlide = 160; // Max number of pixels to slide images horizontally
+          const offset = split - 50; // Calculate offset from center
+          const slide = (offset / 50) * maxSlide; // Calculate slide amount
           // Fast transition for pointer movement, slow for initial doors
           const fastTransition =
             "transform 0.2s cubic-bezier(.7,.2,.3,1), clip-path 0.2s cubic-bezier(.7,.2,.3,1)";

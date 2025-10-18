@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description: "A simple Next.js application with a hero section",
 };
 
-import Navbar from "@/components/Navbar";
+import Navbar from "../components/Navbar";
 
 export default function RootLayout({
   children,
