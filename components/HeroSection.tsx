@@ -155,7 +155,7 @@ export default function HeroSection() {
                   transition: "opacity 0.4s cubic-bezier(.7,.2,.3,1)",
                 }}
               >
-                  Engineering seamless, scalable digital experiences.
+                Engineering seamless, scalable digital experiences.
               </span>
             </div>
             <div className="flex flex-col items-end">
@@ -180,7 +180,7 @@ export default function HeroSection() {
                   transition: "opacity 0.4s cubic-bezier(.7,.2,.3,1)",
                 }}
               >
-                  Designing intuitive, impactful brand experiences.
+                Designing intuitive, impactful brand experiences.
               </span>
             </div>
           </div>
