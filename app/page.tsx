@@ -1,25 +1,21 @@
+// Main page for the site
+// This page renders the hero section and some example sections
+import HeroSection from "../components/HeroSection";
+
 export default function Home() {
   return (
-    <main className="mx-auto max-w-5xl px-4 py-12">
-      <section className="space-y-4">
-        <h1 className="text-4xl font-bold tracking-tight">Jerod Hollen</h1>
-        <p className="text-muted-foreground">
-          Builder of fast, tasteful web apps.
-        </p>
-      </section>
+    <main className="mx-auto">
+      {/* Hero section at the top of the page */}
+      <HeroSection />
 
-      <section className="mt-12">
-        <h2 className="text-2xl font-semibold">Projects</h2>
-        <p className="text-sm text-muted-foreground">
-          Coming soon — case studies, live links, repos.
-        </p>
-      </section>
-
-      <section className="mt-12">
-        <h2 className="text-2xl font-semibold">Band Highlights</h2>
-        <p className="text-sm text-muted-foreground">
-          A quick peek, full site linked later.
-        </p>
+      {/* Under Maintenance message in a green gradient section below the hero */}
+      <section
+        className="w-full flex justify-center items-center py-16"
+        style={{ background: "linear-gradient(135deg, #7a9c7d 0%, #222 100%)" }}
+      >
+        <div className="bg-yellow-200 text-yellow-900 font-semibold px-6 py-3 rounded shadow-lg text-xl border-2 border-yellow-300">
+          Under Maintenance
+        </div>
       </section>
     </main>
   );
