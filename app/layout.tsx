@@ -3,11 +3,11 @@ import "./globals.css";
 
 // Import Next.js Metadata type for SEO and page info
 export const metadata: Metadata = {
-  title: "Next.js Hero App",
-  description: "A simple Next.js application with a hero section",
+  title: "Jerod Hollen - Portfolio",
+  description: "Portfolio of Jerod Hollen - Developer, Designer, and Creative",
 };
 
-import Navbar from "../components/Navbar";
+import ClientLayout from "../components/ClientLayout";
 
 export default function RootLayout({
   children,
@@ -17,35 +17,21 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        {/* Load the Lato font from public/fonts */}
+        {/* Import Roboto from Google Fonts */}
         <link
-          rel="preload"
-          href="/fonts/Lato-Regular.ttf"
-          as="font"
-          type="font/ttf"
-          crossOrigin="anonymous"
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap"
         />
-        {/* Inject font-face CSS for Lato */}
         <style>
           {`
-            @font-face {
-              font-family: 'Lato';
-              src: url('/fonts/Lato-Regular.ttf') format('truetype');
-              font-weight: normal;
-              font-style: normal;
-            }
             body {
-              font-family: 'Lato', sans-serif;
+              font-family: 'Roboto', sans-serif;
             }
           `}
         </style>
       </head>
-      {/* Main body styles: antialiasing, min height, background, and text color */}
-      <body className="antialiased min-h-dvh bg-background text-foreground">
-        <header className="border-b">
-          <Navbar />
-        </header>
-        {children}
+      <body>
+        <ClientLayout showBreadcrumbs>{children}</ClientLayout>
       </body>
     </html>
   );
