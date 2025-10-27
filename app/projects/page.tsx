@@ -35,7 +35,7 @@ export default function ProjectsPage() {
       <div className="projects-backdrop pointer-events-none absolute inset-0 -z-10 blur-3xl opacity-95" />
       <Container>
         {/* Header */}
-        <div className="mb-12 glass-surface glass-surface--thin rounded-3xl p-10">
+        <div className="mb-12 glass-section rounded-[40px] p-10">
           <div className="max-w-3xl mx-auto text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900">
               Project Portfolio
@@ -57,7 +57,7 @@ export default function ProjectsPage() {
               className="relative mb-16"
               id={`${section.key}-work`}
             >
-              <div className="pointer-events-none absolute left-1/2 h-64 w-64 -translate-x-1/2 rounded-full bg-gradient-to-br from-white/60 via-white/20 to-transparent blur-3xl" />
+              <div className="pointer-events-none absolute left-1/2 h-64 w-64 -translate-x-1/2 rounded-full bg-gradient-to-br from-white/70 via-white/10 to-transparent blur-3xl" />
               <div className="flex items-center mb-8 gap-3">
                 <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-white border border-gray-200">
                   <span className="text-xl" aria-hidden="true">
@@ -84,7 +84,7 @@ export default function ProjectsPage() {
                     className="block group"
                     tabIndex={0}
                   >
-                    <div className="group glass-card glass-card--clear glass-card--convex h-full overflow-hidden rounded-3xl transition-transform duration-500 hover:-translate-y-2 ring-1 ring-white/40 hover:ring-white/60">
+                    <div className="group glass-card glass-card--clear glass-card--convex h-full overflow-hidden rounded-3xl transition-transform duration-500 hover:-translate-y-2 ring-1 ring-white/25 hover:ring-white/45">
                       <ProjectCard project={project} hideRepoLink={true} />
                     </div>
                   </Link>

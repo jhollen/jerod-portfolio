@@ -44,14 +44,18 @@ export default function Layout({
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-page">
+    <div className="relative flex min-h-screen flex-col overflow-hidden">
+      <div className="background-canvas pointer-events-none absolute inset-0 -z-30" />
+      <div className="background-canvas--layer pointer-events-none absolute inset-0 -z-20" />
+      <div className="background-noise pointer-events-none absolute inset-0 -z-10" />
+
       {/* Header with Navbar (ensure it's always above page content) */}
-      <header>
+      <header className="relative z-20">
         <Navbar />
       </header>
 
       {/* Main Content */}
-      <main className={`flex-grow${isHome ? "" : " pt-28"}`}>
+      <main className={`relative z-10 flex-grow${isHome ? "" : " pt-28"}`}>
         {showBreadcrumbs && pathname !== "/" && (
           <Container>
             <div className="py-4">

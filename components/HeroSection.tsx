@@ -1,329 +1,210 @@
 "use client";
+
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
+
+const clamp = (value: number, min: number, max: number) =>
+  Math.min(Math.max(value, min), max);
+
 export default function HeroSection() {
-  const [split, setSplit] = useState(0); // Start at 0 for animation
-  const [doorsClosed, setDoorsClosed] = useState(false);
-  const [textVisible, setTextVisible] = useState(false);
-  const [hoveredSide, setHoveredSide] = useState<
-    "developer" | "designer" | null
-  >(null);
-  const [interactive, setInteractive] = useState(true);
-  const sectionRef = useRef<HTMLElement | null>(null);
+  const splitRef = useRef<HTMLDivElement | null>(null);
+  const [split, setSplit] = useState(50);
+  const animationFrameRef = useRef<number | null>(null);
+  const splitValueRef = useRef(split);
 
-  // Animate images in on mount
   useEffect(() => {
-    // Start sliding doors effect
-    const doorsTimeout = setTimeout(() => {
-      setDoorsClosed(true);
+    splitValueRef.current = split;
+  }, [split]);
+
+  useEffect(() => {
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+    };
+  }, []);
+
+  const updateSplit = useCallback((clientX: number) => {
+    const surface = splitRef.current;
+    if (!surface) return;
+    if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current);
+      animationFrameRef.current = null;
+    }
+    const rect = surface.getBoundingClientRect();
+    const ratio = clamp((clientX - rect.left) / rect.width, 0, 1);
+    const next = (1 - ratio) * 100;
+    setSplit(next);
+    splitValueRef.current = next;
+  }, []);
+
+  const resetSplit = useCallback(() => {
+    const startValue = splitValueRef.current;
+    if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current);
+    }
+    if (Math.abs(startValue - 50) < 0.05) {
       setSplit(50);
-    }, 200); // Start after short delay
-    const textTimeout = setTimeout(() => {
-      setTextVisible(true);
-    }, 900); // Fade in text after images (quicker)
-    return () => {
-      clearTimeout(doorsTimeout);
-      clearTimeout(textTimeout);
+      splitValueRef.current = 50;
+      return;
+    }
+    const duration = 680;
+    const startTime = performance.now();
+    const step = (timestamp: number) => {
+      const progress = clamp((timestamp - startTime) / duration, 0, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const next = startValue + (50 - startValue) * eased;
+      setSplit(next);
+      splitValueRef.current = next;
+      if (progress < 1) {
+        animationFrameRef.current = requestAnimationFrame(step);
+      } else {
+        animationFrameRef.current = null;
+        setSplit(50);
+        splitValueRef.current = 50;
+      }
     };
+    animationFrameRef.current = requestAnimationFrame(step);
   }, []);
 
-  // Toggle interaction based on overlap with the glass header and ease back to center
-  useEffect(() => {
-    const onScroll = () => {
-      const section = sectionRef.current;
-      if (!section) return;
-      const nav = document.querySelector(
-        "nav[data-app-navbar]"
-      ) as HTMLElement | null;
-      const headerH = nav?.offsetHeight ?? 0;
-      const rect = section.getBoundingClientRect();
-      const overlappingHeader = rect.top < -headerH;
-      setInteractive(!overlappingHeader);
-      if (overlappingHeader) setSplit(50);
-    };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
-    };
-  }, []);
-
-  const scrollToSection = useCallback((id: string) => {
+  const handleFilter = (filter: "dev" | "design") => {
     if (typeof window === "undefined") return;
-    const target = document.getElementById(id);
-    if (!target) return;
-    const prefersReducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
-    target.scrollIntoView({
-      behavior: prefersReducedMotion ? "auto" : "smooth",
-      block: "start",
-    });
-  }, []);
-
-  const updateSplitFromPointer = useCallback((clientX: number) => {
-    const section = sectionRef.current;
-    if (!section) return;
-    const bounds = section.getBoundingClientRect();
-    if (bounds.width === 0) return;
-    const x = Math.min(Math.max(clientX - bounds.left, 0), bounds.width);
-    const nextSplit = 100 - (x / bounds.width) * 100;
-    setSplit(nextSplit);
-    setTextVisible(true); // Show text if user interacts
-    const midpoint = bounds.width / 2;
-    const deadZone = bounds.width * 0.04; // soften transitions around center
-    const nextSide =
-      Math.abs(x - midpoint) <= deadZone
-        ? null
-        : x < midpoint
-        ? "developer"
-        : "designer";
-    setHoveredSide((prev) => (prev === nextSide ? prev : nextSide));
-  }, []);
-
-  // Pointer-driven animation: as user moves mouse, push one image over the other
-  const onPointerMove: React.PointerEventHandler<HTMLDivElement> = (e) => {
-    updateSplitFromPointer(e.clientX);
+    window.dispatchEvent(
+      new CustomEvent("featured-project-filter", { detail: { filter } })
+    );
+    const target = document.getElementById("featured-projects");
+    if (target) {
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
   };
 
-  // Reset split to center with easing when pointer leaves hero area
-  const onPointerLeave: React.PointerEventHandler<HTMLDivElement> = () => {
-    setHoveredSide(null);
-    setSplit(50);
-  };
-
-  const handleSideClick = useCallback(
-    (side: "developer" | "designer") => {
-      setHoveredSide(side);
-      setSplit(side === "developer" ? 75 : 25);
-      scrollToSection(
-        side === "developer" ? "developer-projects" : "designer-projects"
-      );
-    },
-    [scrollToSection]
-  );
-
-  // Keyboard accessibility: left/right arrows adjust split
-  const onKeyboardAdjust: React.KeyboardEventHandler<HTMLDivElement> = (e) => {
-    if (e.key === "ArrowLeft") setSplit((s) => Math.max(0, s - 2));
-    if (e.key === "ArrowRight") setSplit((s) => Math.min(100, s + 2));
-  };
-
-  const developerActive = hoveredSide === "developer";
-  const designerActive = hoveredSide === "designer";
+  const developerClip = `polygon(0 0, ${split}% 0, ${split}% 100%, 0 100%)`;
+  const designerClip = `polygon(${split}% 0, 100% 0, 100% 100%, ${split}% 100%)`;
+  const developerTranslate = ((split - 50) / 50) * 24;
+  const designerTranslate = ((50 - split) / 50) * 24;
+  const developerEmphasis = clamp(split / 50, 0, 1);
+  const designerEmphasis = clamp((100 - split) / 50, 0, 1);
+  const developerContentOpacity = Math.max(developerEmphasis, 0.25);
+  const designerContentOpacity = Math.max(designerEmphasis, 0.25);
+  const developerImageOpacity = 0.25 + developerEmphasis * 0.75;
+  const designerImageOpacity = 0.25 + designerEmphasis * 0.75;
 
   return (
-    <section
-      ref={sectionRef}
-      className="relative w-full min-h-[72vh] bg-[var(--background)] flex items-center justify-center overflow-hidden"
-      aria-label="Hero split portrait: Designer and Developer"
-    >
-
-      {/* Flex container for images, centered and layered */}
+    <section className="relative overflow-hidden pt-36 pb-20">
       <div
-        role="slider"
-        aria-valuemin={0}
-        aria-valuemax={100}
-        aria-valuenow={Math.round(split)}
-        aria-label="Adjust split between Designer and Developer"
-        tabIndex={0}
-        onKeyDown={onKeyboardAdjust}
-        onPointerMove={interactive ? onPointerMove : undefined}
-        onPointerDown={interactive ? onPointerMove : undefined}
-        onPointerLeave={onPointerLeave}
-        className="relative w-full h-[70vh] md:h-[80vh] flex items-center justify-center overflow-hidden"
-        style={{ width: "100%", margin: 0 }}
+        ref={splitRef}
+        className="relative w-full cursor-ew-resize overflow-hidden bg-gradient-to-r from-white/35 via-white/10 to-white/35 shadow-[inset_0_1px_0_rgba(255,255,255,0.35)] transition-colors duration-500"
+        onPointerMove={(event) => updateSplit(event.clientX)}
+        onPointerDown={(event) => updateSplit(event.clientX)}
+        onTouchMove={(event) => updateSplit(event.touches[0].clientX)}
+        onTouchStart={(event) => updateSplit(event.touches[0].clientX)}
+        onPointerLeave={resetSplit}
+        onTouchEnd={resetSplit}
+        onTouchCancel={resetSplit}
       >
-        {/* Images, split and animated */}
-        {(() => {
-          const maxSlide = 160; // Max number of pixels to slide images horizontally
-          const offset = split - 50; // Calculate offset from center
-          const slide = (offset / 50) * maxSlide; // Calculate slide amount
-          // Fast transition for pointer movement, slow for initial doors
-          const fastTransition =
-            "transform 0.2s cubic-bezier(.7,.2,.3,1), clip-path 0.2s cubic-bezier(.7,.2,.3,1)";
-          const doorTransition = doorsClosed
-            ? fastTransition
-            : "transform 2.5s cubic-bezier(.7,.2,.3,1), clip-path 2.5s cubic-bezier(.7,.2,.3,1)";
-
-          const fadeStart = 58;
-          const fadeWindow = 20;
-
-          const designerOpacity =
-            split <= fadeStart
-              ? 1
-              : 1 - Math.min(Math.max((split - fadeStart) / fadeWindow, 0), 1);
-
-          const developerOpacity =
-            split >= 100 - fadeStart
-              ? 1
-              : 1 -
-                Math.min(
-                  Math.max((100 - fadeStart - split) / fadeWindow, 0),
-                  1
-                );
-
-          return (
-            <>
-              <Image
-                src="/images/hero-design.png"
-                alt="Designer Jerod"
-                fill
-                style={{
-                  objectFit: "contain",
-                  objectPosition: "50% 100%",
-                  clipPath: `polygon(${split}% 0, 100% 0, 100% 100%, ${split}% 100%)`,
-                  zIndex: split > 50 ? 30 : 10,
-                  left: 0,
-                  transition: doorTransition,
-                  transform: doorsClosed
-                    ? `translateX(${slide}px)`
-                    : `translateX(100%)`,
-                  filter: "drop-shadow(0 25px 55px rgba(31, 60, 87, 0.26))",
-                  opacity: designerOpacity,
-                }}
-                sizes="100vw"
-                priority
-              />
-              <Image
-                src="/images/hero-dev.png"
-                alt="Developer Jerod"
-                fill
-                style={{
-                  objectFit: "contain",
-                  objectPosition: "50% 100%",
-                  clipPath: `polygon(0 0, ${split}% 0, ${split}% 100%, 0 100%)`,
-                  zIndex: split < 50 ? 30 : 20,
-                  left: 0,
-                  transition: doorTransition,
-                  transform: doorsClosed
-                    ? `translateX(${slide}px)`
-                    : `translateX(-100%)`,
-                  filter: "drop-shadow(0 25px 55px rgba(31, 60, 87, 0.26))",
-                  opacity: developerOpacity,
-                }}
-                sizes="100vw"
-                priority
-              />
-            </>
-          );
-        })()}
-
-        {/* Soft vignette for readability */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 -z-[1]"
-          style={{
-            background:
-              "radial-gradient(120% 60% at 50% 60%, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.00) 55%)",
-          }}
-        />
-
-        {/* No color swell to keep hero area clean/white */}
-
-        {/* Overlay text, centered and layered above images */}
-        <div
-          className="absolute inset-0 z-40 flex flex-col items-center justify-center select-none"
-          style={{
-            opacity: textVisible ? 1 : 0,
-            transition: "opacity 0.7s cubic-bezier(.7,.2,.3,1) 0.1s",
-          }}
-        >
-          <div className="mx-auto flex w-full justify-between max-w-7xl gap-12 px-6 md:gap-24 md:px-8 lg:px-12">
-            <div
-              role="button"
-              tabIndex={0}
-              aria-label="Jump to developer projects"
-              onClick={() => handleSideClick("developer")}
-              onKeyDown={(event) => {
-                if (event.key === "Enter" || event.key === " ") {
-                  event.preventDefault();
-                  handleSideClick("developer");
-                }
-              }}
-              onMouseEnter={() => setHoveredSide("developer")}
-              onMouseLeave={() => setHoveredSide(null)}
-              onFocus={() => setHoveredSide("developer")}
-              onBlur={() => setHoveredSide(null)}
-              className={`pointer-events-auto group hero-card hero-card--developer ${
-                developerActive ? "hero-card--active" : ""
-              }`}
+        <div className="relative aspect-[5/3] w-full max-h-[640px]">
+          <div className="absolute inset-0">
+            <Image
+              src="/images/hero-dev.png"
+              alt="Developer portrait"
+              fill
+              priority
               style={{
-                opacity: split < 30 ? (split < 20 ? 0 : (split - 20) / 10) : 1,
+                clipPath: developerClip,
+                transform: `translateX(${developerTranslate}px) scale(1.02)`,
+                opacity: developerImageOpacity,
               }}
-            >
-              <span className="hero-card__eyebrow">Back-End</span>
-              <span className="hero-card__title">Developer</span>
-              <span className="hero-card__summary">
-                Engineering seamless, scalable digital experiences.
-              </span>
-              <span className="hero-card__cta inline-flex items-center gap-2 text-sm font-semibold">
-                Explore
-                <svg
-                  className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.6"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M5 12h14" />
-                  <path d="M13 6l6 6-6 6" />
-                </svg>
-              </span>
-            </div>
-            <div
-              role="button"
-              tabIndex={0}
-              aria-label="Jump to designer projects"
-              onClick={() => handleSideClick("designer")}
-              onKeyDown={(event) => {
-                if (event.key === "Enter" || event.key === " ") {
-                  event.preventDefault();
-                  handleSideClick("designer");
-                }
-              }}
-              onMouseEnter={() => setHoveredSide("designer")}
-              onMouseLeave={() => setHoveredSide(null)}
-              onFocus={() => setHoveredSide("designer")}
-              onBlur={() => setHoveredSide(null)}
-              className={`pointer-events-auto group hero-card hero-card--designer ${
-                designerActive ? "hero-card--active" : ""
-              }`}
+              className="object-contain object-center transition-[opacity,transform] duration-300"
+            />
+            <Image
+              src="/images/hero-design.png"
+              alt="Designer portrait"
+              fill
+              priority
               style={{
-                opacity:
-                  split > 70 ? (split > 80 ? 0 : 1 - (split - 70) / 10) : 1,
+                clipPath: designerClip,
+                transform: `translateX(${designerTranslate}px) scale(1.02)`,
+                opacity: designerImageOpacity,
               }}
-            >
-              <span className="hero-card__eyebrow">Front-End</span>
-              <span className="hero-card__title text-right">Designer</span>
-              <span className="hero-card__summary text-right">
-                Designing intuitive, impactful brand experiences.
-              </span>
-              <span className="hero-card__cta inline-flex items-center gap-2 text-sm font-semibold">
-                Explore
-                <svg
-                  className="h-4 w-4 transition-transform duration-300 group-hover:-translate-x-1"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.6"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
+              className="object-contain object-center transition-[opacity,transform] duration-300"
+            />
+          </div>
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/30 via-white/8 to-white/35" />
+
+          <div className="absolute inset-0 flex h-full items-center justify-center px-4 py-12 sm:px-8">
+            <div className="flex w-full max-w-7xl flex-col gap-10 text-black">
+              <div className="grid gap-6 sm:grid-cols-2 sm:gap-12">
+                <div
+                  className="flex flex-col gap-3 text-left transition-opacity duration-300"
+                  style={{ opacity: developerContentOpacity }}
                 >
-                  <path d="M19 12H5" />
-                  <path d="M11 18l-6-6 6-6" />
-                </svg>
-              </span>
+                  <span className="text-xs font-semibold uppercase tracking-[0.32em] text-black/50">
+                    Back-End
+                  </span>
+                  <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">
+                    Developer
+                  </h1>
+                  <p className="text-sm text-black/70 transition-opacity duration-300">
+                    Automation, APIs, and systems that ship reliable experiences.
+                  </p>
+                </div>
+                <div
+                  className="flex flex-col gap-3 text-right transition-opacity duration-300 sm:items-end"
+                  style={{ opacity: designerContentOpacity }}
+                >
+                  <span className="text-xs font-semibold uppercase tracking-[0.32em] text-black/50">
+                    Front-End
+                  </span>
+                  <h2 className="text-4xl font-semibold tracking-tight sm:text-5xl">
+                    Designer
+                  </h2>
+                  <p className="text-sm text-black/70 sm:max-w-xs transition-opacity duration-300">
+                    Interfaces & motion that feel intuitive, expressive, and calm.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+                <button
+                  onClick={() => handleFilter("dev")}
+                  onMouseEnter={() => setSplit(80)}
+                  onFocus={() => setSplit(80)}
+                  onMouseLeave={resetSplit}
+                  onBlur={resetSplit}
+                  className="group inline-flex max-w-sm flex-col gap-2 rounded-2xl border border-black/5 bg-white/20 px-6 py-4 text-left text-black backdrop-blur-xl transition-[transform,opacity] duration-300 hover:-translate-y-1"
+                  style={{ opacity: Math.max(developerEmphasis, 0.35) }}
+                >
+                  <span className="text-xs font-semibold uppercase tracking-[0.32em] text-black/45">
+                    Explore Developer Work
+                  </span>
+                  <span className="text-sm text-black/60">
+                    Dig into systems thinking, automation flows, and product
+                    infrastructure.
+                  </span>
+                </button>
+
+                <button
+                  onClick={() => handleFilter("design")}
+                  onMouseEnter={() => setSplit(20)}
+                  onFocus={() => setSplit(20)}
+                  onMouseLeave={resetSplit}
+                  onBlur={resetSplit}
+                  className="group inline-flex max-w-sm flex-col gap-2 rounded-2xl border border-black/5 bg-white/20 px-6 py-4 text-right text-black backdrop-blur-xl transition-[transform,opacity] duration-300 hover:-translate-y-1"
+                  style={{ opacity: Math.max(designerEmphasis, 0.35) }}
+                >
+                  <span className="text-xs font-semibold uppercase tracking-[0.32em] text-black/45">
+                    Explore Design Work
+                  </span>
+                  <span className="text-sm text-black/60">
+                    See brand systems, motion language, and immersive product
+                    details.
+                  </span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
-
-      {/* Bottom info section */}
     </section>
   );
 }

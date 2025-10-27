@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import ProjectCard from "./ProjectCard";
 import Link from "next/link";
 import { featuredProjects } from "@/lib/projects";
@@ -41,17 +41,37 @@ export default function FeaturedProjectsSection() {
 
   const activeMeta = FILTERS.find((filter) => filter.id === activeFilter);
 
+  useEffect(() => {
+    const onFilter = (event: Event) => {
+      const custom = event as CustomEvent<{ filter?: DisciplineFilter }>;
+      if (custom.detail?.filter) {
+        setActiveFilter(custom.detail.filter);
+      }
+    };
+    if (typeof window !== "undefined") {
+      window.addEventListener(
+        "featured-project-filter",
+        onFilter as EventListener
+      );
+    }
+    return () => {
+      if (typeof window !== "undefined") {
+        window.removeEventListener(
+          "featured-project-filter",
+          onFilter as EventListener
+        );
+      }
+    };
+  }, []);
+
   return (
-    <section className="relative py-20">
+    <section id="featured-projects" className="relative py-20">
       <div className="absolute inset-x-0 top-0 -z-10 mx-auto h-[520px] max-w-6xl rounded-[48px] bg-white/6 blur-3xl" />
 
       <Container className="glass-section rounded-[48px] px-6 py-12 md:px-12 lg:px-16">
         <div className="flex flex-col gap-10">
           <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
             <div>
-              <span className="inline-flex items-center rounded-full border border-white/40 bg-white/20 px-4 py-1 text-xs font-semibold uppercase tracking-[0.28em] text-slate-700">
-                Featured
-              </span>
               <h2 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 md:text-4xl">
                 Featured Projects
               </h2>
@@ -67,7 +87,9 @@ export default function FeaturedProjectsSection() {
                   key={filter.id}
                   type="button"
                   onClick={() => setActiveFilter(filter.id)}
-                  className={`glass-toggle ${activeFilter === filter.id ? "glass-toggle--active" : ""}`}
+                  className={`glass-toggle ${
+                    activeFilter === filter.id ? "glass-toggle--active" : ""
+                  }`}
                 >
                   {filter.label}
                 </button>
@@ -82,9 +104,7 @@ export default function FeaturedProjectsSection() {
                 href={`/projects/${project.slug}`}
                 className="group block h-full"
               >
-                <div className="glass-featured-card h-full">
-                  <ProjectCard project={project} hideRepoLink />
-                </div>
+                <ProjectCard project={project} hideRepoLink />
               </Link>
             ))}
           </div>
