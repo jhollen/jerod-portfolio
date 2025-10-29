@@ -9,8 +9,10 @@ export default function FooterCTA() {
 
   return (
     <section className="relative overflow-hidden bg-surface-base py-24">
-      <div className="absolute inset-0 -z-10 bg-noise-texture opacity-10" />
-      <div className="absolute inset-x-0 top-0 -z-20 h-40 bg-gradient-to-b from-surface-muted to-transparent" />
+      {/* Gentle vignette/radial overlay for premium focus */}
+      <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_center,rgba(30,41,59,0.08)_0%,transparent_70%)]" />
+      <div className="absolute inset-0 -z-20 bg-gradient-to-t from-[#111c2d]/80 via-surface-base/90 via-70% to-transparent" />
+      <div className="absolute inset-0 -z-30 bg-noise-texture opacity-10" />
 
       <Container className="relative px-6 md:px-10 lg:px-12">
         <motion.div
@@ -38,10 +40,10 @@ export default function FooterCTA() {
               Start a project
             </Link>
             <Link
-              href="/resume"
+              href="/experience"
               className="text-sm font-semibold text-text-subtle underline-offset-4 transition-colors duration-200 hover:text-ink"
             >
-              View resume
+              View experience
             </Link>
           </div>
         </motion.div>

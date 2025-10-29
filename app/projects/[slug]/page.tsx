@@ -5,6 +5,18 @@ import { notFound } from "next/navigation";
 import GlassCard from "../../../components/GlassCard";
 import { Container } from "../../../components/Container";
 import { featuredProjects } from "../../../lib/projects";
+import { Badge } from "@/components/ui/badge";
+import {
+  ShieldCheck,
+  Workflow,
+  FileArchive,
+  UploadCloud,
+  ListChecks,
+  CheckCircle2,
+  RefreshCcw,
+  MessageCircle,
+  ClipboardList,
+} from "lucide-react";
 
 type Params = { slug: string };
 
@@ -37,6 +49,82 @@ Checking /Users/jerod/Dev/rails-image-optimizer-demo/app/assets/images/bloated/b
   Total saved (all time): 105.72 MB
   Optimization complete.`;
 
+type IconType = React.ComponentType<{ className?: string; "aria-hidden"?: boolean }>;
+
+const SCORM_FLOW: Array<{ title: string; body: string; icon: IconType }> = [
+  {
+    title: "Authenticate & scope",
+    body: "Use vaulted credentials to log into LEAi and Skilljar, then scope the run to the learner folder the operator selects.",
+    icon: ShieldCheck,
+  },
+  {
+    title: "Export with guardrails",
+    body: "On every LEAi export, enforce SCORM 3rd Edition, restricted navigation, quiz pass gating, and the standardized summary before publishing.",
+    icon: Workflow,
+  },
+  {
+    title: "Build the course map",
+    body: "Capture a canonical map of course name → generated zip → checksum → Skilljar ID so downstream stages stay in lockstep.",
+    icon: FileArchive,
+  },
+  {
+    title: "Replace in Skilljar",
+    body: "Locate the matching Skilljar SCORM record, trigger Replace, upload the new archive, and verify completion with UI + API assertions.",
+    icon: UploadCloud,
+  },
+];
+
+const SCORM_CONFIGS = [
+  "SCORM 3rd Edition",
+  "Restrict navigation",
+  "Show correct answers",
+  "Require quiz pass",
+  "Standardized summary copy",
+  "Name → file → SCORM ID map",
+];
+
+const SCORM_PRACTICES: Array<{ title: string; body: string; icon: IconType }> = [
+  {
+    title: "Deterministic locators",
+    body: "Only data-test hooks and role queries—stable across LEAi and Skilljar UI updates.",
+    icon: ListChecks,
+  },
+  {
+    title: "Retry with tracing",
+    body: "Automatic retry on transient failures plus Playwright trace-on-retry for lightweight forensics.",
+    icon: RefreshCcw,
+  },
+  {
+    title: "Idempotent + checksum aware",
+    body: "Skip exports when artifacts already match remote size and checksum, preventing duplicate uploads.",
+    icon: CheckCircle2,
+  },
+  {
+    title: "Operator feedback",
+    body: "Structured logs and Slack notifications call out which courses updated, skipped, or flagged for review.",
+    icon: MessageCircle,
+  },
+];
+
+const SCORM_SUPPLEMENTS = [
+  {
+    title: "Demo clip",
+    body: "Embed a short Loom or mp4 walkthrough (blur proprietary data) showing LEAi export through Skilljar replace.",
+  },
+  {
+    title: "Before / after timeline",
+    body: "Chart the 8-hour manual process versus the 20-minute automated run to visualise the time savings.",
+  },
+  {
+    title: "Stakeholder quote",
+    body: "Add a testimonial from Enablement/Ops that speaks to confidence and reclaimed hours.",
+  },
+  {
+    title: "Technical addendum",
+    body: "Link to a scrubbed architecture doc or pseudocode snippet describing the Playwright helpers and retry logic.",
+  },
+];
+
 function CollapsibleCode({ label, code }: { label: string; code: string }) {
   const [open, setOpen] = React.useState(false);
 
@@ -68,6 +156,7 @@ export default function ProjectDetail({ params }: { params: Params }) {
   const project = featuredProjects.find((p) => p.slug === params.slug);
 
   if (!project) return notFound();
+  const isScormAutomation = project.slug === "scorm-automation-scripts";
 
   return (
     <main className="relative min-h-screen pb-20 pt-16">
@@ -244,6 +333,8 @@ export default function ProjectDetail({ params }: { params: Params }) {
           </GlassCard>
         </div>
 
+        {isScormAutomation ? <ScormAutomationDetails /> : null}
+
         {project.slug === "rails-image-optimizer" ? (
           <GlassCard
             as="section"
@@ -270,5 +361,95 @@ export default function ProjectDetail({ params }: { params: Params }) {
         ) : null}
       </Container>
     </main>
+  );
+}
+
+function ScormAutomationDetails() {
+  return (
+    <section className="grid gap-8">
+      <GlassCard className="rounded-[36px] px-8 py-10 text-slate-800">
+        <div className="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+          <ClipboardList className="h-4 w-4" aria-hidden />
+          Automation flow
+        </div>
+        <p className="mt-3 text-base leading-relaxed text-slate-600">
+          One maintained command now handles exports, uploads, and verification for the entire CCSK catalog. Below is the sequence that replaced a day of manual work.
+        </p>
+        <ul className="mt-6 space-y-5 text-sm leading-6 text-slate-600">
+          {SCORM_FLOW.map((item) => (
+            <li key={item.title} className="flex gap-3">
+              <span className="mt-1 inline-flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-indigo-100 text-indigo-600">
+                <item.icon className="h-4 w-4" aria-hidden />
+              </span>
+              <div>
+                <p className="font-semibold text-slate-900">{item.title}</p>
+                <p>{item.body}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </GlassCard>
+
+      <div className="grid gap-8 lg:grid-cols-2">
+        <GlassCard className="rounded-[32px] px-8 py-10 text-slate-800">
+          <h3 className="text-xl font-semibold tracking-tight text-slate-950">
+            Configurations applied every run
+          </h3>
+          <p className="mt-3 text-sm text-slate-600">
+            Playwright fills every export form exactly the way our instructional design team expects.
+          </p>
+          <div className="mt-5 flex flex-wrap gap-2">
+            {SCORM_CONFIGS.map((chip) => (
+              <Badge
+                key={chip}
+                variant="secondary"
+                className="rounded-full border border-white/45 bg-white/70 px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-slate-700"
+              >
+                {chip}
+              </Badge>
+            ))}
+          </div>
+        </GlassCard>
+
+        <GlassCard className="rounded-[32px] px-8 py-10 text-slate-800">
+          <h3 className="text-xl font-semibold tracking-tight text-slate-950">
+            Engineering practices
+          </h3>
+          <ul className="mt-5 space-y-4 text-sm leading-6 text-slate-600">
+            {SCORM_PRACTICES.map((item) => (
+              <li key={item.title} className="flex gap-3">
+                <span className="mt-1 inline-flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-slate-200 text-slate-700">
+                  <item.icon className="h-4 w-4" aria-hidden />
+                </span>
+                <div>
+                  <p className="font-semibold text-slate-900">{item.title}</p>
+                  <p>{item.body}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </GlassCard>
+      </div>
+
+      <GlassCard className="rounded-[32px] px-8 py-10 text-slate-800">
+        <h3 className="text-xl font-semibold tracking-tight text-slate-950">
+          Supplement this case study
+        </h3>
+        <p className="mt-3 text-sm text-slate-600">
+          When you share this publicly, these slots are ready for richer artefacts without exposing proprietary course content.
+        </p>
+        <div className="mt-6 grid gap-4 md:grid-cols-2">
+          {SCORM_SUPPLEMENTS.map((item) => (
+            <div
+              key={item.title}
+              className="rounded-2xl border border-dashed border-white/45 bg-white/70 p-4 text-sm text-slate-600"
+            >
+              <p className="font-semibold text-slate-900">{item.title}</p>
+              <p className="mt-1 text-slate-600">{item.body}</p>
+            </div>
+          ))}
+        </div>
+      </GlassCard>
+    </section>
   );
 }

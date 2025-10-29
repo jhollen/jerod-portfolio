@@ -6,11 +6,14 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="relative overflow-hidden bg-surface-contrast text-white">
-      <div className="absolute inset-0 -z-20 bg-gradient-to-br from-ink-soft via-[#111c2d] to-[#050b1c]" />
+    <footer className="relative overflow-hidden text-white">
+      {/* Smooth gradient transition from page background into footer */}
+      <div className="absolute inset-0 -z-20 bg-gradient-to-t from-[#050b1c] via-[#111c2d]/90 via-70% to-blue-50/0" />
+      {/* Gentle vignette/radial overlay for premium focus */}
+      <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_center,rgba(30,41,59,0.10)_0%,transparent_70%)]" />
       <div className="absolute inset-0 -z-10 bg-noise-texture opacity-[0.15]" />
 
-      <Container className="relative px-6 py-16 md:px-10 lg:px-12">
+      <Container className="relative px-6 py-20 md:px-10 lg:px-12">
         <div className="grid gap-12 md:grid-cols-3">
           <div className="space-y-4">
             <Link
@@ -31,7 +34,7 @@ export default function Footer() {
               <nav className="mt-4 space-y-2 text-white/70">
                 <FooterLink href="/">Home</FooterLink>
                 <FooterLink href="/projects">Projects</FooterLink>
-                <FooterLink href="/resume">Experience</FooterLink>
+                <FooterLink href="/experience">Experience</FooterLink>
                 <FooterLink href="/contact">Contact</FooterLink>
               </nav>
             </div>
@@ -52,9 +55,7 @@ export default function Footer() {
           </div>
 
           <div className="flex flex-col gap-4 text-sm text-white/60 md:items-end md:text-right">
-            <p>
-              © {currentYear} Jerod Hollen. All rights reserved.
-            </p>
+            <p>© {currentYear} Jerod Hollen. All rights reserved.</p>
             <p>Built with Next.js &amp; Tailwind CSS</p>
           </div>
         </div>
@@ -95,7 +96,10 @@ function FooterExternalLink({
       >
         <span className="inline-flex h-1.5 w-1.5 rounded-full bg-accent-gradient opacity-70 transition-opacity duration-200 group-hover:opacity-100" />
         {children}
-        <span aria-hidden="true" className="text-[10px] opacity-0 transition-opacity duration-200 group-hover:opacity-70">
+        <span
+          aria-hidden="true"
+          className="text-[10px] opacity-0 transition-opacity duration-200 group-hover:opacity-70"
+        >
           ↗
         </span>
       </a>

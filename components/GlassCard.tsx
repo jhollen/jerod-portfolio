@@ -20,12 +20,15 @@ export default function GlassCard<T extends React.ElementType = "div">({
 
   return (
     <Component
-      className={`glass-card-base relative overflow-hidden rounded-[34px] px-8 py-8 ${className}`}
+      className={`relative overflow-hidden rounded-[34px] px-8 py-8 bg-gradient-to-br from-white/70 via-white/40 to-blue-50/20 shadow-2xl shadow-blue-200/40 ring-1 ring-white/40 backdrop-blur-lg transition-all duration-200 hover:-translate-y-1 hover:scale-[1.015] hover:brightness-110 hover:shadow-3xl ${className}`}
       {...rest}
     >
-      <div className="glass-card-base__shine pointer-events-none absolute inset-0" />
-      <div className="glass-card-base__shadow pointer-events-none absolute inset-0" />
-      <div className="glass-card-base__noise pointer-events-none absolute inset-0" />
+      {/* Shine/highlight edge */}
+      <div className="pointer-events-none absolute inset-0 rounded-[34px] ring-1 ring-white/30" />
+      {/* Gentle vignette/radial overlay for premium focus */}
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(30,41,59,0.06)_0%,transparent_70%)]" />
+      {/* Subtle noise texture */}
+      <div className="pointer-events-none absolute inset-0 bg-noise-texture opacity-10" />
       <div className="relative z-10">{children}</div>
     </Component>
   );

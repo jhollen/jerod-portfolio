@@ -101,7 +101,7 @@
  *    - Code snippets with syntax highlighting
  *    - Related projects
  *
- * 4. Resume/Experience Page
+ * 4. Experience Page
  *    - Timeline or sections for work history
  *    - Skills and technologies
  *

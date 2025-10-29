@@ -44,7 +44,7 @@ export default function ProjectCard({
   return (
     <motion.article
       className={clsx(
-        "group relative flex h-full min-h-[320px] flex-col overflow-hidden rounded-2xl border border-black/5 bg-white/70 p-6 shadow-card transition-colors duration-300 backdrop-blur-md",
+        "group relative flex h-full min-h-[320px] flex-col overflow-hidden rounded-3xl bg-gradient-to-br from-white/70 via-white/40 to-blue-50/20 shadow-2xl shadow-blue-200/40 ring-1 ring-white/40 p-7 transition-all duration-200 backdrop-blur-lg hover:-translate-y-1 hover:scale-[1.015] hover:brightness-110 hover:shadow-3xl",
         "focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-offset-white",
         config.ring
       )}
@@ -52,8 +52,9 @@ export default function ProjectCard({
         prefersReducedMotion
           ? undefined
           : {
-              scale: 1.02,
-              y: -3,
+              scale: 1.015,
+              y: -2,
+              filter: "brightness(1.10)",
               transition: { type: "spring", stiffness: 200, damping: 20 },
             }
       }
@@ -63,6 +64,12 @@ export default function ProjectCard({
           : { scale: 0.995, transition: { duration: 0.12 } }
       }
     >
+      {/* Shine/highlight edge */}
+      <div className="pointer-events-none absolute inset-0 rounded-3xl ring-1 ring-white/30" />
+      {/* Gentle vignette/radial overlay for premium focus */}
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(30,41,59,0.06)_0%,transparent_70%)]" />
+      {/* Subtle noise texture */}
+      <div className="pointer-events-none absolute inset-0 bg-noise-texture opacity-10" />
       <span
         className={clsx(
           "pointer-events-none absolute inset-y-4 left-0 w-[4px] rounded-full bg-gradient-to-b opacity-80 transition-opacity duration-300",

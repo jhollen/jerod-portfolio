@@ -42,11 +42,11 @@ export const featuredProjects: readonly Project[] = [
     repo: "https://github.com/jerods/rails-image-optimizer",
     tech: ["Ruby", "Rails", "ImageMagick", "libvips", "Shell"],
     stats: {
-      totalSaved: "52.86 MB",
+      totalSaved: "2.86 GB",
       metrics: [
         { label: "Runs Automated", value: "200+" },
         { label: "Unique Assets", value: "1.4k+" },
-        { label: "Estimated Savings", value: "Multiple GB" },
+        { label: "Estimated Savings", value: "2.5+ GB" },
       ],
     },
     image: "/images/projects/rails_image_optimizer/rails_image_optimizer.png",
@@ -69,14 +69,22 @@ export const featuredProjects: readonly Project[] = [
     slug: "scorm-automation-scripts",
     title: "SCORM Publishing Automation",
     tagline:
-      "Batch SCORM export, validation, and upload scripts that reclaimed hours of manual work.",
+      "Playwright-driven exporter that turns a day of LEAi → Skilljar publishing into a 20 minute run.",
     category: "engineering",
     discipline: "dev",
     highlights:
-      "Authored a suite of automation that packages SCORM modules, verifies manifests, and ships them to multiple LMS endpoints with a single command.",
+      "Python + Playwright scripts sign into LEAi, apply the mandated SCORM 3rd Edition configuration, generate exports, and replace the matching Skilljar objects with traceable hand-offs. Every step is idempotent, logged, and guarded by checksum comparison so 78 CCSK courses ship hands-off.",
     whyImpressive:
-      "Reduced a multi-hour release checklist to a 6-minute job while logging audit trails and surfacing validation failures in Slack.",
+      "Compressed an all-day release cycle to roughly twenty minutes while preserving auditability—one maintained script updates the entire CCSK catalog without touching proprietary course content.",
     tech: ["Playwright", "Python", "Skilljar API"],
+    stats: {
+      metrics: [
+        { label: "Courses maintained", value: "78" },
+        { label: "Manual effort saved", value: "≈8h" },
+        { label: "Runtime", value: "~20m" },
+        { label: "Error rate", value: "Near-zero" },
+      ],
+    },
   },
   {
     slug: "auth0-relay-integration",
