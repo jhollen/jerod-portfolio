@@ -15,8 +15,7 @@ const variantConfig = {
     accentLine:
       "from-sky-300/80 via-sky-400/80 to-indigo-400/80 group-hover:opacity-100",
     glow: "group-hover:opacity-25",
-    chip:
-      "border-sky-400/60 bg-transparent text-sky-800 dark:text-sky-200",
+    chip: "border-sky-400/60 bg-transparent text-sky-800 dark:text-sky-200",
     link: "text-sky-700 group-hover:text-sky-900",
     ring: "focus-within:ring-accent-blue/60",
   },
@@ -24,8 +23,7 @@ const variantConfig = {
     accentLine:
       "from-orange-300/80 via-rose-300/80 to-rose-400/80 group-hover:opacity-100",
     glow: "group-hover:opacity-30",
-    chip:
-      "border-rose-400/60 bg-transparent text-rose-800 dark:text-rose-100",
+    chip: "border-rose-400/60 bg-transparent text-rose-800 dark:text-rose-100",
     link: "text-rose-700 group-hover:text-rose-900",
     ring: "focus-within:ring-accent-orange/60",
   },

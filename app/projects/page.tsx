@@ -30,12 +30,12 @@ const SECTIONS: Array<{
 export default function ProjectsPage() {
   // Discipline color rhythm for card backgrounds
   const sectionBg = {
-    dev: 'bg-gradient-to-br from-white/70 via-blue-50/40 to-blue-100/30',
-    design: 'bg-gradient-to-br from-white/70 via-pink-50/40 to-pink-100/30',
+    dev: "bg-gradient-to-br from-white/70 via-blue-50/40 to-blue-100/30",
+    design: "bg-gradient-to-br from-white/70 via-pink-50/40 to-pink-100/30",
   };
   const sectionRing = {
-    dev: 'ring-blue-200/30 hover:ring-blue-300/50',
-    design: 'ring-pink-200/30 hover:ring-pink-300/50',
+    dev: "ring-blue-200/30 hover:ring-blue-300/50",
+    design: "ring-pink-200/30 hover:ring-pink-300/50",
   };
 
   return (
@@ -95,7 +95,9 @@ export default function ProjectsPage() {
                       tabIndex={0}
                     >
                       <div
-                        className={`group h-full overflow-hidden rounded-3xl p-0 transition-transform duration-200 hover:-translate-y-1 hover:scale-[1.02] hover:brightness-110 hover:shadow-3xl shadow-2xl shadow-blue-200/30 ring-1 ring-white/40 ${sectionBg[section.key]} ${sectionRing[section.key]}`}
+                        className={`group h-full overflow-hidden rounded-3xl p-0 transition-transform duration-200 hover:-translate-y-1 hover:scale-[1.02] hover:brightness-110 hover:shadow-3xl shadow-2xl shadow-blue-200/30 ring-1 ring-white/40 ${
+                          sectionBg[section.key]
+                        } ${sectionRing[section.key]}`}
                       >
                         <ProjectCard project={project} hideRepoLink={true} />
                       </div>
