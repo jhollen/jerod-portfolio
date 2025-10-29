@@ -74,9 +74,6 @@ export default function FeaturedProjectsSection() {
           className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between"
         >
           <div className="max-w-2xl">
-            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.32em] text-text-subtle">
-              Selected Case Studies
-            </p>
             <h2 className="text-4xl font-semibold tracking-tight text-ink md:text-[2.75rem]">
               Featured Projects
             </h2>

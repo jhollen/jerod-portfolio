@@ -181,7 +181,7 @@ export default function HeroSection() {
             ref={surfaceRef}
             className={clsx(
               "relative w-full overflow-hidden rounded-3xl border border-border-subtle/70 bg-gradient-to-r from-cool-bg/40 via-transparent to-warm-bg/40 shadow-card",
-              isMobile ? "cursor-default" : "cursor-ew-resize"
+              isMobile ? "cursor-default" : "cursor-pointer"
             )}
             onPointerMove={(event) => {
               if (isMobile) return;
@@ -262,35 +262,85 @@ export default function HeroSection() {
 
               <div className="absolute inset-0 flex h-full items-center justify-center px-6 py-12 sm:px-10 lg:px-16">
                 <div className="flex w-full max-w-6xl flex-col gap-12">
-                  <div className="grid grid-cols-2 gap-8 sm:gap-16">
+                  <div className="grid grid-cols-2 gap-8 sm:gap-16 items-start sm:items-end">
+                    {/* Developer Side */}
                     <div
-                      className="flex max-w-xl flex-col gap-6 text-left transition-opacity duration-300"
+                      className="flex flex-col gap-6 text-left transition-opacity duration-300"
                       style={{ opacity: developerContentOpacity }}
                     >
                       <header className="flex flex-col gap-4">
                         <h1 className="text-balance text-4xl font-semibold tracking-tight text-ink sm:text-5xl lg:text-[3.25rem]">
                           Developer
-                          <span
-                            className="mt-3 inline-flex h-[2px] w-20 rounded-full bg-accent-gradient opacity-80"
-                            aria-hidden="true"
-                          />
                         </h1>
                       </header>
+                      {/* Dev CTA under Dev text, fades with content */}
+                      {!isMobile && (
+                        <button
+                          type="button"
+                          data-hero-interactive="true"
+                          onClick={() => handleFilter("dev")}
+                          className="self-start inline-flex items-center justify-center gap-3 rounded-full border border-black/5 bg-surface-base/90 px-5 py-3 text-sm font-semibold text-ink shadow-card transition-colors duration-200 hover:bg-cool-tint/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue/60 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base"
+                          style={{
+                            opacity: developerContentOpacity,
+                            transition: "opacity 0.3s",
+                          }}
+                        >
+                          Dev Work
+                          <svg
+                            className="h-4 w-4 text-accent-blue"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth={1.6}
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            aria-hidden="true"
+                          >
+                            <path d="M5 12h14" />
+                            <path d="M13 6l6 6-6 6" />
+                          </svg>
+                        </button>
+                      )}
                     </div>
 
+                    {/* Designer Side */}
                     <div
-                      className="flex max-w-xl flex-col gap-6 text-left transition-opacity duration-300 sm:text-right sm:items-end"
+                      className="flex flex-col gap-6 text-left transition-opacity duration-300 sm:text-right sm:items-end"
                       style={{ opacity: designerContentOpacity }}
                     >
-                      <header className="flex flex-col gap-4 sm:items-end">
-                        <h2 className="text-balance text-4xl font-semibold tracking-tight text-ink sm:text-5xl lg:text-[3.25rem]">
+                      <header className="flex w-full flex-col gap-4 sm:items-end">
+                        <h2 className="self-end text-right text-4xl font-semibold tracking-tight text-ink sm:text-5xl lg:text-[3.25rem]">
                           Designer
-                          <span
-                            className="mt-3 inline-flex h-[2px] w-20 justify-end rounded-full bg-gradient-to-r from-accent-orange via-accent-amber to-accent-blue opacity-80"
-                            aria-hidden="true"
-                          />
                         </h2>
                       </header>
+                      {/* Design CTA under Designer text, fades with content */}
+                      {!isMobile && (
+                        <button
+                          type="button"
+                          data-hero-interactive="true"
+                          onClick={() => handleFilter("design")}
+                          className="self-end inline-flex items-center justify-center gap-3 rounded-full border border-black/5 bg-surface-base/90 px-5 py-3 text-sm font-semibold text-ink shadow-card transition-colors duration-200 hover:bg-warm-tint/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-orange/60 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base"
+                          style={{
+                            opacity: designerContentOpacity,
+                            transition: "opacity 0.3s",
+                          }}
+                        >
+                          Design Work
+                          <svg
+                            className="h-4 w-4 text-accent-orange"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth={1.6}
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            aria-hidden="true"
+                          >
+                            <path d="M5 12h14" />
+                            <path d="M13 6l6 6-6 6" />
+                          </svg>
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -300,50 +350,52 @@ export default function HeroSection() {
             </div>
           </div>
         </div>
-        <div className="mt-8 grid grid-cols-2 gap-4 sm:gap-6 lg:mt-10 lg:gap-10">
-          <button
-            type="button"
-            data-hero-interactive="true"
-            onClick={() => handleFilter("dev")}
-            className="inline-flex w-full items-center justify-center gap-3 rounded-full border border-black/5 bg-surface-base/90 px-6 py-3 text-sm font-semibold text-ink shadow-card transition-colors duration-200 hover:bg-cool-tint/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue/60 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base"
-          >
-            Dev Work
-            <svg
-              className="h-4 w-4 text-accent-blue"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={1.6}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
+        {isMobile && (
+          <div className="mt-8 grid grid-cols-2 gap-4 sm:gap-6 lg:mt-10 lg:gap-10">
+            <button
+              type="button"
+              data-hero-interactive="true"
+              onClick={() => handleFilter("dev")}
+              className="inline-flex w-full items-center justify-center gap-3 rounded-full border border-black/5 bg-surface-base/90 px-6 py-3 text-sm font-semibold text-ink shadow-card transition-colors duration-200 hover:bg-cool-tint/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue/60 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base"
             >
-              <path d="M5 12h14" />
-              <path d="M13 6l6 6-6 6" />
-            </svg>
-          </button>
-          <button
-            type="button"
-            data-hero-interactive="true"
-            onClick={() => handleFilter("design")}
-            className="inline-flex w-full items-center justify-center gap-3 rounded-full border border-black/5 bg-surface-base/90 px-6 py-3 text-sm font-semibold text-ink shadow-card transition-colors duration-200 hover:bg-warm-tint/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-orange/60 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base"
-          >
-            Design Work
-            <svg
-              className="h-4 w-4 text-accent-orange"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={1.6}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
+              Dev Work
+              <svg
+                className="h-4 w-4 text-accent-blue"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={1.6}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M5 12h14" />
+                <path d="M13 6l6 6-6 6" />
+              </svg>
+            </button>
+            <button
+              type="button"
+              data-hero-interactive="true"
+              onClick={() => handleFilter("design")}
+              className="inline-flex w-full items-center justify-center gap-3 rounded-full border border-black/5 bg-surface-base/90 px-6 py-3 text-sm font-semibold text-ink shadow-card transition-colors duration-200 hover:bg-warm-tint/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-orange/60 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base"
             >
-              <path d="M5 12h14" />
-              <path d="M13 6l6 6-6 6" />
-            </svg>
-          </button>
-        </div>
+              Design Work
+              <svg
+                className="h-4 w-4 text-accent-orange"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={1.6}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M5 12h14" />
+                <path d="M13 6l6 6-6 6" />
+              </svg>
+            </button>
+          </div>
+        )}
       </div>
     </section>
   );

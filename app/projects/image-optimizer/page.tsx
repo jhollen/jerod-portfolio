@@ -28,7 +28,7 @@ function CollapsibleCode({ label, code }: { label: string; code: string }) {
         {open ? "Hide" : "Show"} {label}
       </button>
       {open && (
-        <pre className="bg-zinc-900 text-green-200 rounded p-4 overflow-x-auto text-xs border border-zinc-800">
+        <pre className="bg-[#f5f3ee] text-black rounded p-4 overflow-x-auto text-xs border border-[#e6e1d5]">
           <code>{code}</code>
         </pre>
       )}

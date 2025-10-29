@@ -90,15 +90,35 @@ export const featuredProjects: readonly Project[] = [
     slug: "auth0-relay-integration",
     title: "Auth0 Relay for Mobile + Rails",
     tagline:
-      "Bridged React Native and Rails with Auth0, JWT decoding, and user sync pipelines.",
+      "Bridged React Native Expo and Rails through an Auth0 relay that decodes tokens and hydrates user context in one roundtrip.",
     category: "engineering",
     discipline: "dev",
     highlights:
-      "Implemented Auth0 universal login, wrote a Relay in Rails that decodes JWTs, hydrates user context, and returns signed payloads for the mobile app to render and edit.",
+      "Implemented Auth0 universal login in the mobile app, added a Rails relay endpoint that validates JWTs, looks up profiles via the Auth0 sub, and returns sanitized user payloads back to Expo. The relay also provisions missing users and caches claims for faster follow-up requests.",
     whyImpressive:
-      "Established a secure, reusable auth backbone that eliminated duplicate credential flows and hardened API calls with role-based claims.",
+      "Eliminated duplicate credential flows and gave the mobile team a single secure handshake—Auth0 issues the token, Rails verifies and hydrates profile data, and the app renders immediately without direct database access.",
     tech: ["React Native", "Rails", "Auth0", "TypeScript"],
     repo: "https://github.com/jerods/auth0-mobile-relay",
+    stats: {
+      metrics: [
+        { label: "Platforms linked", value: "Mobile ↔ Rails" },
+        { label: "Token roundtrip", value: "<2s" },
+        { label: "Profile coverage", value: "100%" },
+      ],
+    },
+  },
+  {
+    slug: "membership-filter-system",
+    title: "Membership Filtering System",
+    tagline:
+      "Extended a reusable Rails filtering hierarchy to surface current members with deterministic random logo rotations.",
+    category: "engineering",
+    discipline: "dev",
+    highlights:
+      "Built on top of our FormFiltering parent class by introducing a MemberFilter form object and a CurrentMemberFilter child, allowing nuanced filtering rules while keeping inheritance intact. Added a deterministic randomizer so member logos shuffle per session yet stay stable across pagination.",
+    whyImpressive:
+      "Turned a brittle list into a robust browsing experience—users get current members only, filters remain composable, and the logo carousel feels fresh without breaking cache or pagination.",
+    tech: ["Ruby on Rails", "Form Objects", "PostgreSQL"],
   },
   {
     slug: "landing-page-campaigns",
@@ -132,14 +152,21 @@ export const featuredProjects: readonly Project[] = [
     slug: "csa-skilljar-redesign",
     title: "CSA Skilljar LMS Redesign",
     tagline:
-      "Overhauled CSA’s Skilljar domain with cohesive branding and learner-first flows.",
+      "Recast CSA’s Skilljar LMS into a brand-consistent experience across course detail, curriculum, and registration flows.",
     category: "design",
     discipline: "design",
     highlights:
-      "Audited course templates, redesigned navigation, and introduced modular blocks that adapt to course difficulty, conversion goals, and device sizes.",
+      "Audited every Skilljar surface, built a brand system in a version-controlled repo, and shipped minified Sass + JavaScript snippets into Skilljar’s custom code boxes to overhaul course detail, curriculum, and registration pages.",
     whyImpressive:
-      "Cut learner drop-off by aligning information architecture to personas and instrumenting progress cues tied to Skilljar analytics.",
-    tech: ["Skilljar Editor", "JavaScript", "HTML", "CSS"],
+      "Turned a sprawling, inconsistent LMS into a cohesive experience—tracking dozens of templates in Git, iterating in VS Code, and shipping minified assets safely into Skilljar’s admin UI without breaking production.",
+    tech: ["Skilljar", "Sass", "JavaScript", "Git"],
+    stats: {
+      metrics: [
+        { label: "Templates refreshed", value: "30+" },
+        { label: "Duration", value: "3 months" },
+        { label: "Capture rate", value: "Major course flows" },
+      ],
+    },
     href: "https://academy.csa.example.com",
   },
   {
@@ -182,20 +209,6 @@ export const featuredProjects: readonly Project[] = [
       "Deliverables included responsive component libraries and accessibility annotations that accelerated engineering hand-off and cut onboarding questions in half.",
     tech: ["Figma", "Framer", "Notion"],
     image: "/images/projects/knowledge_center.png",
-  },
-  {
-    slug: "preview-cards",
-    title: "Preview Cards System",
-    tagline:
-      "Composable marketing card system with auto theming, dark mode, and content safety rails.",
-    category: "engineering",
-    discipline: "dev",
-    highlights:
-      "Implemented a card rendering pipeline that ingests CMS content, sanitises HTML, and generates accessible previews with on-the-fly palette derivation and multi-brand support.",
-    whyImpressive:
-      "Shipped with visual regression tests and editor tooling that flags contrast violations before publishing.",
-    tech: ["TypeScript", "Next.js", "Tailwind CSS", "Storybook"],
-    image: "/images/projects/preview_cards.png",
   },
   {
     slug: "modular-systems-set",
