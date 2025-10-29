@@ -1,5 +1,5 @@
 import React from "react";
-import Navbar from "./Navbar";
+import HeaderNav from "./HeaderNav";
 import Footer from "./Footer";
 import Breadcrumbs from "./Breadcrumbs";
 import { Container } from "./Container";
@@ -51,7 +51,7 @@ export default function Layout({
 
       {/* Header with Navbar (ensure it's always above page content) */}
       <header className="relative z-20">
-        <Navbar />
+        <HeaderNav />
       </header>
 
       {/* Main Content */}

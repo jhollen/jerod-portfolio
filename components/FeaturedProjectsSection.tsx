@@ -1,53 +1,43 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import ProjectCard from "./ProjectCard";
 import Link from "next/link";
+import { motion, useReducedMotion } from "framer-motion";
+import clsx from "clsx";
+
+import ProjectCard from "./ProjectCard";
+import ProjectTabs, { ProjectDiscipline } from "./ProjectTabs";
+import { Container } from "./Container";
 import { featuredProjects } from "@/lib/projects";
 import type { Project } from "@/lib/projects";
-import { Container } from "./Container";
 
-type DisciplineFilter = "dev" | "design";
-
-const FILTERS: Array<{
-  id: DisciplineFilter;
-  label: string;
-  description: string;
-}> = [
-  {
-    id: "dev",
-    label: "Engineering",
-    description: "Automation, infrastructure, and build-side product work.",
-  },
-  {
-    id: "design",
-    label: "Design",
-    description: "Systems, experiences, and storytelling through interfaces.",
-  },
-];
-
-const disciplineMap: Record<DisciplineFilter, Project[]> = {
-  dev: featuredProjects.filter((p) => p.discipline === "dev"),
-  design: featuredProjects.filter((p) => p.discipline === "design"),
+const disciplineMap: Record<ProjectDiscipline, Project[]> = {
+  dev: featuredProjects.filter((project) => project.discipline === "dev"),
+  design: featuredProjects.filter((project) => project.discipline === "design"),
 };
 
 export default function FeaturedProjectsSection() {
-  const [activeFilter, setActiveFilter] = useState<DisciplineFilter>("dev");
+  const [activeFilter, setActiveFilter] = useState<ProjectDiscipline | "all">(
+    "all"
+  );
+  const prefersReducedMotion = useReducedMotion();
 
   const projects = useMemo(() => {
+    if (activeFilter === "all") {
+      return featuredProjects.slice(0, 6);
+    }
     const list = disciplineMap[activeFilter] ?? [];
-    return list.slice(0, 3);
+    return list.slice(0, 6);
   }, [activeFilter]);
-
-  const activeMeta = FILTERS.find((filter) => filter.id === activeFilter);
 
   useEffect(() => {
     const onFilter = (event: Event) => {
-      const custom = event as CustomEvent<{ filter?: DisciplineFilter }>;
+      const custom = event as CustomEvent<{ filter?: ProjectDiscipline }>;
       if (custom.detail?.filter) {
         setActiveFilter(custom.detail.filter);
       }
     };
+
     if (typeof window !== "undefined") {
       window.addEventListener(
         "featured-project-filter",
@@ -65,50 +55,84 @@ export default function FeaturedProjectsSection() {
   }, []);
 
   return (
-    <section id="featured-projects" className="relative py-20">
-      <div className="absolute inset-x-0 top-0 -z-10 mx-auto h-[520px] max-w-6xl rounded-[48px] bg-white/6 blur-3xl" />
+    <section
+      id="featured-projects"
+      className="relative overflow-hidden bg-gradient-to-br from-[#EEF2FF] via-white to-[#FFF1F2] py-24"
+    >
+      <div className="pointer-events-none absolute inset-0 -z-30">
+        <div className="absolute -left-[20%] top-[10%] h-[420px] w-[420px] rounded-full bg-[radial-gradient(circle_at_center,rgba(99,102,241,0.18),transparent_65%)] blur-2xl" />
+        <div className="absolute -right-[15%] top-[30%] h-[420px] w-[420px] rounded-full bg-[radial-gradient(circle_at_center,rgba(251,146,60,0.18),transparent_68%)] blur-2xl" />
+        <div className="absolute inset-0 bg-noise opacity-[0.06] mix-blend-overlay" />
+      </div>
 
-      <Container className="glass-section rounded-[48px] px-6 py-12 md:px-12 lg:px-16">
-        <div className="flex flex-col gap-10">
-          <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-            <div>
-              <h2 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 md:text-4xl">
-                Featured Projects
-              </h2>
-              {activeMeta ? (
-                <p className="mt-3 max-w-2xl text-base text-slate-600">
-                  {activeMeta.description}
-                </p>
-              ) : null}
-            </div>
-            <div className="glass-toggle-group flex flex-wrap gap-3">
-              {FILTERS.map((filter) => (
-                <button
-                  key={filter.id}
-                  type="button"
-                  onClick={() => setActiveFilter(filter.id)}
-                  className={`glass-toggle ${
-                    activeFilter === filter.id ? "glass-toggle--active" : ""
-                  }`}
-                >
-                  {filter.label}
-                </button>
-              ))}
-            </div>
+      <Container className="relative flex flex-col gap-14 px-6 md:px-10 lg:px-12">
+        <motion.div
+          initial={{ opacity: 0, y: prefersReducedMotion ? 0 : 18 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-120px" }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between"
+        >
+          <div className="max-w-2xl">
+            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.32em] text-text-subtle">
+              Selected Case Studies
+            </p>
+            <h2 className="text-4xl font-semibold tracking-tight text-ink md:text-[2.75rem]">
+              Featured Projects
+            </h2>
+            <p className="mt-4 text-[15px] leading-7 text-text-subtle">
+              Calm, confident highlights spanning engineering automation and
+              design systems work—showcasing how both sides of the craft come
+              together.
+            </p>
           </div>
+          <ProjectTabs active={activeFilter} onChange={setActiveFilter} />
+        </motion.div>
 
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {projects.map((project) => (
-              <Link
+        <motion.div
+          initial={{ opacity: 0, y: prefersReducedMotion ? 0 : 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-10% 0px" }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="grid gap-6 md:grid-cols-2 xl:grid-cols-3"
+        >
+          {projects.map((project, index) => {
+            const variant =
+              project.discipline === "dev" ? "engineering" : "design";
+            const focusRingClass =
+              variant === "engineering"
+                ? "focus-visible:ring-accent-blue/50"
+                : "focus-visible:ring-accent-orange/50";
+
+            return (
+              <motion.div
                 key={project.slug}
-                href={`/projects/${project.slug}`}
-                className="group block h-full"
+                initial={{ opacity: 0, y: prefersReducedMotion ? 0 : 14 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-12% 0px" }}
+                transition={{
+                  duration: 0.45,
+                  delay: prefersReducedMotion ? 0 : index * 0.05,
+                  ease: "easeOut",
+                }}
               >
-                <ProjectCard project={project} hideRepoLink />
-              </Link>
-            ))}
-          </div>
-        </div>
+                <Link
+                  href={`/projects/${project.slug}`}
+                  className={clsx(
+                    "block h-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-white",
+                    focusRingClass
+                  )}
+                >
+                  <ProjectCard
+                    project={project}
+                    hideRepoLink
+                    variant={variant}
+                  />
+                </Link>
+              </motion.div>
+            );
+          })}
+        </motion.div>
       </Container>
     </section>
   );

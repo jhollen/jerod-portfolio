@@ -7,7 +7,7 @@ const clamp = (value: number, min: number, max: number) =>
   Math.min(Math.max(value, min), max);
 
 export default function HeroSection() {
-  const splitRef = useRef<HTMLDivElement | null>(null);
+  const surfaceRef = useRef<HTMLDivElement | null>(null);
   const [split, setSplit] = useState(50);
   const animationFrameRef = useRef<number | null>(null);
   const splitValueRef = useRef(split);
@@ -25,7 +25,7 @@ export default function HeroSection() {
   }, []);
 
   const updateSplit = useCallback((clientX: number) => {
-    const surface = splitRef.current;
+    const surface = surfaceRef.current;
     if (!surface) return;
     if (animationFrameRef.current) {
       cancelAnimationFrame(animationFrameRef.current);
@@ -90,117 +90,155 @@ export default function HeroSection() {
   const designerImageOpacity = 0.25 + designerEmphasis * 0.75;
 
   return (
-    <section className="relative overflow-hidden pt-36 pb-20">
-      <div
-        ref={splitRef}
-        className="relative w-full cursor-ew-resize overflow-hidden bg-gradient-to-r from-white/35 via-white/10 to-white/35 shadow-[inset_0_1px_0_rgba(255,255,255,0.35)] transition-colors duration-500"
-        onPointerMove={(event) => updateSplit(event.clientX)}
-        onPointerDown={(event) => updateSplit(event.clientX)}
-        onTouchMove={(event) => updateSplit(event.touches[0].clientX)}
-        onTouchStart={(event) => updateSplit(event.touches[0].clientX)}
-        onPointerLeave={resetSplit}
-        onTouchEnd={resetSplit}
-        onTouchCancel={resetSplit}
-      >
-        <div className="relative aspect-[5/3] w-full max-h-[640px]">
-          <div className="absolute inset-0">
-            <Image
-              src="/images/hero-dev.png"
-              alt="Developer portrait"
-              fill
-              priority
-              style={{
-                clipPath: developerClip,
-                transform: `translateX(${developerTranslate}px) scale(1.02)`,
-                opacity: developerImageOpacity,
-              }}
-              className="object-contain object-center transition-[opacity,transform] duration-300"
-            />
-            <Image
-              src="/images/hero-design.png"
-              alt="Designer portrait"
-              fill
-              priority
-              style={{
-                clipPath: designerClip,
-                transform: `translateX(${designerTranslate}px) scale(1.02)`,
-                opacity: designerImageOpacity,
-              }}
-              className="object-contain object-center transition-[opacity,transform] duration-300"
-            />
+    <section className="relative isolate overflow-hidden border-b border-border-subtle bg-gradient-to-br from-cool-bg/60 via-surface-base to-warm-bg/60 text-text">
+      <div className="absolute inset-0 -z-20 bg-noise-texture opacity-10" />
+      <div className="pointer-events-none absolute inset-y-0 right-1/2 -z-30 hidden w-[60%] translate-x-[12%] bg-cool-radial lg:block" />
+      <div className="pointer-events-none absolute inset-y-0 left-1/2 -z-30 hidden w-[60%] -translate-x-[12%] bg-warm-radial lg:block" />
+
+      <div className="mx-auto max-w-7xl px-4 pb-20 pt-32 sm:px-6 lg:px-8">
+        <div className="flex flex-col gap-12">
+          <div className="flex justify-center">
+            <span className="inline-flex items-center gap-2 rounded-full border border-border-subtle/70 bg-surface-base/70 px-4 py-1 text-xs font-semibold uppercase tracking-[0.38em] text-ink/70 shadow-subtle backdrop-blur-2xs">
+              Full-Stack Engineer
+            </span>
           </div>
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/30 via-white/8 to-white/35" />
 
-          <div className="absolute inset-0 flex h-full items-center justify-center px-4 py-12 sm:px-8">
-            <div className="flex w-full max-w-7xl flex-col gap-10 text-black">
-              <div className="grid gap-6 sm:grid-cols-2 sm:gap-12">
+          <div
+            ref={surfaceRef}
+            className="relative w-full cursor-ew-resize overflow-hidden rounded-3xl border border-border-subtle/70 bg-gradient-to-r from-cool-bg/40 via-transparent to-warm-bg/40 shadow-card"
+            onPointerMove={(event) => updateSplit(event.clientX)}
+            onPointerDown={(event) => updateSplit(event.clientX)}
+            onTouchMove={(event) => updateSplit(event.touches[0].clientX)}
+            onTouchStart={(event) => updateSplit(event.touches[0].clientX)}
+            onPointerLeave={resetSplit}
+            onTouchEnd={resetSplit}
+            onTouchCancel={resetSplit}
+          >
+            <div className="relative aspect-[5/3] w-full max-h-[640px]">
+              <div className="absolute inset-0">
+                <Image
+                  src="/images/hero-dev.png"
+                  alt="Developer portrait"
+                  fill
+                  priority
+                  style={{
+                    clipPath: developerClip,
+                    transform: `translateX(${developerTranslate}px) scale(1.02)`,
+                    opacity: developerImageOpacity,
+                  }}
+                  className="object-cover object-center transition-[opacity,transform] duration-300"
+                />
                 <div
-                  className="flex flex-col gap-3 text-left transition-opacity duration-300"
-                  style={{ opacity: developerContentOpacity }}
-                >
-                  <span className="text-xs font-semibold uppercase tracking-[0.32em] text-black/50">
-                    Back-End
-                  </span>
-                  <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">
-                    Developer
-                  </h1>
-                  <p className="text-sm text-black/70 transition-opacity duration-300">
-                    Automation, APIs, and systems that ship reliable experiences.
-                  </p>
-                </div>
+                  className="absolute inset-0"
+                  style={{
+                    clipPath: developerClip,
+                    background:
+                      "linear-gradient(135deg, rgba(37,99,235,0.32), rgba(37,99,235,0.08))",
+                    mixBlendMode: "multiply",
+                  }}
+                />
+                <Image
+                  src="/images/hero-design.png"
+                  alt="Designer portrait"
+                  fill
+                  priority
+                  style={{
+                    clipPath: designerClip,
+                    transform: `translateX(${designerTranslate}px) scale(1.02)`,
+                    opacity: designerImageOpacity,
+                  }}
+                  className="object-cover object-center transition-[opacity,transform] duration-300"
+                />
                 <div
-                  className="flex flex-col gap-3 text-right transition-opacity duration-300 sm:items-end"
-                  style={{ opacity: designerContentOpacity }}
-                >
-                  <span className="text-xs font-semibold uppercase tracking-[0.32em] text-black/50">
-                    Front-End
-                  </span>
-                  <h2 className="text-4xl font-semibold tracking-tight sm:text-5xl">
-                    Designer
-                  </h2>
-                  <p className="text-sm text-black/70 sm:max-w-xs transition-opacity duration-300">
-                    Interfaces & motion that feel intuitive, expressive, and calm.
-                  </p>
+                  className="absolute inset-0"
+                  style={{
+                    clipPath: designerClip,
+                    background:
+                      "linear-gradient(135deg, rgba(249,115,22,0.24), rgba(249,115,22,0.08))",
+                    mixBlendMode: "multiply",
+                  }}
+                />
+              </div>
+
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/28 via-white/10 to-white/24" />
+
+              <div className="absolute inset-0 flex h-full items-center justify-center px-6 py-12 sm:px-10 lg:px-16">
+                <div className="flex w-full max-w-6xl flex-col gap-12">
+                  <div className="grid gap-12 sm:grid-cols-2 sm:gap-16">
+                    <div
+                      className="flex max-w-xl flex-col gap-6 text-left transition-opacity duration-300"
+                      style={{ opacity: developerContentOpacity }}
+                    >
+                      <header className="flex flex-col gap-4">
+                        <h1 className="text-balance text-4xl font-semibold tracking-tight text-ink sm:text-5xl lg:text-[3.25rem]">
+                          Developer
+                          <span
+                            className="mt-3 inline-flex h-[2px] w-20 rounded-full bg-accent-gradient opacity-80"
+                            aria-hidden="true"
+                          />
+                        </h1>
+                      </header>
+                      <button
+                        type="button"
+                        onClick={() => handleFilter("dev")}
+                        className="inline-flex w-fit items-center gap-3 rounded-full border border-black/5 bg-surface-base/90 px-6 py-3 text-sm font-semibold text-ink shadow-card transition-colors duration-200 hover:bg-cool-tint/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue/60 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base"
+                      >
+                        Explore Engineering Work
+                        <svg
+                          className="h-4 w-4 text-accent-blue"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth={1.6}
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          aria-hidden="true"
+                        >
+                          <path d="M5 12h14" />
+                          <path d="M13 6l6 6-6 6" />
+                        </svg>
+                      </button>
+                    </div>
+
+                    <div
+                      className="flex max-w-xl flex-col gap-6 text-left transition-opacity duration-300 sm:text-right sm:items-end"
+                      style={{ opacity: designerContentOpacity }}
+                    >
+                      <header className="flex flex-col gap-4 sm:items-end">
+                        <h2 className="text-balance text-4xl font-semibold tracking-tight text-ink sm:text-5xl lg:text-[3.25rem]">
+                          Designer
+                          <span
+                            className="mt-3 inline-flex h-[2px] w-20 justify-end rounded-full bg-gradient-to-r from-accent-orange via-accent-amber to-accent-blue opacity-80"
+                            aria-hidden="true"
+                          />
+                        </h2>
+                      </header>
+                      <button
+                        type="button"
+                        onClick={() => handleFilter("design")}
+                        className="inline-flex w-fit items-center gap-3 rounded-full border border-black/5 bg-surface-base/90 px-6 py-3 text-sm font-semibold text-ink shadow-card transition-colors duration-200 hover:bg-warm-tint/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-orange/60 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base"
+                      >
+                        Explore Design Work
+                        <svg
+                          className="h-4 w-4 text-accent-orange"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth={1.6}
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          aria-hidden="true"
+                        >
+                          <path d="M5 12h14" />
+                          <path d="M13 6l6 6-6 6" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
-                <button
-                  onClick={() => handleFilter("dev")}
-                  onMouseEnter={() => setSplit(80)}
-                  onFocus={() => setSplit(80)}
-                  onMouseLeave={resetSplit}
-                  onBlur={resetSplit}
-                  className="group inline-flex max-w-sm flex-col gap-2 rounded-2xl border border-black/5 bg-white/20 px-6 py-4 text-left text-black backdrop-blur-xl transition-[transform,opacity] duration-300 hover:-translate-y-1"
-                  style={{ opacity: Math.max(developerEmphasis, 0.35) }}
-                >
-                  <span className="text-xs font-semibold uppercase tracking-[0.32em] text-black/45">
-                    Explore Developer Work
-                  </span>
-                  <span className="text-sm text-black/60">
-                    Dig into systems thinking, automation flows, and product
-                    infrastructure.
-                  </span>
-                </button>
-
-                <button
-                  onClick={() => handleFilter("design")}
-                  onMouseEnter={() => setSplit(20)}
-                  onFocus={() => setSplit(20)}
-                  onMouseLeave={resetSplit}
-                  onBlur={resetSplit}
-                  className="group inline-flex max-w-sm flex-col gap-2 rounded-2xl border border-black/5 bg-white/20 px-6 py-4 text-right text-black backdrop-blur-xl transition-[transform,opacity] duration-300 hover:-translate-y-1"
-                  style={{ opacity: Math.max(designerEmphasis, 0.35) }}
-                >
-                  <span className="text-xs font-semibold uppercase tracking-[0.32em] text-black/45">
-                    Explore Design Work
-                  </span>
-                  <span className="text-sm text-black/60">
-                    See brand systems, motion language, and immersive product
-                    details.
-                  </span>
-                </button>
-              </div>
+              <div className="pointer-events-none absolute inset-y-12 left-1/2 hidden w-px -translate-x-1/2 bg-gradient-to-b from-surface-base/0 via-surface-contrast/30 to-surface-base/0 lg:block" />
             </div>
           </div>
         </div>

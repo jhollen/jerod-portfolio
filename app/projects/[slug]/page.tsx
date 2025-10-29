@@ -1,13 +1,14 @@
 "use client";
-type Params = { slug: string };
-import React from "react";
-import { featuredProjects } from "../../../lib/projects";
-import { notFound } from "next/navigation";
-import { Container } from "../../../components/Container";
 
-export default function ProjectDetail({ params }: { params: Params }) {
-  // Example CLI output for demo purposes
-  const sampleCliOutput = `Checking /Users/jerod/Dev/rails-image-optimizer-demo/app/assets/images/bloated/bloat_svg_1.svg (15017 bytes)
+import React from "react";
+import { notFound } from "next/navigation";
+import GlassCard from "../../../components/GlassCard";
+import { Container } from "../../../components/Container";
+import { featuredProjects } from "../../../lib/projects";
+
+type Params = { slug: string };
+
+const SAMPLE_CLI_OUTPUT = `Checking /Users/jerod/Dev/rails-image-optimizer-demo/app/assets/images/bloated/bloat_svg_1.svg (15017 bytes)
 Checking /Users/jerod/Dev/rails-image-optimizer-demo/app/assets/images/bloated/bloat_svg_2.svg (15017 bytes)
 Checking /Users/jerod/Dev/rails-image-optimizer-demo/app/assets/images/bloated/bloat_svg_3.svg (15017 bytes)
 
@@ -36,135 +37,237 @@ Checking /Users/jerod/Dev/rails-image-optimizer-demo/app/assets/images/bloated/b
   Total saved (all time): 105.72 MB
   Optimization complete.`;
 
-  function CollapsibleCode({ label, code }: { label: string; code: string }) {
-    const [open, setOpen] = React.useState<boolean>(false);
-    return (
-      <div className="mb-6">
-        <button
-          className="font-mono text-sm bg-[#f5f8f5] px-4 py-2 rounded-full border border-[#d1e0d2] text-gray-700 hover:bg-[#e9f0ea] transition mb-2 shadow-sm"
-          onClick={() => setOpen((o) => !o)}
-          aria-expanded={open}
-        >
-          {open ? "Hide" : "Show"} {label}
-        </button>
-        {open && (
-          <pre className="bg-white text-gray-800 rounded-xl p-6 overflow-x-auto text-sm border border-[#d1e0d2] font-mono shadow-inner">
+function CollapsibleCode({ label, code }: { label: string; code: string }) {
+  const [open, setOpen] = React.useState(false);
+
+  return (
+    <div className="flex flex-col gap-4">
+      <button
+        type="button"
+        className="inline-flex w-fit items-center gap-2 rounded-full border border-white/30 bg-white/20 px-4 py-2 text-sm font-medium text-slate-700 shadow-[0_10px_30px_rgba(15,23,42,0.18)] transition hover:-translate-y-0.5 hover:border-white/45 hover:bg-white/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/70"
+        onClick={() => setOpen((prev) => !prev)}
+        aria-expanded={open}
+      >
+        {open ? "Hide" : "Show"} {label}
+        <span className="text-xs uppercase tracking-[0.3em] text-slate-500">
+          CLI
+        </span>
+      </button>
+      {open ? (
+        <div className="overflow-hidden rounded-[28px] border border-white/20 bg-slate-950/80 p-6 shadow-[0_24px_48px_rgba(2,6,23,0.35)] backdrop-blur">
+          <pre className="scrollbar-thin max-h-[520px] overflow-auto text-[12.5px] leading-relaxed text-slate-200">
             <code>{code}</code>
           </pre>
-        )}
-      </div>
-    );
-  }
-
-  // Use the slug from params
-  const slug = params.slug;
-  const project = featuredProjects.find(
-    (p: (typeof featuredProjects)[number]) => p.slug === slug
+        </div>
+      ) : null}
+    </div>
   );
+}
+
+export default function ProjectDetail({ params }: { params: Params }) {
+  const project = featuredProjects.find((p) => p.slug === params.slug);
+
   if (!project) return notFound();
 
   return (
-    <main className="min-h-screen w-full bg-[#f5f8f5] py-0">
-      <Container className="py-12">
-        {/* Title Section */}
-        <section className="mb-10 rounded-2xl border border-[#d1e0d2] bg-white p-10 shadow-sm">
-          <div className="flex flex-col gap-2 items-start md:items-center md:text-center">
-            <span className="inline-flex items-center gap-2 rounded-full border border-[#a0c2a3] bg-[#e9f0ea] px-3 py-1 text-xs tracking-wider text-[#5a7c5d] font-medium">
-              {project.category.toUpperCase()}
-            </span>
-            <h1
-              className="mt-2 text-4xl font-extrabold tracking-tight text-gray-800 md:text-5xl"
-              style={{ letterSpacing: "-0.03em" }}
-            >
-              {project.title}
-            </h1>
-            <p className="mt-2 max-w-xl text-lg leading-relaxed text-gray-600 font-medium">
-              {project.tagline}
-            </p>
-            <div className="mt-6 flex flex-wrap items-center gap-3">
-              {project.repo && (
-                <a
-                  href={project.repo}
-                  className="rounded-full bg-[#7a9c7d] px-4 py-2 text-sm font-medium text-white hover:bg-[#6a8c6d] transition-colors"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  View Source on GitHub
-                </a>
-              )}
-              {project.href && (
-                <a
-                  href={project.href}
-                  className="rounded-full border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
-                >
-                  Live Demo
-                </a>
-              )}
-            </div>
-          </div>
-        </section>
+    <main className="relative min-h-screen pb-20 pt-16">
+      <div className="projects-backdrop pointer-events-none absolute inset-0 -z-10 opacity-95 blur-3xl" />
 
-        {/* What Happened Section */}
-        <section className="mb-10 rounded-xl border border-[#d1e0d2] bg-white p-8 shadow-sm">
-          <h2 className="text-xl font-semibold text-[#7a9c7d] mb-4">
-            What happened?
-          </h2>
-          <p className="text-base leading-relaxed text-gray-700">
-            {project.highlights}
-          </p>
-        </section>
-
-        {/* Tech & Why Impressive Section */}
-        <section className="mb-10 rounded-xl border border-[#d1e0d2] bg-white p-8 shadow-sm">
-          <h2 className="text-xl font-semibold text-[#7a9c7d] mb-4">
-            Tech & Impact
-          </h2>
-          <ul className="mb-4 space-y-2 text-base text-gray-700">
-            {project.tech &&
-              project.tech.map((tech: string) => (
-                <li key={tech} className="flex gap-2 items-center">
-                  <span className="inline-block h-2 w-2 rounded-full bg-[#7a9c7d]" />
-                  {tech}
-                </li>
-              ))}
-          </ul>
-          {project.whyImpressive && (
-            <div className="mt-6 p-5 bg-[#f5f8f5] rounded-lg border border-[#d1e0d2] text-base text-gray-700 italic">
-              {project.whyImpressive}
-            </div>
-          )}
-        </section>
-
-        {/* CLI Output Section (only for image optimizer) */}
-        {project.slug === "rails-image-optimizer" && (
-          <section className="mb-10 rounded-xl border border-[#d1e0d2] bg-white p-8 shadow-sm">
-            <h2 className="text-xl font-semibold text-[#7a9c7d] mb-4">
-              Sample CLI Output
-            </h2>
-            <div className="rounded-xl border border-[#d1e0d2] bg-white p-4 shadow-sm">
-              <div className="flex items-center justify-between rounded-lg border border-[#d1e0d2] bg-[#f5f8f5] px-4 py-2 mb-2">
-                <div className="flex items-center gap-2 text-[11px] text-gray-700">
-                  <span className="inline-block h-2 w-2 rounded-full bg-red-400" />
-                  <span className="inline-block h-2 w-2 rounded-full bg-yellow-300" />
-                  <span className="inline-block h-2 w-2 rounded-full bg-green-400" />
-                  <span className="ml-2 font-bold tracking-widest text-gray-700">
-                    CLI OUTPUT
+      <Container className="relative z-10 flex flex-col gap-10 px-6 md:px-10">
+        <GlassCard
+          as="section"
+          className="glass-section rounded-[48px] px-8 py-10 text-slate-900 md:px-12 lg:px-16"
+        >
+          <div className="flex flex-col gap-10 lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex-1 space-y-6">
+              <div className="flex flex-wrap items-center gap-4">
+                <span className="inline-flex items-center gap-2 rounded-full border border-white/40 bg-white/60 px-3 py-0.5 text-[11px] font-semibold uppercase tracking-[0.32em] text-black/55">
+                  <span className="h-1.5 w-1.5 rounded-full bg-gradient-to-br from-sky-400 to-sky-200" />
+                  {project.category}
+                </span>
+                {project.stats?.totalSaved ? (
+                  <span className="rounded-full border border-white/40 bg-white/55 px-3 py-1 text-xs font-medium text-black/60">
+                    {project.stats.totalSaved} saved
                   </span>
-                </div>
-                <code className="rounded bg-white px-2 py-0.5 text-[10px] text-gray-700 font-mono">
-                  bin/demo
-                </code>
+                ) : null}
               </div>
-              <CollapsibleCode
-                label="Sample CLI Output"
-                code={sampleCliOutput}
-              />
+
+              <div className="space-y-3">
+                <h1 className="text-4xl font-semibold tracking-tight text-slate-950 md:text-5xl">
+                  {project.title}
+                </h1>
+                <p className="max-w-2xl text-lg leading-relaxed text-slate-600">
+                  {project.tagline}
+                </p>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-3">
+                {project.repo ? (
+                  <a
+                    href={project.repo}
+                    className="inline-flex items-center gap-2 rounded-full border border-white/35 bg-white/30 px-5 py-2 text-sm font-medium text-slate-800 transition hover:-translate-y-0.5 hover:border-white/50 hover:bg-white/40"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    View Source
+                    <svg
+                      className="h-4 w-4"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d="M18 13v6a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6" />
+                      <path d="M15 3h6v6" />
+                      <path d="M10 14 21 3" />
+                    </svg>
+                  </a>
+                ) : null}
+                {project.href ? (
+                  <a
+                    href={project.href}
+                    className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/15 px-5 py-2 text-sm font-medium text-slate-700 transition hover:-translate-y-0.5 hover:border-white/40 hover:bg-white/25"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Visit Live Experience
+                    <svg
+                      className="h-4 w-4"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d="M5 12h14" />
+                      <path d="m12 5 7 7-7 7" />
+                    </svg>
+                  </a>
+                ) : null}
+              </div>
             </div>
-            <p className="mt-4 text-xs text-gray-500">
-              Tip: collapse long paths in the reporter to keep output skimmable.
+
+            {project.stats?.metrics ? (
+              <div className="grid gap-3 rounded-[32px] border border-white/30 bg-white/20 p-6 text-sm text-slate-700 shadow-[0_14px_40px_rgba(15,23,42,0.16)] lg:w-[300px]">
+                <p className="text-xs font-semibold uppercase tracking-[0.28em] text-slate-500">
+                  Key Metrics
+                </p>
+                <ul className="flex flex-col gap-3">
+                  {project.stats.metrics.map(({ label, value }) => (
+                    <li
+                      key={label}
+                      className="flex items-center justify-between rounded-full border border-white/40 bg-white/55 px-4 py-2 text-sm text-slate-700"
+                    >
+                      <span className="font-medium text-slate-500">
+                        {label}
+                      </span>
+                      <span className="text-base font-semibold text-slate-900">
+                        {value}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+          </div>
+        </GlassCard>
+
+        <div className="grid gap-8 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+          <GlassCard
+            as="section"
+            className="rounded-[36px] px-8 py-10 text-slate-800"
+          >
+            <h2 className="text-2xl font-semibold tracking-tight text-slate-950">
+              What happened?
+            </h2>
+            <p className="mt-4 text-base leading-relaxed text-slate-600">
+              {project.highlights}
             </p>
-          </section>
-        )}
+          </GlassCard>
+
+          {project.stats?.metrics ? (
+            <GlassCard
+              as="aside"
+              className="hidden h-full flex-col gap-4 rounded-[36px] px-8 py-10 text-slate-700 lg:flex"
+            >
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.28em] text-slate-500">
+                  Snapshot
+                </p>
+                {project.stats?.totalSaved ? (
+                  <p className="mt-4 text-4xl font-semibold text-slate-950">
+                    {project.stats.totalSaved}
+                    <span className="ml-2 text-sm font-medium text-slate-500">
+                      saved
+                    </span>
+                  </p>
+                ) : null}
+              </div>
+              <p className="text-sm leading-relaxed text-slate-600">
+                Metrics pulled from the shipped automation and analytics layer.
+              </p>
+            </GlassCard>
+          ) : null}
+
+          <GlassCard
+            as="section"
+            className="rounded-[36px] px-8 py-10 text-slate-800 lg:col-start-1"
+          >
+            <div className="flex flex-col gap-6">
+              <div>
+                <h2 className="text-2xl font-semibold tracking-tight text-slate-950">
+                  Tech & Impact
+                </h2>
+                <ul className="mt-4 flex flex-wrap gap-2">
+                  {project.tech?.map((tech) => (
+                    <li
+                      key={tech}
+                      className="rounded-full border border-white/45 bg-white/55 px-4 py-1.5 text-xs font-medium uppercase tracking-[0.18em] text-slate-600 shadow-[0_4px_12px_rgba(15,23,42,0.08)]"
+                    >
+                      {tech}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {project.whyImpressive ? (
+                <p className="text-base leading-relaxed text-slate-600">
+                  {project.whyImpressive}
+                </p>
+              ) : null}
+            </div>
+          </GlassCard>
+        </div>
+
+        {project.slug === "rails-image-optimizer" ? (
+          <GlassCard
+            as="section"
+            className="rounded-[36px] px-8 py-10 text-slate-100"
+          >
+            <div className="flex flex-col gap-6">
+              <div className="flex flex-col gap-3">
+                <span className="inline-flex w-fit items-center gap-2 rounded-full border border-white/35 bg-white/15 px-4 py-1 text-[11px] font-semibold uppercase tracking-[0.3em] text-white/70">
+                  CLI Snapshot
+                </span>
+                <h2 className="text-2xl font-semibold tracking-tight text-white">
+                  Sample CLI Output
+                </h2>
+                <p className="text-sm text-white/70">
+                  Collapsible log excerpt from the demo run of the optimizer.
+                </p>
+              </div>
+              <CollapsibleCode label="sample run" code={SAMPLE_CLI_OUTPUT} />
+              <p className="text-xs text-white/60">
+                Tip: collapse long paths in the reporter to keep output skimmable.
+              </p>
+            </div>
+          </GlassCard>
+        ) : null}
       </Container>
     </main>
   );

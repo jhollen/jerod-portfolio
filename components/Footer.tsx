@@ -1,114 +1,104 @@
+import type { ReactNode } from "react";
 import Link from "next/link";
 import { Container } from "./Container";
-import GlassCard from "./GlassCard";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="relative mt-32 bg-slate-950/98 pb-16 pt-20 text-slate-100">
-      <Container>
-        <GlassCard as="div" className="rounded-[42px] border-white/20 bg-white/8 px-10 py-12 text-slate-100">
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
-            {/* Logo & About */}
-            <div className="md:col-span-2">
-              <Link
-                href="/"
-                className="font-bold text-3xl tracking-tight text-white"
-              >
-                Jerod Hollen
-              </Link>
-              <p className="text-sm text-slate-300 mt-4 max-w-xs leading-relaxed">
-                Developer, designer, and creative technologist building liquid
-                glass experiences with polish and purpose.
-              </p>
-            </div>
+    <footer className="relative overflow-hidden bg-surface-contrast text-white">
+      <div className="absolute inset-0 -z-20 bg-gradient-to-br from-ink-soft via-[#111c2d] to-[#050b1c]" />
+      <div className="absolute inset-0 -z-10 bg-noise-texture opacity-[0.15]" />
 
-            {/* Quick Links */}
-            <div>
-              <h3 className="text-lg font-semibold text-white mb-4">
-                Site
-              </h3>
-              <ul className="space-y-3">
-                <li>
-                  <Link
-                    href="/"
-                    className="text-slate-300 hover:text-white transition-colors px-1 py-0.5 inline-flex items-center gap-2"
-                  >
-                    <span className="h-1.5 w-1.5 rounded-full bg-gradient-to-br from-primary/80 to-primary/40" />
-                    Home
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/projects"
-                    className="text-slate-300 hover:text-white transition-colors px-1 py-0.5 inline-flex items-center gap-2"
-                  >
-                    <span className="h-1.5 w-1.5 rounded-full bg-gradient-to-br from-primary/80 to-primary/40" />
-                    Projects
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/resume"
-                    className="text-slate-300 hover:text-white transition-colors px-1 py-0.5 inline-flex items-center gap-2"
-                  >
-                    <span className="h-1.5 w-1.5 rounded-full bg-gradient-to-br from-primary/80 to-primary/40" />
-                    Experience
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/contact"
-                    className="text-slate-300 hover:text-white transition-colors px-1 py-0.5 inline-flex items-center gap-2"
-                  >
-                    <span className="h-1.5 w-1.5 rounded-full bg-gradient-to-br from-primary/80 to-primary/40" />
-                    Contact
-                  </Link>
-                </li>
-              </ul>
-            </div>
+      <Container className="relative px-6 py-16 md:px-10 lg:px-12">
+        <div className="grid gap-12 md:grid-cols-3">
+          <div className="space-y-4">
+            <Link
+              href="/"
+              className="inline-flex text-3xl font-semibold tracking-tight text-white"
+            >
+              Jerod Hollen
+            </Link>
+            <p className="max-w-sm text-sm leading-7 text-white/70">
+              Developer, designer, and creative technologist building web
+              experiences with polish, systems thinking, and enduring craft.
+            </p>
+          </div>
 
-            {/* Contact */}
+          <div className="grid gap-6 text-sm sm:grid-cols-2 md:grid-cols-1">
             <div>
-              <h3 className="text-lg font-semibold text-white mb-4">
-                Connect
-              </h3>
-              <ul className="space-y-3">
-                <li>
-                  <a
-                    href="https://github.com/jhollen"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-slate-300 hover:text-white transition-colors px-1 py-0.5 inline-flex items-center gap-2"
-                  >
-                    <span className="h-1.5 w-1.5 rounded-full bg-gradient-to-br from-secondary/70 to-secondary/30" />
-                    GitHub
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="mailto:contact@jerod.a.hollen.com"
-                    className="text-slate-300 hover:text-white transition-colors px-1 py-0.5 inline-flex items-center gap-2"
-                  >
-                    <span className="h-1.5 w-1.5 rounded-full bg-gradient-to-br from-secondary/70 to-secondary/30" />
-                    Email
-                  </a>
-                </li>
+              <h3 className="text-base font-semibold text-white">Site</h3>
+              <nav className="mt-4 space-y-2 text-white/70">
+                <FooterLink href="/">Home</FooterLink>
+                <FooterLink href="/projects">Projects</FooterLink>
+                <FooterLink href="/resume">Experience</FooterLink>
+                <FooterLink href="/contact">Contact</FooterLink>
+              </nav>
+            </div>
+            <div>
+              <h3 className="text-base font-semibold text-white">Connect</h3>
+              <ul className="mt-4 space-y-2 text-white/70">
+                <FooterExternalLink href="https://github.com/jhollen">
+                  GitHub
+                </FooterExternalLink>
+                <FooterExternalLink href="mailto:contact@jerod.a.hollen.com">
+                  Email
+                </FooterExternalLink>
+                <FooterExternalLink href="https://www.linkedin.com/in/jerodhollen/">
+                  LinkedIn
+                </FooterExternalLink>
               </ul>
             </div>
           </div>
 
-          {/* Divider */}
-          <div className="my-10 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent" />
-
-          {/* Copyright */}
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-slate-300">
-            <p>© {currentYear} Jerod Hollen. All rights reserved.</p>
-            <p>Built with Next.js & Tailwind CSS</p>
+          <div className="flex flex-col gap-4 text-sm text-white/60 md:items-end md:text-right">
+            <p>
+              © {currentYear} Jerod Hollen. All rights reserved.
+            </p>
+            <p>Built with Next.js &amp; Tailwind CSS</p>
           </div>
-        </GlassCard>
+        </div>
       </Container>
     </footer>
+  );
+}
+
+function FooterLink({ href, children }: { href: string; children: ReactNode }) {
+  return (
+    <Link
+      href={href}
+      className="group inline-flex items-center gap-2 rounded-full px-1 py-1 text-white/70 transition-colors duration-200 hover:text-white"
+    >
+      <span className="inline-flex h-1.5 w-1.5 rounded-full bg-accent-gradient opacity-70 transition-opacity duration-200 group-hover:opacity-100" />
+      {children}
+    </Link>
+  );
+}
+
+function FooterExternalLink({
+  href,
+  children,
+}: {
+  href: string;
+  children: ReactNode;
+}) {
+  const externalProps = href.startsWith("http")
+    ? { target: "_blank", rel: "noopener noreferrer" }
+    : {};
+
+  return (
+    <li>
+      <a
+        href={href}
+        {...externalProps}
+        className="group inline-flex items-center gap-2 rounded-full px-1 py-1 text-white/70 transition-colors duration-200 hover:text-white"
+      >
+        <span className="inline-flex h-1.5 w-1.5 rounded-full bg-accent-gradient opacity-70 transition-opacity duration-200 group-hover:opacity-100" />
+        {children}
+        <span aria-hidden="true" className="text-[10px] opacity-0 transition-opacity duration-200 group-hover:opacity-70">
+          ↗
+        </span>
+      </a>
+    </li>
   );
 }

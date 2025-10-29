@@ -1,248 +1,337 @@
 "use client";
-import React from "react";
-import { Montserrat } from "next/font/google";
 
-const montserrat = Montserrat({ subsets: ["latin"], weight: ["400", "700"] });
-const colors = {
-  ink: "#1F2A2A",
-  teal: "#0E6B5B",
-  orange: "#C44B22",
-  mustard: "#B88A1D",
-  cream: "#F8F3E6",
-  paper: "#FFF9ED",
-  muted: "#4B5656",
-  line: "#E8DCC7",
-};
+import GlassCard from "@/components/GlassCard";
+import { Container } from "@/components/Container";
+import Link from "next/link";
+
+const CONTACT = [
+  {
+    label: "Email",
+    value: "jerod.a.hollen@gmail.com",
+    href: "mailto:jerod.a.hollen@gmail.com",
+  },
+  {
+    label: "Phone",
+    value: "(360) 477-1854",
+    href: "tel:+13604771854",
+  },
+  {
+    label: "Location",
+    value: "Bellingham, WA",
+  },
+  {
+    label: "Portfolio",
+    value: "jerodhollen.com",
+    href: "https://jerodhollen.com",
+  },
+];
+
+const EDUCATION = [
+  {
+    school: "Western Washington University",
+    location: "Bellingham, WA",
+    degree: "B.S. Computer Science",
+    notes: "GPA 3.2",
+    timeframe: "Sep 2020 – Jun 2022",
+  },
+];
+
+const EXPERIENCE = [
+  {
+    company: "Cloud Security Alliance",
+    role: "Web Developer",
+    location: "Bellingham, WA",
+    timeframe: "Jul 2022 – Oct 2025",
+    bullets: [
+      "Rebuilt the Skilljar training site with modular JavaScript, SCSS, and template overrides that aligned the platform with CSA branding and cut load times by ~25%.",
+      "Built an automated Ruby/Rake optimization pipeline that diffed new assets against a manifest, enforced compression in CI, and reduced image payloads by ~30%.",
+      "Customized Rails Admin contributor tooling with hero layouts, color themes, role badges, and tagged course feeds, improving editorial throughput by ~15%.",
+      "Shipped dozens of production marketing experiences with analytics, accessibility, and responsive motion tuned for glass-inspired aesthetics.",
+      "Partnered with product and design to translate wireframes into consistent cross-application UI systems.",
+    ],
+  },
+  {
+    company: "Cloud Security Alliance",
+    role: "Web Developer Intern",
+    location: "Bellingham, WA",
+    timeframe: "Jul 2021 – Jun 2022",
+    bullets: [
+      "Implemented UI components and page layouts for marketing properties using Rails (ERB), SCSS, and vanilla JS under senior guidance.",
+      "Refined brand alignment by refactoring CSS utilities, resolving responsiveness regressions, and assisting in multi-site launches.",
+      "Supported accessibility sweeps, Lighthouse performance audits, and release QA to keep pages inclusive and reliable.",
+    ],
+  },
+];
+
+const PROJECTS = [
+  {
+    name: "Image Optimization Pipeline",
+    stack: ["Ruby", "Rake"],
+    summary:
+      "Build-time pipeline that scans assets, enforces compression standards, and keeps marketing payloads lean across deployments.",
+  },
+  {
+    name: "Rails Image Optimizer",
+    stack: ["Ruby", "ImageMagick"],
+    summary:
+      "Lossless optimization script that tracks image manifests, runs diffs, and prevents regressions in CI for long-lived content libraries.",
+  },
+];
+
+const SKILLS = [
+  {
+    title: "Product & Engineering",
+    items: [
+      "Design systems",
+      "Creative tooling",
+      "Automation flows",
+      "CMS customization",
+    ],
+  },
+  {
+    title: "Languages & Frameworks",
+    items: ["TypeScript", "React/Next.js", "Ruby on Rails", "Tailwind CSS"],
+  },
+  {
+    title: "Tools",
+    items: ["Prisma & Postgres", "Playwright", "Vercel", "Figma", "Notion"],
+  },
+];
+
 export default function ResumePage() {
   return (
-    <main
-      className={`${montserrat.className} max-w-3xl mx-auto py-12 px-4 md:px-0`}
-      style={{
-        background: colors.cream,
-        minHeight: "100vh",
-        color: colors.ink,
-      }}
-    >
-      <h1
-        className="text-5xl font-extrabold mb-10 text-center tracking-tight"
-        style={{ color: colors.ink, letterSpacing: "-0.04em" }}
-      >
-        Resume
-      </h1>
-      <div className="flex items-center justify-center mb-8">
-        <span className="w-3 h-3 rounded-full bg-teal-600 mx-2" />
-        <span className="w-3 h-3 rounded-full bg-amber-500 mx-2" />
-        <span className="w-3 h-3 rounded-full bg-orange-500 mx-2" />
-        <span className="w-3 h-3 rounded-full bg-green-700 mx-2" />
+    <main className="relative overflow-hidden pb-24 pt-32">
+      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+        <div className="absolute left-[12%] top-[-18%] h-[360px] w-[360px] rounded-full bg-[radial-gradient(circle_at_center,rgba(173,216,255,0.35),transparent_70%)] blur-3xl" />
+        <div className="absolute right-[-10%] top-[12%] h-[420px] w-[420px] rounded-full bg-[radial-gradient(circle_at_center,rgba(255,208,242,0.3),transparent_72%)] blur-[120px]" />
+        <div className="absolute bottom-[-12%] left-1/2 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle_at_center,rgba(184,241,220,0.32),transparent_70%)] blur-[140px]" />
       </div>
-      <section
-        className="mb-8 rounded-xl shadow-md p-6"
-        style={{ background: colors.paper, border: `1px solid ${colors.line}` }}
-      >
-        <h2 className="text-2xl font-bold mb-2" style={{ color: colors.teal }}>
-          Jerod A. Hollen
-        </h2>
-        <p className="mb-2" style={{ color: colors.muted }}>
-          <span className="mr-2">jerod.a.hollen@gmail.com</span>
-          <span className="mr-2">| (360) 477-1854</span>
-          <span className="mr-2">| Bellingham, WA</span>
-          <span>
-            |{" "}
-            <a
-              href="https://jerodhollen.com"
-              className="underline"
-              style={{ color: colors.teal }}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              jerodhollen.com
-            </a>
-          </span>
-        </p>
-      </section>
-      <section
-        className="mb-8 rounded-xl shadow-md p-6"
-        style={{ background: colors.paper, border: `1px solid ${colors.line}` }}
-      >
-        <h3
-          className="text-xl font-semibold mb-2 tracking-wide uppercase"
-          style={{ color: colors.orange }}
-        >
-          Education
-        </h3>
-        <ul>
-          <li>
-            <div className="flex flex-wrap justify-between items-baseline w-full">
-              <span><strong>Western Washington University</strong></span>
-              <span style={{ color: colors.teal }}>Bellingham, WA</span>
+
+      <Container className="relative flex flex-col gap-10">
+        <header className="glass-section relative overflow-hidden rounded-[44px] px-10 py-12 text-slate-900">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+            <div className="flex max-w-2xl flex-col gap-4">
+              <span className="text-xs font-semibold uppercase tracking-[0.32em] text-black/45">
+                Resume
+              </span>
+              <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">
+                Jerod Hollen
+              </h1>
+              <p className="text-sm leading-relaxed text-black/60">
+                Developer and designer crafting clean, modern interfaces and
+                calm product systems. I bridge UX-led motion, automation, and
+                full-stack delivery for teams shipping expressive web
+                experiences.
+              </p>
             </div>
-            <div className="flex flex-wrap justify-between items-baseline w-full">
-              <span style={{ color: colors.mustard, fontWeight: 600 }}>BS Computer Science, GPA: 3.2</span>
-              <span style={{ color: colors.muted, fontStyle: "italic" }}>Sep 2020 to Jun 2022</span>
+            <div className="flex flex-wrap gap-3 text-sm text-black/65">
+              {CONTACT.map((contact) => {
+                const badge = (
+                  <span className="inline-flex items-center gap-1 rounded-full border border-white/40 bg-white/35 px-4 py-1.5 text-xs font-medium text-black/70 backdrop-blur-xl">
+                    <span className="text-[10px] uppercase tracking-[0.28em] text-black/45">
+                      {contact.label}
+                    </span>
+                    <span className="font-semibold text-black/70">
+                      {contact.value}
+                    </span>
+                  </span>
+                );
+
+                return contact.href ? (
+                  <a
+                    key={contact.label}
+                    href={contact.href}
+                    target={
+                      contact.href.startsWith("http") ? "_blank" : "_self"
+                    }
+                    rel="noopener noreferrer"
+                    className="transition-transform duration-300 hover:-translate-y-0.5"
+                  >
+                    {badge}
+                  </a>
+                ) : (
+                  <span
+                    key={contact.label}
+                    className="transition-transform duration-300 hover:-translate-y-0.5"
+                  >
+                    {badge}
+                  </span>
+                );
+              })}
             </div>
-          </li>
-        </ul>
-      </section>
-      <section
-        className="mb-8 rounded-xl shadow-md p-6"
-        style={{ background: colors.paper, border: `1px solid ${colors.line}` }}
-      >
-        <h3
-          className="text-xl font-semibold mb-2 tracking-wide uppercase"
-          style={{ color: colors.orange }}
-        >
-          Experience
-        </h3>
-        <ul className="space-y-4">
-          {/* Full-time role */}
-          <li>
-            <div className="flex flex-wrap justify-between items-baseline w-full">
-              <span><strong>Cloud Security Alliance</strong></span>
-              <span style={{ color: colors.teal }}>Bellingham, WA</span>
-            </div>
-            <div className="flex flex-wrap justify-between items-baseline w-full">
-              <span style={{ color: colors.mustard, fontWeight: 600 }}>Web Developer</span>
-              <span style={{ color: colors.muted, fontStyle: "italic" }}>Jul 2022 to Oct 2025</span>
-            </div>
-            <ul
-              className="list-disc ml-6 mt-2 space-y-1"
-              style={{ color: colors.muted }}
-            >
-              <li>
-                Led frontend rebuild of the Skilljar training site to align with
-                CSA brand; implemented modular JavaScript/SCSS and template
-                overrides; improved load times by ~25% and unified UX across
-                products.
-              </li>
-              <li>
-                Designed and enforced an image optimization pipeline (Ruby +
-                Rake + CI) that diffed new assets against an optimization
-                manifest and failed builds when needed; reduced asset bloat by
-                ~30% and standardized performance.
-              </li>
-              <li>
-                Built Rails Admin customizations for contributor pages (hero,
-                color themes, avatars, role badges, tagged course feeds),
-                improving editorial workflow efficiency by ~15%.
-              </li>
-              <li>
-                Shipped and maintained dozens of production landing pages and
-                microsites with analytics/SEO, responsive layouts, and
-                accessibility best practices.
-              </li>
-              <li>
-                Collaborated with product owners and designers to translate
-                wireframes into production-ready code while maintaining
-                consistent branding across multiple apps.
-              </li>
-            </ul>
-          </li>
-          {/* Internship */}
-          <li>
-            <div className="flex flex-wrap justify-between items-baseline w-full">
-              <span><strong>Cloud Security Alliance</strong></span>
-              <span style={{ color: colors.teal }}>Bellingham, WA</span>
-            </div>
-            <div className="flex flex-wrap justify-between items-baseline w-full">
-              <span style={{ color: colors.mustard, fontWeight: 600 }}>Web Developer Intern</span>
-              <span style={{ color: colors.muted, fontStyle: "italic" }}>Jul 2021 to Jun 2022</span>
-            </div>
-            <ul
-              className="list-disc ml-6 mt-2 space-y-1"
-              style={{ color: colors.muted }}
-            >
-              <li>
-                Implemented UI components and page layouts in Rails (ERB), HTML,
-                SCSS, and vanilla JS under senior guidance across marketing
-                properties.
-              </li>
-              <li>
-                Assisted with brand alignment efforts; refactored CSS utilities,
-                fixed responsiveness and cross‑browser issues, and supported
-                content launches.
-              </li>
-              <li>
-                Built and QA’d marketing landing pages; configured basic
-                analytics, metadata, and publishing workflows.
-              </li>
-              <li>
-                Contributed to accessibility improvements (contrast, focus
-                states, semantic HTML) and Lighthouse audits/documentation.
-              </li>
-              <li>
-                Wrote internal snippets and notes that sped up repeatable
-                page-building tasks for the team.
-              </li>
-            </ul>
-          </li>
-        </ul>
-      </section>
-      <section
-        className="mb-8 rounded-xl shadow-md p-6"
-        style={{ background: colors.paper, border: `1px solid ${colors.line}` }}
-      >
-        <h3
-          className="text-xl font-semibold mb-2 tracking-wide uppercase"
-          style={{ color: colors.orange }}
-        >
-          Projects
-        </h3>
-        <ul className="space-y-4">
-          <li>
-            <div className="flex flex-wrap justify-between items-baseline w-full">
-              <span><strong>Image Optimization Pipeline</strong></span>
-              <span style={{ color: colors.teal }}>Ruby, Rake</span>
-            </div>
-            <span style={{ color: colors.muted }}>
-              Built a Ruby rake task that scans and optimizes images at build-time, enforcing compression standards and reducing asset payloads across the company’s web apps.
-            </span>
-          </li>
-          <li>
-            <div className="flex flex-wrap justify-between items-baseline w-full">
-              <span><strong>SCORM Automation Scripts</strong></span>
-              <span style={{ color: colors.teal }}>Ruby, Playwright</span>
-            </div>
-            <span style={{ color: colors.muted }}>
-              Automated export and upload of SCORM training packages between Skilljar and SCORM Cloud, eliminating manual steps and saving hours of release prep each week.
-            </span>
-          </li>
-          <li>
-            <div className="flex flex-wrap justify-between items-baseline w-full">
-              <span><strong>Portfolio Website</strong></span>
-              <span style={{ color: colors.teal }}>Next.js, TypeScript, Tailwind</span>
-            </div>
-            <span style={{ color: colors.muted }}>
-              Designed and built jerodhollen.com to showcase projects and music; implemented a dual-image hover animation inspired by Adham Dannaway’s designer/coder concept.
-            </span>
-          </li>
-        </ul>
-      </section>
-      <section
-        className="rounded-xl shadow-md p-6"
-        style={{ background: colors.paper, border: `1px solid ${colors.line}` }}
-      >
-        <h3
-          className="text-xl font-semibold mb-2 tracking-wide uppercase"
-          style={{ color: colors.orange }}
-        >
-          Skills
-        </h3>
-        <ul
-          className="list-disc ml-6 space-y-1"
-          style={{ color: colors.muted }}
-        >
-          <li>
-            <strong>Languages:</strong> Ruby, Javascript, HTML, CSS/SASS
-          </li>
-          <li>
-            <strong>Frameworks:</strong> Ruby on Rails, React, Next.js
-          </li>
-          <li>
-            <strong>Dev Tools:</strong> Git, Playwright, Rake, SCORM Cloud API,
-            Auth0
-          </li>
-        </ul>
-      </section>
+          </div>
+        </header>
+
+        <div className="grid gap-8 lg:grid-cols-[1.65fr_1fr]">
+          <GlassCard className="flex flex-col gap-10">
+            <section className="flex flex-col gap-6">
+              <div className="flex items-center justify-between gap-4">
+                <h2 className="text-xs font-semibold uppercase tracking-[0.3em] text-black/45">
+                  Experience
+                </h2>
+                <span className="h-px flex-1 bg-black/10" />
+              </div>
+              <div className="space-y-7">
+                {EXPERIENCE.map((role) => (
+                  <article
+                    key={`${role.company}-${role.role}`}
+                    className="space-y-3"
+                  >
+                    <div className="flex flex-wrap items-baseline justify-between gap-3 text-sm text-black/55">
+                      <span className="text-base font-semibold text-black/80">
+                        {role.company}
+                      </span>
+                      <span>{role.location}</span>
+                    </div>
+                    <div className="flex flex-wrap items-baseline justify-between gap-3 text-sm">
+                      <span className="font-medium text-black/70">
+                        {role.role}
+                      </span>
+                      <span className="text-black/45">{role.timeframe}</span>
+                    </div>
+                    <ul className="list-disc space-y-2 pl-5 text-sm leading-relaxed text-black/65">
+                      {role.bullets.map((bullet) => (
+                        <li key={bullet}>{bullet}</li>
+                      ))}
+                    </ul>
+                  </article>
+                ))}
+              </div>
+            </section>
+
+            <section className="flex flex-col gap-6">
+              <div className="flex items-center justify-between gap-4">
+                <h2 className="text-xs font-semibold uppercase tracking-[0.3em] text-black/45">
+                  Projects
+                </h2>
+                <span className="h-px flex-1 bg-black/10" />
+              </div>
+              <div className="space-y-6">
+                {PROJECTS.map((project) => (
+                  <article
+                    key={project.name}
+                    className="flex flex-col gap-2 rounded-2xl border border-white/40 bg-white/25 px-4 py-4 text-sm text-black/65 backdrop-blur-xl"
+                  >
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                      <h3 className="text-base font-semibold text-black/75">
+                        {project.name}
+                      </h3>
+                      <span className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.28em] text-black/40">
+                        {project.stack.join(" • ")}
+                      </span>
+                    </div>
+                    <p className="leading-relaxed">{project.summary}</p>
+                  </article>
+                ))}
+              </div>
+            </section>
+          </GlassCard>
+
+          <div className="flex flex-col gap-8">
+            <GlassCard className="flex flex-col gap-6">
+              <div className="flex items-center justify-between gap-4">
+                <h2 className="text-xs font-semibold uppercase tracking-[0.3em] text-black/45">
+                  Education
+                </h2>
+                <span className="h-px flex-1 bg-black/10" />
+              </div>
+              <div className="space-y-6">
+                {EDUCATION.map((school) => (
+                  <article
+                    key={school.school}
+                    className="space-y-2 text-sm text-black/65"
+                  >
+                    <div className="flex flex-wrap items-baseline justify-between gap-3 text-black/55">
+                      <span className="font-semibold text-black/75">
+                        {school.school}
+                      </span>
+                      <span>{school.location}</span>
+                    </div>
+                    <div className="flex flex-wrap items-baseline justify-between gap-3">
+                      <span className="font-medium text-black/70">
+                        {school.degree}
+                      </span>
+                      <span className="text-black/45">{school.timeframe}</span>
+                    </div>
+                    <p className="text-xs uppercase tracking-[0.28em] text-black/40">
+                      {school.notes}
+                    </p>
+                  </article>
+                ))}
+              </div>
+            </GlassCard>
+
+            <GlassCard className="flex flex-col gap-6">
+              <div className="flex items-center justify-between gap-4">
+                <h2 className="text-xs font-semibold uppercase tracking-[0.3em] text-black/45">
+                  Capabilities
+                </h2>
+                <span className="h-px flex-1 bg-black/10" />
+              </div>
+              <div className="space-y-5">
+                {SKILLS.map((group) => (
+                  <div key={group.title} className="space-y-2">
+                    <h3 className="text-sm font-semibold text-black/70">
+                      {group.title}
+                    </h3>
+                    <div className="flex flex-wrap gap-2 text-xs text-black/60">
+                      {group.items.map((item) => (
+                        <span
+                          key={item}
+                          className="rounded-full border border-white/40 bg-white/30 px-3 py-1 font-medium backdrop-blur-xl"
+                        >
+                          {item}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </GlassCard>
+
+            <GlassCard className="flex flex-col gap-4 text-sm text-black/60">
+              <span className="text-xs font-semibold uppercase tracking-[0.3em] text-black/45">
+                Links
+              </span>
+              <div className="flex flex-col gap-3">
+                <Link
+                  href="/projects"
+                  className="inline-flex items-center gap-2 text-black/70 transition-transform duration-300 hover:-translate-y-0.5"
+                >
+                  <span className="text-xs uppercase tracking-[0.3em] text-black/45">
+                    Portfolio
+                  </span>
+                  <span className="font-medium">
+                    Featured work & case studies
+                  </span>
+                </Link>
+                <a
+                  href="https://github.com/jhollen"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-black/70 transition-transform duration-300 hover:-translate-y-0.5"
+                >
+                  <span className="text-xs uppercase tracking-[0.3em] text-black/45">
+                    GitHub
+                  </span>
+                  <span className="font-medium">Open source & experiments</span>
+                </a>
+                <a
+                  href="https://www.linkedin.com/in/jerodhollen"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-black/70 transition-transform duration-300 hover:-translate-y-0.5"
+                >
+                  <span className="text-xs uppercase tracking-[0.3em] text-black/45">
+                    LinkedIn
+                  </span>
+                  <span className="font-medium">Connect & collaborate</span>
+                </a>
+              </div>
+            </GlassCard>
+          </div>
+        </div>
+      </Container>
     </main>
   );
 }

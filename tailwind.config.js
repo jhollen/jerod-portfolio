@@ -8,56 +8,58 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Main Color Palette
-        primary: "#78866B", // Primary Accent (Google Search Tab)
-        secondary: "#A68170", // Beaver - Secondary Accent
-        tertiary: "#CEC1B7", // Dun - Tertiary Accent
-
-        // Background Colors
-        page: "#F7F8FA", // Very light gray for main page background
-        antique: "#F0E7D8", // Antique White for content areas
-        gray: "#808080", // Gray for subtle highlights or footer
-
-        // Semantic Colors
+        ink: "#0B1220",
+        "ink-soft": "#13203B",
         text: {
-          DEFAULT: "#222222", // Near-black for main text
-          muted: "#78866B", // Muted text using primary color
-          light: "#FFFFFF", // White text for dark backgrounds
+          DEFAULT: "#25324A",
+          subtle: "#5B6B86",
+          faint: "#A7B4CC",
         },
-        border: {
-          DEFAULT: "#E6E1D5", // Light border color
-          accent: "#78866B", // Accent border using primary color
-        },
-
-        // Section Background Colors
-        section: {
-          DEFAULT: "#FFFFFF", // White for primary sections
-          alt: "#F9FAFB", // Very light gray for alternating sections
-          muted: "#F0E7D8", // Antique white for muted sections
-        },
-      },
-      fontFamily: {
-        sans: ["Lato", "sans-serif"],
-        serif: ["Georgia", "serif"],
-        mono: ["Menlo", "monospace"],
-      },
-      spacing: {
-        container: "2rem",
-        section: "4rem",
+        card: "#F8FAFC",
+        "surface-base": "#FFFFFF",
+        "surface-muted": "#F1F5F9",
+        "surface-contrast": "#0F172A",
+        "border-subtle": "rgba(15,23,42,0.14)",
+        "border-strong": "rgba(15,23,42,0.2)",
+        "cool-bg": "#E4ECFF",
+        "cool-base": "#2563EB",
+        "cool-tint": "#60A5FA",
+        "warm-bg": "#FFE8D6",
+        "warm-base": "#F97316",
+        "warm-tint": "#FDBA74",
+        "accent-blue": "#2563EB",
+        "accent-orange": "#F97316",
+        "accent-amber": "#FDBA74",
+        "accent-deep": "#1E3A8A",
       },
       borderRadius: {
-        DEFAULT: "0.5rem",
-        lg: "1rem",
-        xl: "1.5rem",
+        "2.5xl": "1.75rem",
+        "3xl": "2.5rem",
       },
       boxShadow: {
-        card: "0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)",
-        elevated:
-          "0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04)",
+        subtle: "0 1px 0 rgba(15,23,42,0.06), 0 1px 2px rgba(15,23,42,0.08)",
+        card: "0 10px 22px rgba(15, 23, 42, 0.06), 0 2px 6px rgba(15, 23, 42, 0.04)",
+        "card-hover": "0 24px 56px -24px rgba(15, 23, 42, 0.45), 0 12px 28px -14px rgba(15, 23, 42, 0.24)",
+        floating: "0 40px 120px -40px rgba(15, 23, 42, 0.35)",
       },
-      maxWidth: {
-        container: "64rem", // 1024px
-        reading: "48rem", // 768px
+      backgroundImage: {
+        "accent-gradient": "linear-gradient(120deg, #2563EB 0%, #F97316 100%)",
+        "cool-radial": "radial-gradient(circle at 18% 20%, rgba(37, 99, 235, 0.32), transparent 68%)",
+        "warm-radial": "radial-gradient(circle at 82% 22%, rgba(249, 115, 22, 0.28), transparent 70%)",
+        "noise-texture": "url('/noise.png')",
+        noise: "url('/noise.png')",
+      },
+      spacing: {
+        section: "6rem",
+      },
+      transitionTimingFunction: {
+        "out-cubic": "cubic-bezier(0.22, 0.61, 0.36, 1)",
+      },
+      backdropBlur: {
+        "2xs": "6px",
+      },
+      fontFamily: {
+        sans: ["Roboto", "system-ui", "sans-serif"],
       },
     },
   },
