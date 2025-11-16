@@ -33,24 +33,17 @@ export default function HeaderNav() {
   }, []);
 
   return (
-    <nav className="pointer-events-none fixed inset-x-0 top-0 z-[999]">
-      <Container className="pointer-events-auto px-4 pb-4 pt-6 sm:px-6 lg:px-8">
-        <div
-          className={clsx(
-            "flex items-center justify-between gap-4 rounded-full border border-transparent px-4 py-3 transition-all duration-300",
-            isElevated
-              ? "backdrop-blur-md border-white/50 bg-white/70 shadow-card"
-              : "bg-transparent"
-          )}
-        >
+    <nav className="w-full bg-black text-white">
+      <Container className="px-4 py-3 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <Link
               href="/"
-              className="relative h-10 w-10 overflow-hidden rounded-full border border-black/5 bg-white/80 shadow-subtle transition-transform duration-200 hover:-translate-y-0.5"
+              className="relative h-10 w-10 overflow-hidden"
               aria-label="Home"
             >
               <Image
-                src="/logo-jh.png"
+                src="/logo.png"
                 alt="Jerod Hollen logo"
                 fill
                 sizes="40px"
@@ -58,9 +51,6 @@ export default function HeaderNav() {
                 priority
               />
             </Link>
-            <span className="hidden text-xs font-semibold uppercase tracking-[0.32em] text-text-subtle md:inline-flex">
-              Jerod Hollen
-            </span>
           </div>
 
           <div className="hidden items-center gap-6 md:flex">
@@ -102,7 +92,7 @@ export default function HeaderNav() {
           </div>
           <button
             type="button"
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-border-subtle/80 bg-white/80 text-ink transition-transform duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue/50 focus-visible:ring-offset-2 focus-visible:ring-offset-white md:hidden"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-white/40 bg-black/50 text-white transition-transform duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black md:hidden"
             aria-label={menuOpen ? "Close menu" : "Open menu"}
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen((prev) => !prev)}
@@ -129,9 +119,9 @@ export default function HeaderNav() {
         </div>
       </Container>
       {menuOpen ? (
-        <div className="pointer-events-auto px-4 pb-6 md:hidden">
-          <div className="rounded-2xl border border-border-subtle/70 bg-white/90 shadow-card backdrop-blur-md">
-            <div className="flex flex-col divide-y divide-border-subtle/40">
+        <div className="px-4 pb-6 md:hidden">
+          <div className="rounded-2xl border border-white/10 bg-black text-white">
+            <div className="flex flex-col divide-y divide-white/10">
               <MobileNavLink
                 href="/projects"
                 onClick={() => setMenuOpen(false)}
@@ -189,7 +179,7 @@ function HeaderLink({ href, children }: { href: string; children: ReactNode }) {
   return (
     <Link
       href={href}
-      className="rounded-full px-3 py-1 text-text-subtle transition-colors duration-200 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue/50 focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+      className="rounded-full px-3 py-1 text-white/80 transition-colors duration-200 hover:text-[#6EFF85] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
     >
       {children}
     </Link>
@@ -209,7 +199,7 @@ function MobileNavLink({
     <Link
       href={href}
       onClick={onClick}
-      className="block px-4 py-3 text-sm font-semibold text-ink hover:bg-surface-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue/40"
+      className="block px-4 py-3 text-sm font-semibold text-white hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue/40"
     >
       {children}
     </Link>
@@ -231,7 +221,7 @@ function HeaderSocialLink({
       target="_blank"
       rel="noopener noreferrer"
       aria-label={label}
-      className="flex h-9 w-9 items-center justify-center rounded-full border border-border-subtle/80 bg-white/80 text-ink transition-transform duration-200 hover:-translate-y-0.5 hover:text-accent-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue/50 focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+      className="flex h-9 w-9 items-center justify-center rounded-full border border-white/40 bg-black/50 text-white transition-transform duration-200 hover:-translate-y-0.5 hover:text-emerald-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
     >
       {children}
     </a>

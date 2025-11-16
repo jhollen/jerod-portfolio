@@ -55,7 +55,7 @@ export default function Layout({
       </header>
 
       {/* Main Content */}
-      <main className={`relative z-10 flex-grow${isHome ? "" : " pt-28"}`}>
+      <main className="relative z-10 flex-grow">
         {showBreadcrumbs && pathname !== "/" && (
           <Container>
             <div className="py-4">

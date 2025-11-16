@@ -101,6 +101,11 @@ body {
   overflow-x: hidden;
 }
 
+/* Apple system font utility */
+.font-apple {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
 body::before,
 body::after {
   content: "";

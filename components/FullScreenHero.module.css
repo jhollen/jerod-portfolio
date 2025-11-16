@@ -1,0 +1,38 @@
+/* Full-screen hero container */
+.hero {
+  position: relative;
+  width: 100%;
+  height: 100vh; /* full viewport height */
+  min-height: 100svh; /* small viewport units for mobile chrome */
+  overflow: hidden;
+  background: #000; /* fallback background behind image */
+}
+
+/* next/image with fill -> absolute positioning; enforce cover fit */
+.image {
+  /* Ensure the underlying <img> fully covers the container
+     and is not constrained by global resets (e.g., Tailwind preflight) */
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  object-fit: cover; /* cover viewport without distortion */
+  object-position: center; /* keep focal point centered */
+}
+
+/* Optional centered overlay for headings/CTAs */
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  /* Pin content near the top, centered horizontally */
+  align-content: start;
+  justify-items: center;
+  z-index: 1;
+  padding: 1rem;
+  /* Nudge below the navbar area across breakpoints */
+  padding-top: clamp(4rem, 9vh, 6rem);
+  pointer-events: none;
+}
