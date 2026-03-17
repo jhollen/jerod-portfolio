@@ -146,60 +146,57 @@ export default function AudioConsolePage() {
             </div>
 
             {/* Right Section: Auxiliary & Presets */}
-            <div className="w-48 hidden lg:flex flex-col justify-between items-center h-full shrink-0 relative">
+            <div className="w-48 hidden lg:flex flex-col justify-center items-center h-full shrink-0 relative">
               {/* Right Column Meter - Absolute positioned to the left of the column */}
               <div className="absolute -left-10 top-0 bottom-20 w-10 flex items-stretch justify-center py-8">
                 <VerticalMeter activityMv1={rightMeterActivity} />
               </div>
 
-              {/* Hardware Control Section (Presets) - Moved Up */}
-              <div className="w-full flex flex-col gap-4">
-                <VCABank />
-              </div>
-
-              {/* Telemetry */}
-              <div className="w-full mt-4">
-                <TelemetryDisplay />
-              </div>
-
-              {/* Traversal Dials - Moved Down */}
-              <div className="flex flex-col gap-10 mb-12">
-                <div className="flex flex-col items-center gap-2">
-                  <Knob
-                    label="SCRUB"
-                    minLabel="UP"
-                    centerLabel="SCROLL"
-                    maxLabel="DOWN"
-                    value={contentDepth}
-                    onChange={(val) => {
-                      setContentDepth(val);
-                    }}
-                    activityMv={rightMeterActivity}
-                    isActive={
-                      activeSelection !== null &&
-                      !(activeSelection === "02_CASE_STUDIES" && tabIndex === 4)
-                    }
-                  />
+              <div className="flex flex-col items-center gap-12">
+                {/* Traversal Dials - Centered with LCD */}
+                <div className="flex flex-col gap-10">
+                  <div className="flex flex-col items-center gap-2">
+                    <Knob
+                      label="SCRUB"
+                      minLabel="UP"
+                      centerLabel="SCROLL"
+                      maxLabel="DOWN"
+                      value={contentDepth}
+                      onChange={(val) => {
+                        setContentDepth(val);
+                      }}
+                      activityMv={rightMeterActivity}
+                      isActive={
+                        activeSelection !== null &&
+                        !(activeSelection === "02_CASE_STUDIES" && tabIndex === 4)
+                      }
+                    />
+                  </div>
+                  <div className="flex flex-col items-center gap-2">
+                    <Knob
+                      label="PAN"
+                      minLabel="LEFT"
+                      centerLabel="CAROUSEL"
+                      maxLabel="RIGHT"
+                      value={panDepth}
+                      onChange={(val) => {
+                        setPanDepth(val);
+                      }}
+                      activityMv={rightMeterActivity}
+                      isActive={
+                        activeSelection === "02_CASE_STUDIES" && tabIndex === 4
+                      }
+                    />
+                  </div>
                 </div>
-                <div className="flex flex-col items-center gap-2">
-                  <Knob
-                    label="PAN"
-                    minLabel="LEFT"
-                    centerLabel="CAROUSEL"
-                    maxLabel="RIGHT"
-                    value={panDepth}
-                    onChange={(val) => {
-                      setPanDepth(val);
-                    }}
-                    activityMv={rightMeterActivity}
-                    isActive={
-                      activeSelection === "02_CASE_STUDIES" && tabIndex === 4
-                    }
-                  />
+
+                {/* Hardware Control Section (Presets) - Moved Under Knobs */}
+                <div className="w-full flex flex-col gap-4 mt-4">
+                  <VCABank />
                 </div>
               </div>
 
-              <div className="w-full flex justify-center pt-4 border-t border-black/30 shadow-[0_-1px_0_rgba(255,255,255,0.05)]">
+              <div className="absolute bottom-0 w-full flex justify-center pt-4 border-t border-black/30 shadow-[0_-1px_0_rgba(255,255,255,0.05)]">
                 <SyncLed />
               </div>
             </div>
