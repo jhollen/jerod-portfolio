@@ -36,7 +36,7 @@ export default function AudioConsolePage() {
     "04_GET_IN_TOUCH",
   ];
   const tabs = ["OVERVIEW", "BREACH", "DEPLOY", "RESULT", "ASSETS"];
-  const projectIds = ["CSA_AUTO", "OFF_GRID_MED", "PORTFOLIO_V2", "SYSTEM_MIGRATION"];
+  const projectIds = ["SCORM_AUTO", "OFF_GRID_MED", "SKILLJAR_REDESIGN", "IMAGE_PIPELINE", "CONTRIBUTOR_SYSTEM"];
 
   const leftMeterActivity = useMotionValue(0);
   const rightMeterActivity = useMotionValue(0);
@@ -82,18 +82,14 @@ export default function AudioConsolePage() {
                     isActive={true}
                     activityMv={leftMeterActivity}
                     steps={activeSelection === "02_CASE_STUDIES" && !selectedProject ? projectIds.length : menus.length}
-                    value={activeSelection === "02_CASE_STUDIES" && !selectedProject ? projectIds.indexOf(selectedProject || projectIds[0]) : menuIndex}
+                    value={menuIndex}
                     onChange={(newIdx) => {
+                      setMenuIndex(newIdx);
                       if (activeSelection === "02_CASE_STUDIES" && !selectedProject) {
-                        const nextProj = projectIds[newIdx];
-                        if (nextProj) {
-                          setSelectedProject(nextProj);
-                          addLogMessage(`PROJECT_MOUNTED: ${nextProj}`);
-                        }
+                        addLogMessage(`NAVIGATOR: [PROJECT_PREVIEW: ${projectIds[newIdx]}]`);
                       } else {
-                        setMenuIndex(newIdx);
                         addLogMessage(`NAVIGATOR: ${menus[newIdx]}`);
-                        if (activeSelection) {
+                        if (!activeSelection) {
                           setActiveSelection(menus[newIdx] || "01_WHO_AM_I");
                         }
                       }

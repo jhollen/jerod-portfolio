@@ -7,6 +7,8 @@ import { BootScreen } from "./BootScreen";
 const TerminalText: React.FC<{ children: string }> = ({ children }) => {
   const keywords = [
     "React Server Components",
+    "React Native",
+    "Expo",
     "React",
     "Next.js 13",
     "Next.js",
@@ -14,6 +16,7 @@ const TerminalText: React.FC<{ children: string }> = ({ children }) => {
     "TypeScript",
     "Node.js",
     "Node",
+    "Ruby on Rails",
     "Ruby",
     "AWS Lambda",
     "SCORM",
@@ -35,7 +38,14 @@ const TerminalText: React.FC<{ children: string }> = ({ children }) => {
     "Next.js 15",
     "Tailwind CSS 4",
     "ETL",
-    "ETL pipelines",
+    "Playwright",
+    "Python",
+    "Skilljar API",
+    "Git",
+    "LEAi",
+    "image-optim",
+    "Heroku",
+    "Rails Admin",
   ];
   const regex = new RegExp(
     `\\b(${keywords.map((k) => k.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|")})\\b`,
@@ -69,81 +79,165 @@ interface Project {
     deployment: string;
     result: string[];
   };
+  assets: Array<{
+    type: "diagram" | "screenshot";
+    label: string;
+    content?: React.ReactNode;
+    todo?: string;
+  }>;
 }
 
 const PROJECTS: Project[] = [
   {
-    id: "CSA_AUTO",
-    title: "Cloud Security Alliance Automation",
+    id: "SCORM_AUTO",
+    title: "SCORM Delivery Automation",
     category: "BACK_END",
-    description:
-      "Spearheaded reconstruction of core architectural infrastructure for learning portals.",
+    description: "Automated bulk extraction and deployment of SCORM learning packets.",
     details: {
-      overview:
-        "Spearheaded the reconstruction of core architectural infrastructure for institutional learning portals. Targeted legacy bottlenecks to achieve enterprise-grade performance and deployment velocity.",
-      breach:
-        "A legacy PHP monolith coupled with manual SCORM packaging procedures created severe friction in scaling efforts. Enterprise clients were facing unacceptable deployment latency and mounting technical debt.",
-      deployment:
-        "Engineered a robust Node.js CLI toolchain utilizing AST parsing for SCORM automation. Orchestrated a full migration to Next.js with React Server Components, optimizing for institutional-scale load patterns.",
-      result: [
-        "> 50% increase in Time-to-Interactive (TTI).",
-        "> Reduced manual deployment cycle from 45m to 12s.",
-        "> Achieved 100% reliability in automated pipelines.",
-      ],
+      overview: "Engineered a high-velocity pipeline using Playwright and Python to bulk export SCORM packets from LEAi, transit them through Google Drive, and programmatically replace assets in Skilljar via their REST API.",
+      breach: "Manual SCORM updates were taking 45+ minutes per course, leading to massive synchronization lag and human error during content refreshes.",
+      deployment: "Built a Python-based CLI utilizing Playwright for browser automation and Skilljar API for headless deployment. Integrated with Git for version-controlled manifest tracking.",
+      result: ["> Reduced manual deployment from 45m to 12s.", "> 100% sync accuracy across 50+ enterprise courses.", "> Eliminated manual 'Cowboy Coding' in production."],
     },
+    assets: [
+      {
+        type: "diagram",
+        label: "AUTOMATION_FLOW",
+        content: (
+          <div className="flex flex-col items-center justify-center h-full gap-2 text-[8px]">
+            <div className="border border-current px-2 py-1">LEAi (SOURCE)</div>
+            <div className="animate-bounce">↓</div>
+            <div className="border border-current px-2 py-1 bg-current/10">PLAYWRIGHT / PYTHON</div>
+            <div className="animate-bounce">↓</div>
+            <div className="border border-current px-2 py-1">GOOGLE DRIVE (STORAGE)</div>
+            <div className="animate-bounce">↓</div>
+            <div className="border border-current px-2 py-1 bg-current/10">SKILLJAR API (DEPLOY)</div>
+          </div>
+        )
+      },
+      { type: "screenshot", label: "SCR_CLI_LOGS", todo: "Add screenshot of Python CLI logs showing successful bulk replacement." },
+      { type: "screenshot", label: "SCR_SKILLJAR_DASH", todo: "Add screenshot of Skilljar asset library after automated sync." }
+    ]
   },
   {
     id: "OFF_GRID_MED",
-    title: "OFF_GRID_MED_APP",
+    title: "Burmese Medical Reference",
     category: "SUPPORT",
-    description: "Android medical reference for Burmese soldiers in zero-connectivity zones.",
+    description: "React Native medical reference for Burmese soldiers in zero-connectivity zones.",
     details: {
-      overview: "Android medical reference for Burmese soldiers in zero-connectivity zones.",
-      breach: "Extreme censorship and lack of internet required an air-gapped distribution model.",
-      deployment: "Android Studio / P2P Sharing / Physical encrypted flash drive distribution.",
-      result: ["100% offline availability in conflict zones."],
-    }
+      overview: "Developed a mission-critical React Native app using Expo to provide offline access to indexed medical facts and life-saving procedures for soldiers in conflict zones.",
+      breach: "Extreme military censorship and absolute lack of internet infrastructure required a fully air-gapped distribution and usage model.",
+      deployment: "Developed with React Native Expo. Distributed via physical encrypted flash drives and P2P sharing to bypass network monitoring.",
+      result: ["> 100% offline availability in active conflict zones.", "> Encrypted local storage for sensitive data protection.", "> Indexed searchable medical database."],
+    },
+    assets: [
+      {
+        type: "diagram",
+        label: "OFFLINE_ACCESS_MAP",
+        content: (
+          <div className="flex items-center justify-center h-full gap-4 text-[8px]">
+            <div className="flex flex-col gap-1 items-center">
+              <div className="border border-current p-1 italic">ENCRYPTED DRIVE</div>
+              <div className="w-px h-4 bg-current"></div>
+              <div className="border border-current p-1 bg-current/10">EXPO RUNTIME</div>
+            </div>
+            <div className="text-lg">→</div>
+            <div className="border-2 border-current p-4 font-bold text-center">OFFLINE<br/>MEDICAL<br/>FACTS</div>
+          </div>
+        )
+      },
+      { type: "screenshot", label: "SCR_APP_HOME", todo: "Add screenshot of the app's main medical index screen." },
+      { type: "screenshot", label: "SCR_PROCEDURE_VIEW", todo: "Add screenshot of a specific medical procedure page in the app." }
+    ]
   },
   {
-    id: "PORTFOLIO_V2",
-    title: "Audio Console Portfolio",
+    id: "SKILLJAR_REDESIGN",
+    title: "Enterprise Brand Alignment",
     category: "FRONT_END",
-    description:
-      "High-fidelity interactive console interface built with Framer Motion and Zustand.",
+    description: "Full UI overhaul of Skilljar learning portal to align with corporate branding.",
     details: {
-      overview:
-        "A highly interactive, skeuomorphic portfolio interface designed to showcase engineering depth through a unique audio console metaphor.",
-      breach:
-        "Standard portfolios often lack technical personality and fail to demonstrate complex state management or physics-based UI interaction.",
-      deployment:
-        "Built with Next.js 15, Tailwind CSS 4, and Framer Motion for hardware-accelerated animations. Managed complex system-wide state using Zustand.",
-      result: [
-        "Achieved high-performance 60fps UI interactions.",
-        "Implemented complex nested state management.",
-        "Created a unique, memorable recruiter experience.",
-      ],
+      overview: "Spearheaded a complete frontend redesign of the Skilljar portal. Used HTML, CSS, and complex JS overrides to wrangle legacy Skilljar elements into a modern, branded experience.",
+      breach: "Skilljar's default 'Cowboy Coding' interface lacked version control and allowed unvetted changes to break the UI consistently.",
+      deployment: "Created a local clone of the portal in VS Code, enabling Git-based version control and local testing before deploying overrides to production.",
+      result: ["> Eliminated UI regressions via proper version control.", "> Achieved 100% brand parity with main marketing site.", "> Improved user navigation flow by 30%."],
     },
+    assets: [
+      {
+        type: "diagram",
+        label: "DEV_TO_PROD_FLOW",
+        content: (
+          <div className="flex flex-col items-center justify-center h-full gap-2 text-[8px]">
+            <div className="border border-dashed border-current p-2">VS CODE CLONE (GIT)</div>
+            <div className="text-xs">↓</div>
+            <div className="border-2 border-current p-2 bg-current/5 font-bold uppercase tracking-widest">Wrangled JS/CSS Overrides</div>
+            <div className="text-xs">↓</div>
+            <div className="border border-current p-2 opacity-50">SKILLJAR PRODUCTION</div>
+          </div>
+        )
+      },
+      { type: "screenshot", label: "SCR_BEFORE_AFTER", todo: "Add side-by-side comparison of old Skilljar vs new branded UI." },
+      { type: "screenshot", label: "SCR_CODE_OVERRIDE", todo: "Add screenshot of the JS/CSS override architecture in VS Code." }
+    ]
   },
   {
-    id: "SYSTEM_MIGRATION",
-    title: "Enterprise System Migration",
-    category: "SUPPORT",
-    description:
-      "Managed large-scale data migration and infrastructure stabilization.",
+    id: "IMAGE_PIPELINE",
+    title: "Rails Optimization Pipeline",
+    category: "BACK_END",
+    description: "Automated image optimization manifest for Rails/Heroku stack.",
     details: {
-      overview:
-        "Led the migration of legacy data systems to a modern PostgreSQL/AWS stack while ensuring zero downtime for existing users.",
-      breach:
-        "Data silos and fragmented legacy databases caused inconsistent user experiences and difficult maintenance windows.",
-      deployment:
-        "Automated ETL pipelines with Node.js and AWS Lambda. Optimized PostgreSQL queries for improved data retrieval speed.",
-      result: [
-        "Successful migration of 1M+ records.",
-        "Reduced query latency by 40%.",
-        "Improved overall system uptime to 99.9%.",
-      ],
+      overview: "Built an automated image optimization pipeline using the image-optim gem to maintain an asset manifest and enforce performance budgets during CI/CD.",
+      breach: "Unoptimized image uploads were bloating the production build and significantly increasing LCP for mobile users.",
+      deployment: "Implemented a manifest-check algorithm. If a new image was detected without optimization, the Heroku build would trigger an immediate failure with a corrective action prompt.",
+      result: ["> Reduced asset payload size by 40%.", "> Zero unoptimized images in production since launch.", "> Automated enforcement of performance thresholds."],
     },
+    assets: [
+      {
+        type: "diagram",
+        label: "PIPELINE_LOGIC",
+        content: (
+          <div className="grid grid-cols-2 gap-4 items-center justify-center h-full text-[8px] p-4">
+            <div className="border border-current p-1">NEW_IMAGE.PNG</div>
+            <div className="border-l-2 border-current pl-2">MANIFEST.JSON</div>
+            <div className="col-span-2 text-center border border-current bg-red-500/20 py-1">BUILD_FAILED: RUN_OPTIMIZE</div>
+          </div>
+        )
+      },
+      { type: "screenshot", label: "SCR_BUILD_FAIL", todo: "Add screenshot of a failed Heroku build log with the custom error message." },
+      { type: "screenshot", label: "SCR_MANIFEST_JSON", todo: "Add screenshot of the image manifest tracking optimized hashes." }
+    ]
   },
+  {
+    id: "CONTRIBUTOR_SYSTEM",
+    title: "Contributor Page System",
+    category: "BACK_END",
+    description: "Custom Rails Admin model for dynamic, multi-stakeholder page generation.",
+    details: {
+      overview: "Engineered a flexible Page Model within Rails Admin to handle complex variable-based layouts for reviews, editors, and contributors.",
+      breach: "Standard CMS models couldn't handle the complex relationships between multiple reviewer roles and dynamic section backgrounds.",
+      deployment: "Built a Ruby on Rails backend with dynamic variables for Hero BG, Subheadings, and multi-user roles (Reviewers, Staff, Contributors).",
+      result: ["> Decentralized content management for the editorial team.", "> Reduced developer intervention for new page builds by 90%.", "> Dynamic layout generation based on model parameters."],
+    },
+    assets: [
+      {
+        type: "diagram",
+        label: "MODEL_RELATIONS",
+        content: (
+          <div className="border border-current p-2 text-[7px] h-full overflow-hidden">
+            <p className="border-b border-current font-bold bg-current/10 p-1">MODEL: CONTRIBUTOR_PAGE</p>
+            <ul className="p-1 space-y-1">
+              <li>+ HERO_COLOR: STRING</li>
+              <li>+ TOPIC: RELATION</li>
+              <li>+ REVIEWERS: HAS_MANY</li>
+              <li>+ EDITORS: HAS_MANY</li>
+              <li>+ STAFF: HAS_MANY</li>
+            </ul>
+          </div>
+        )
+      },
+      { type: "screenshot", label: "SCR_RAILS_ADMIN", todo: "Add screenshot of the Rails Admin interface for the Contributor Page model." },
+      { type: "screenshot", label: "SCR_LIVE_PAGE", todo: "Add screenshot of a rendered live page showing the dynamic hero and contributors." }
+    ]
+  }
 ];
 
 interface LCDDisplayProps {
@@ -181,7 +275,7 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus, tabs }) => {
     if (isBooting) {
       const t = setTimeout(() => {
         setBooting(false);
-      }, 2000);
+      }, 3000); // Sequence lasts 3s now
       return () => clearTimeout(t);
     }
   }, [isBooting, setBooting]);
@@ -204,8 +298,6 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus, tabs }) => {
     const depth = (el.scrollTop / maxScroll) * 100;
     setContentDepth(depth);
 
-    // Reset after a short delay to allow Knob to sync back if needed,
-    // but mostly to prevent feedback loops
     setTimeout(() => {
       isInternalScroll.current = false;
     }, 50);
@@ -213,24 +305,24 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus, tabs }) => {
 
   const getThemeStyles = () => {
     switch (activePreset) {
-      case "RETRO": // 70s Rock / Warm
+      case "RETRO":
         return {
           bg: "bg-[#3e2723]",
           text: "text-[#facc15]",
           highlight: "bg-[#facc15] text-[#3e2723]",
           border: "border-[#facc15]",
         };
-      case "HACKER": // Computer Sciency
+      case "HACKER":
         return {
           bg: "bg-[#020617]",
-          text: "text-[#67e8f9]", // Brightened cyan for better contrast
+          text: "text-[#67e8f9]",
           highlight: "bg-[#22d3ee] text-[#020617]",
           border: "border-[#22d3ee]",
         };
       case "ORIGINAL":
       default:
         return {
-          bg: "bg-[#ffffff]", // Maximum brightness
+          bg: "bg-[#ffffff]",
           text: "text-[#0a0a0a]",
           highlight: "bg-[#0a0a0a] text-[#ffffff]",
           border: "border-[#0a0a0a]",
@@ -291,7 +383,6 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus, tabs }) => {
 
     if (activeSelection === "02_CASE_STUDIES") {
       if (!selectedProject) {
-        // Project Index View
         const filters = ["ALL", "FRONT_END", "BACK_END", "SUPPORT"];
         const filteredProjects =
           projectFilter === "ALL"
@@ -346,7 +437,6 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus, tabs }) => {
         );
       }
 
-      // Project Detail View
       const project = PROJECTS.find((p) => p.id === selectedProject);
       if (!project) return null;
 
@@ -427,24 +517,25 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus, tabs }) => {
                 <div className="w-full h-[200px] relative overflow-hidden">
                   <div
                     className="flex gap-4 absolute inset-0 transition-transform duration-75 h-full"
-                    style={{ transform: `translateX(-${panDepth}%)` }}
+                    style={{ transform: `translateX(-${(panDepth / 100) * (project.assets.length * 100 - 100)}%)` }}
                   >
-                    <div className="w-full shrink-0 border border-current p-4 flex flex-col h-full">
-                      <p className="font-bold border-b border-current pb-2 mb-2">
-                        [ ARCHITECTURE DIAGRAM ]
-                      </p>
-                      <div className="flex-1 bg-current opacity-10 flex items-center justify-center font-bold tracking-widest uppercase">
-                        SYS_MAP_01.PNG
+                    {project.assets.map((asset, i) => (
+                      <div key={i} className="w-full shrink-0 border border-current p-4 flex flex-col h-full">
+                        <p className="font-bold border-b border-current pb-2 mb-2 text-[9px] uppercase tracking-widest">
+                          [ {asset.label} ]
+                        </p>
+                        <div className="flex-1 flex items-center justify-center relative bg-current/5 overflow-hidden">
+                          {asset.type === "diagram" ? (
+                            asset.content
+                          ) : (
+                            <div className="text-center p-4">
+                              <p className="text-[10px] font-bold text-red-500 animate-pulse">TODO: ASSET_MISSING</p>
+                              <p className="text-[8px] opacity-60 mt-2 italic">{asset.todo}</p>
+                            </div>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                    <div className="w-full shrink-0 border border-current p-4 flex flex-col h-full">
-                      <p className="font-bold border-b border-current pb-2 mb-2">
-                        [ SYSTEM LOGS ]
-                      </p>
-                      <div className="flex-1 bg-current opacity-10 flex items-center justify-center font-bold tracking-widest uppercase">
-                        LAMBDA_TRACE.TXT
-                      </div>
-                    </div>
+                    ))}
                   </div>
                 </div>
               )}
@@ -489,8 +580,7 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus, tabs }) => {
                 <p>
                   <TerminalText>
                     Based in Bellingham, WA. Currently advancing my expertise
-                    with LeetCode projects, full stack certifications, and side
-                    projects.
+                    with automated toolchains and scalable system design.
                   </TerminalText>
                 </p>
               </div>

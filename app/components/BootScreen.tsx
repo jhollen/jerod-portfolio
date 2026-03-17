@@ -25,12 +25,12 @@ export const BootScreen: React.FC<{ theme: ThemeStyles }> = ({ theme }) => {
     const t2 = setTimeout(() => {
       setAvatarSrc("images/avatar-static.png");
       setShowText(true);
-    }, 1400);
+    }, 1500); // Increased from 1400 to 1500 (300ms duration instead of 200ms)
     const t3 = setTimeout(() => {
       setGlitch(true);
       const t4 = setTimeout(() => setBooting(false), 500);
       return () => clearTimeout(t4);
-    }, 2800);
+    }, 3000); // Pushed back to accommodate longer sequence
 
     return () => {
       clearTimeout(t1);
