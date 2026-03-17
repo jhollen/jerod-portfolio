@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { motion, useMotionValue, PanInfo, animate, MotionValue } from "framer-motion";
+import { motion, useMotionValue, PanInfo, animate, MotionValue, AnimatePresence } from "framer-motion";
 
 interface KnobProps {
   label: string;
@@ -139,17 +139,17 @@ export const Knob: React.FC<KnobProps> = ({
       ref={knobRef}
     >
       <div className="relative touch-none overscroll-none">
-        <span className="absolute -bottom-2 -left-6 w-8 text-right text-[7px] font-bold text-gray-500 font-mono tracking-tighter uppercase whitespace-nowrap">
+        <span className={`absolute -bottom-2 -left-6 w-8 text-right text-[7px] font-bold font-mono tracking-tighter uppercase whitespace-nowrap transition-colors duration-500 ${isActive ? "text-gray-400" : "text-gray-700"}`}>
           {minLabel}
         </span>
-        <span className="absolute -top-4 left-1/2 -translate-x-1/2 text-[7px] font-bold text-gray-500 font-mono tracking-tighter uppercase whitespace-nowrap">
+        <span className={`absolute -top-4 left-1/2 -translate-x-1/2 text-[7px] font-bold font-mono tracking-tighter uppercase whitespace-nowrap transition-colors duration-500 ${isActive ? "text-gray-400" : "text-gray-700"}`}>
           {centerLabel}
         </span>
-        <span className="absolute -bottom-2 -right-6 w-8 text-left text-[7px] font-bold text-gray-500 font-mono tracking-tighter uppercase whitespace-nowrap">
+        <span className={`absolute -bottom-2 -right-6 w-8 text-left text-[7px] font-bold font-mono tracking-tighter uppercase whitespace-nowrap transition-colors duration-500 ${isActive ? "text-gray-400" : "text-gray-700"}`}>
           {maxLabel}
         </span>
         <div
-          className={`${s.bezel} rounded-full bg-gradient-to-br from-[#3b3f46] to-[#1e2025] flex items-center justify-center shadow-[0_8px_15px_rgba(0,0,0,0.9),inset_0_1px_2px_rgba(255,255,255,0.15)] border border-black/80 relative`}
+          className={`${s.bezel} rounded-full bg-gradient-to-br from-[#3b3f46] to-[#1e2025] flex items-center justify-center shadow-[0_8px_15px_rgba(0,0,0,0.9),inset_0_1px_2px_rgba(255,255,255,0.15)] border border-black/80 relative transition-all duration-500 ${isActive ? "ring-1 ring-emerald-500/10" : ""}`}
         >
           <svg
             className="absolute inset-0 w-full h-full pointer-events-none z-0"
@@ -164,9 +164,10 @@ export const Knob: React.FC<KnobProps> = ({
                   y1="3"
                   x2="50"
                   y2={isMajor ? "10" : "6"}
-                  stroke={isMajor ? "#aaa" : "#555"}
+                  stroke={isActive ? (isMajor ? "#aaa" : "#555") : (isMajor ? "#444" : "#222")}
                   strokeWidth={isMajor ? "1.5" : "1"}
                   transform={`rotate(${-130 + i * 13} 50 50)`}
+                  className="transition-colors duration-500"
                 />
               );
             })}
@@ -183,18 +184,28 @@ export const Knob: React.FC<KnobProps> = ({
             <div className="absolute inset-0 rounded-full bg-[conic-gradient(from_0deg,transparent_0%,rgba(0,0,0,0.3)_10%,transparent_20%,rgba(0,0,0,0.3)_30%,transparent_40%,rgba(0,0,0,0.3)_50%,transparent_60%,rgba(0,0,0,0.3)_70%,transparent_80%,rgba(0,0,0,0.3)_90%,transparent_100%)] opacity-60 pointer-events-none" />
             <div className="absolute inset-[2px] rounded-full border border-white/5" />
             <div
-              className={`absolute left-1/2 -translate-x-1/2 bg-gray-200 rounded-sm shadow-[0_0_5px_rgba(255,255,255,0.5)] ${s.notch}`}
+              className={`absolute left-1/2 -translate-x-1/2 rounded-sm shadow-[0_0_5px_rgba(255,255,255,0.5)] transition-colors duration-500 ${isActive ? "bg-gray-200" : "bg-gray-700"} ${s.notch}`}
             />
           </motion.div>
         </div>
       </div>
       <div className="flex flex-col items-center mt-2 text-center shrink-0 gap-1.5">
-        <span className="text-[10px] text-gray-300 font-bold uppercase tracking-widest shadow-black drop-shadow-md">
+        <span className={`text-[10px] font-bold uppercase tracking-widest transition-all duration-500 ${isActive ? "text-gray-200 drop-shadow-[0_0_2px_rgba(16,185,129,0.3)]" : "text-gray-600"}`}>
           {label}
         </span>
-        <div className="w-2 h-2 rounded-full border border-black/80 flex items-center justify-center bg-black shadow-[inset_0_1px_2px_rgba(0,0,0,1)]">
+        <div className="w-2.5 h-2.5 rounded-full border border-black/80 flex items-center justify-center bg-black shadow-[inset_0_1.5px_3px_rgba(0,0,0,1)] relative">
+          <AnimatePresence>
+            {isActive && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0 }}
+                className="absolute inset-0 rounded-full bg-emerald-500/20 blur-[2px]"
+              />
+            )}
+          </AnimatePresence>
           <div
-            className={`w-1.5 h-1.5 rounded-full transition-colors duration-300 ${isActive ? "bg-emerald-500 shadow-[0_0_6px_#10b981]" : "bg-[#1a2015]"}`}
+            className={`w-1.5 h-1.5 rounded-full transition-all duration-500 ${isActive ? "bg-emerald-500 shadow-[0_0_8px_#10b981]" : "bg-[#0a0f0a]"}`}
           />
         </div>
       </div>

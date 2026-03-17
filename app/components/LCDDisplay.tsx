@@ -180,10 +180,10 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus, tabs }) => {
       case "ORIGINAL":
       default:
         return {
-          bg: "bg-[#e8e9e4]",
-          text: "text-[#1a2015]",
-          highlight: "bg-[#1a2015] text-[#e8e9e4]",
-          border: "border-[#1a2015]",
+          bg: "bg-[#ffffff]", // Maximum brightness
+          text: "text-[#0a0a0a]",
+          highlight: "bg-[#0a0a0a] text-[#ffffff]",
+          border: "border-[#0a0a0a]",
         };
     }
   };
@@ -214,7 +214,7 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus, tabs }) => {
           {menus.map((menu, idx) => {
             const isSelected = idx === menuIndex;
             return (
-              <div
+              <button
                 key={menu}
                 onClick={() => {
                   setMenuIndex(idx);
@@ -224,10 +224,10 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus, tabs }) => {
                   addLogMessage("LOAD_BALANCING_UI_THREAD...");
                   addLogMessage("PARSING_UPSTREAM_METRICS...");
                 }}
-                className={`p-2 transition-colors duration-75 flex gap-3 cursor-pointer hover:bg-black/5 pl-12 ${isSelected ? `${theme.highlight} font-bold` : "opacity-60"}`}
+                className={`p-2 transition-colors duration-75 flex gap-3 cursor-pointer text-left w-full outline-none focus:ring-2 focus:ring-inset focus:ring-current/20 pl-12 ${isSelected ? `${theme.highlight} font-bold` : "opacity-60 hover:bg-black/5"}`}
               >
                 <span>{menu}</span>
-              </div>
+              </button>
             );
           })}
         </div>
@@ -246,35 +246,35 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus, tabs }) => {
           <div className="flex flex-col h-full w-full">
             <div className={`flex gap-2 border-b-2 ${theme.border} pb-2 mb-4 shrink-0 overflow-x-auto [&::-webkit-scrollbar]:hidden pl-12`}>
               {filters.map((f) => (
-                <div
+                <button
                   key={f}
                   onClick={() => {
                     setProjectFilter(f);
                     addLogMessage(`FILTER_APPLIED: ${f}`);
                   }}
-                  className={`px-2 py-1 text-[10px] font-bold tracking-widest uppercase rounded-sm cursor-pointer transition-all ${projectFilter === f ? theme.highlight : "opacity-60 hover:opacity-100 hover:bg-black/5"}`}
+                  className={`px-2 py-1 text-[10px] font-bold tracking-widest uppercase rounded-sm cursor-pointer transition-all outline-none focus:ring-1 focus:ring-current/20 ${projectFilter === f ? theme.highlight : "opacity-60 hover:opacity-100 hover:bg-black/5"}`}
                 >
                   [{f}]
-                </div>
+                </button>
               ))}
             </div>
             <div className="flex-1 overflow-y-auto [&::-webkit-scrollbar]:hidden pl-12">
               <div className="flex flex-col gap-4 pb-10">
                 {filteredProjects.map((p) => (
-                  <div
+                  <button
                     key={p.id}
                     onClick={() => {
                       setSelectedProject(p.id);
                       addLogMessage(`PROJECT_MOUNTED: ${p.id}`);
                     }}
-                    className="group border border-current/20 p-3 hover:bg-current/5 cursor-pointer transition-all"
+                    className="group border border-current/20 p-3 hover:bg-current/5 cursor-pointer transition-all text-left w-full outline-none focus:ring-2 focus:ring-current/10"
                   >
                     <div className="flex justify-between items-start mb-1">
                       <h4 className="font-bold uppercase tracking-wide text-xs">{p.title}</h4>
                       <span className="text-[8px] opacity-50 border border-current px-1">{p.category}</span>
                     </div>
                     <p className="text-[11px] opacity-70 line-clamp-2 leading-relaxed">{p.description}</p>
-                  </div>
+                  </button>
                 ))}
               </div>
             </div>
@@ -294,7 +294,7 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus, tabs }) => {
             className={`flex gap-2 border-b-2 ${theme.border} pb-2 mb-4 shrink-0 overflow-x-auto [&::-webkit-scrollbar]:hidden pl-12`}
           >
             {tabs.map((tab, idx) => (
-              <div
+              <button
                 key={tab}
                 onClick={() => {
                   setTabIndex(idx);
@@ -303,10 +303,10 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus, tabs }) => {
                   addLogMessage("HYDRATING_DOM_SUBTREE...");
                   addLogMessage("TRANSLATING_JSON_TO_UI_LAYER...");
                 }}
-                className={`px-2 py-1 text-[10px] font-bold tracking-widest uppercase rounded-sm cursor-pointer transition-all ${idx === tabIndex ? theme.highlight : "opacity-60 hover:opacity-100 hover:bg-black/5"}`}
+                className={`px-2 py-1 text-[10px] font-bold tracking-widest uppercase rounded-sm cursor-pointer transition-all outline-none focus:ring-1 focus:ring-current/20 ${idx === tabIndex ? theme.highlight : "opacity-60 hover:opacity-100 hover:bg-black/5"}`}
               >
                 [{tab}]
-              </div>
+              </button>
             ))}
           </div>
           <div

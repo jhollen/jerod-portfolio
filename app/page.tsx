@@ -35,10 +35,8 @@ export default function AudioConsolePage() {
   ];
   const tabs = ["OVERVIEW", "BREACH", "DEPLOY", "RESULT", "ASSETS"];
 
-  const navActivity = useMotionValue(0);
-  const infoActivity = useMotionValue(0);
-  const scrubActivity = useMotionValue(0);
-  const panActivity = useMotionValue(0);
+  const leftMeterActivity = useMotionValue(0);
+  const rightMeterActivity = useMotionValue(0);
 
   return (
     <main className="fixed inset-0 w-screen h-screen overflow-hidden bg-[#0a0a0a] flex items-center justify-center p-4 lg:p-8 font-sans select-none touch-none overscroll-none">
@@ -70,7 +68,7 @@ export default function AudioConsolePage() {
               {/* NAVIGATOR Column */}
               <div className="flex flex-col items-center justify-between h-full w-20 pb-2">
                 <div className="flex-1 w-full min-h-0 flex items-stretch justify-center pb-6 pt-2">
-                  <VerticalMeter activityMv1={navActivity} type="nav" />
+                  <VerticalMeter activityMv1={leftMeterActivity} type="nav" />
                 </div>
                 <div className="flex flex-col items-center gap-4 shrink-0 w-full">
                   <Knob
@@ -79,7 +77,7 @@ export default function AudioConsolePage() {
                     centerLabel="NAV"
                     maxLabel="+"
                     isActive={true}
-                    activityMv={navActivity}
+                    activityMv={leftMeterActivity}
                     steps={menus.length}
                     value={menuIndex}
                     onChange={(newIdx) => {
@@ -96,7 +94,7 @@ export default function AudioConsolePage() {
               {/* INFO GAIN Column */}
               <div className="flex flex-col items-center justify-between h-full w-20 pb-2">
                 <div className="flex-1 w-full min-h-0 flex items-stretch justify-center pb-6 pt-2">
-                  <VerticalMeter activityMv1={infoActivity} type="tab" />
+                  <VerticalMeter activityMv1={leftMeterActivity} type="tab" />
                 </div>
                 <div className="flex flex-col items-center gap-4 shrink-0 w-full">
                   <Knob
@@ -104,12 +102,12 @@ export default function AudioConsolePage() {
                     minLabel="LEFT"
                     centerLabel="TAB"
                     maxLabel="RIGHT"
-                    isActive={activeSelection === "02_INCIDENTS"}
-                    activityMv={infoActivity}
+                    isActive={activeSelection === "02_CASE_STUDIES"}
+                    activityMv={leftMeterActivity}
                     steps={tabs.length}
                     value={tabIndex}
                     onChange={(newIndex) => {
-                      if (activeSelection === "02_INCIDENTS") {
+                      if (activeSelection === "02_CASE_STUDIES") {
                         setTabIndex(newIndex);
                         addLogMessage(`INFO_GAIN: ${tabs[newIndex]}`);
                       }
@@ -141,7 +139,12 @@ export default function AudioConsolePage() {
             </div>
 
             {/* Right Section: Auxiliary & Presets */}
-            <div className="w-48 hidden lg:flex flex-col justify-between items-center h-full shrink-0">
+            <div className="w-48 hidden lg:flex flex-col justify-between items-center h-full shrink-0 relative">
+              {/* Right Column Meter - Absolute positioned to the left of the column */}
+              <div className="absolute -left-10 top-0 bottom-20 w-10 flex items-stretch justify-center py-8">
+                <VerticalMeter activityMv1={rightMeterActivity} />
+              </div>
+
               {/* Hardware Control Section (Presets) - Moved Up */}
               <div className="w-full flex flex-col gap-4">
                 <VCABank />
@@ -164,10 +167,10 @@ export default function AudioConsolePage() {
                     onChange={(val) => {
                       setContentDepth(val);
                     }}
-                    activityMv={scrubActivity}
+                    activityMv={rightMeterActivity}
                     isActive={
                       activeSelection !== null &&
-                      !(activeSelection === "02_INCIDENTS" && tabIndex === 4)
+                      !(activeSelection === "02_CASE_STUDIES" && tabIndex === 4)
                     }
                   />
                 </div>
@@ -181,9 +184,9 @@ export default function AudioConsolePage() {
                     onChange={(val) => {
                       setPanDepth(val);
                     }}
-                    activityMv={panActivity}
+                    activityMv={rightMeterActivity}
                     isActive={
-                      activeSelection === "02_INCIDENTS" && tabIndex === 4
+                      activeSelection === "02_CASE_STUDIES" && tabIndex === 4
                     }
                   />
                 </div>
