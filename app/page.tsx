@@ -35,7 +35,13 @@ export default function AudioConsolePage() {
     "04_GET_IN_TOUCH",
   ];
   const tabs = ["OVERVIEW", "BREACH", "DEPLOY", "RESULT", "ASSETS"];
-  const projectIds = ["SCORM_AUTO", "OFF_GRID_MED", "SKILLJAR_REDESIGN", "IMAGE_PIPELINE", "CONTRIBUTOR_SYSTEM"];
+  const projectIds = [
+    "SCORM_AUTO",
+    "OFF_GRID_MED",
+    "SKILLJAR_REDESIGN",
+    "IMAGE_PIPELINE",
+    "CONTRIBUTOR_SYSTEM",
+  ];
 
   const leftMeterActivity = useMotionValue(0);
   const rightMeterActivity = useMotionValue(0);
@@ -80,12 +86,21 @@ export default function AudioConsolePage() {
                     maxLabel="+"
                     isActive={true}
                     activityMv={leftMeterActivity}
-                    steps={activeSelection === "02_CASE_STUDIES" && !selectedProject ? projectIds.length : menus.length}
+                    steps={
+                      activeSelection === "02_CASE_STUDIES" && !selectedProject
+                        ? projectIds.length
+                        : menus.length
+                    }
                     value={menuIndex}
                     onChange={(newIdx) => {
                       setMenuIndex(newIdx);
-                      if (activeSelection === "02_CASE_STUDIES" && !selectedProject) {
-                        addLogMessage(`NAVIGATOR: [PROJECT_PREVIEW: ${projectIds[newIdx]}]`);
+                      if (
+                        activeSelection === "02_CASE_STUDIES" &&
+                        !selectedProject
+                      ) {
+                        addLogMessage(
+                          `NAVIGATOR: [PROJECT_PREVIEW: ${projectIds[newIdx]}]`,
+                        );
                       } else {
                         addLogMessage(`NAVIGATOR: ${menus[newIdx]}`);
                         if (!activeSelection) {
@@ -146,11 +161,6 @@ export default function AudioConsolePage() {
 
             {/* Right Section: Auxiliary & Presets */}
             <div className="w-48 hidden lg:flex flex-col justify-center items-center h-full shrink-0 relative">
-              {/* Right Column Meter - Absolute positioned to the left of the column */}
-              <div className="absolute -left-10 top-0 bottom-20 w-10 flex items-stretch justify-center py-8">
-                <VerticalMeter activityMv1={rightMeterActivity} />
-              </div>
-
               <div className="flex flex-col items-center gap-12">
                 {/* Traversal Dials - Vertically Centered */}
                 <div className="flex flex-col gap-10">
@@ -167,7 +177,10 @@ export default function AudioConsolePage() {
                       activityMv={rightMeterActivity}
                       isActive={
                         activeSelection !== null &&
-                        !(activeSelection === "02_CASE_STUDIES" && tabIndex === 4)
+                        !(
+                          activeSelection === "02_CASE_STUDIES" &&
+                          tabIndex === 4
+                        )
                       }
                     />
                   </div>
