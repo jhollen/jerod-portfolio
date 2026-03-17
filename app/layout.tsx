@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Roboto, Merriweather } from "next/font/google";
+import { Roboto, Merriweather, Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 
 const roboto = Roboto({
@@ -14,6 +14,16 @@ const merriweather = Merriweather({
   variable: "--font-merriweather",
 });
 
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+});
+
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  variable: "--font-playfair",
+});
+
 // Import Next.js Metadata type for SEO and page info
 export const metadata: Metadata = {
   title: "Jerod Hollen - Portfolio",
@@ -26,7 +36,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${roboto.variable} ${merriweather.variable}`}>
+    <html lang="en" className={`${roboto.variable} ${merriweather.variable} ${inter.variable} ${playfair.variable}`}>
       <head></head>
       <body className="bg-[#121212] m-0 p-0 text-white antialiased">
         {children}

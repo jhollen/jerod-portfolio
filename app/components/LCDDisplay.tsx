@@ -36,7 +36,7 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
 
   React.useEffect(() => {
     if (isBooting) {
-      const t = setTimeout(() => setBooting(false), 10000); // Align with BootScreen duration
+      const t = setTimeout(() => setBooting(false), 4800); 
       return () => clearTimeout(t);
     }
   }, [isBooting, setBooting]);
@@ -95,6 +95,12 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
     addLogMessage("SYSTEM: RETURN_TO_PROJECT_INDEX");
   };
 
+  const setTier = (t: number) => {
+    if (t === 1) setContentDepth(0);
+    if (t === 2) setContentDepth(50);
+    if (t === 3) setContentDepth(100);
+  };
+
   const renderReturnButton = () => (
     <button 
       onClick={handleReturnToSystem}
@@ -104,20 +110,40 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
     </button>
   );
 
-  const renderBio = () => (
-    <div className={`space-y-6 ${theme.font} ${theme.text} text-[15px] leading-relaxed relative h-full`}>
-      <div className="absolute -right-2 top-1/2 -translate-y-1/2 flex flex-col gap-4 opacity-20 text-[8px] font-bold uppercase tracking-widest pointer-events-none">
-        <div className={`transition-all duration-300 ${tier === 1 ? "opacity-100 scale-125 font-black" : ""}`}>↑ Tier 1</div>
-        <div className={`transition-all duration-300 ${tier === 2 ? "opacity-100 scale-125 font-black" : ""}`}>• Tier 2</div>
-        <div className={`transition-all duration-300 ${tier === 3 ? "opacity-100 scale-125 font-black" : ""}`}>↓ Tier 3</div>
+  const renderTierControls = () => (
+    <div className="absolute -right-2 top-1/2 -translate-y-1/2 flex flex-col gap-4 z-50">
+      <button 
+        onClick={() => setTier(Math.max(1, tier - 1))}
+        disabled={tier === 1}
+        className={`p-2 bg-current text-white/90 shadow-lg hover:scale-110 active:scale-95 transition-all disabled:opacity-10 ${theme.led}`}
+      >
+        ↑
+      </button>
+      <div className="flex flex-col gap-2 opacity-40 text-[8px] font-bold uppercase tracking-widest pointer-events-none items-center">
+        <div className={`transition-all duration-300 ${tier === 1 ? "opacity-100 scale-125 font-black" : ""}`}>T1</div>
+        <div className={`transition-all duration-300 ${tier === 2 ? "opacity-100 scale-125 font-black" : ""}`}>T2</div>
+        <div className={`transition-all duration-300 ${tier === 3 ? "opacity-100 scale-125 font-black" : ""}`}>T3</div>
       </div>
+      <button 
+        onClick={() => setTier(Math.min(3, tier + 1))}
+        disabled={tier === 3}
+        className={`p-2 bg-current text-white/90 shadow-lg hover:scale-110 active:scale-95 transition-all disabled:opacity-10 ${theme.led}`}
+      >
+        ↓
+      </button>
+    </div>
+  );
+
+  const renderBio = () => (
+    <div className={`space-y-6 ${theme.font} ${theme.text} text-[16px] leading-relaxed relative h-full`}>
+      {renderTierControls()}
 
       <h3 className="text-xl font-black border-b-2 border-current pb-2 flex justify-between items-end text-lg uppercase tracking-tighter">
         <TypewriterText text="01_BIO" speed={30} />
         <span className="text-[10px] opacity-40 uppercase tracking-[0.2em]">Zoom: Tier {tier}</span>
       </h3>
       
-      <div className="flex-1 overflow-y-auto max-h-[220px] custom-scrollbar pr-4">
+      <div className="flex-1 overflow-y-auto max-h-[220px] custom-scrollbar pr-10">
         {tier === 1 && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
             <p><TypewriterText text="Full Stack Engineer & Creative Technologist. Western Washington University CS Grad (Dec 2022). Former Culinary Professional turned Solutions Engineer." speed={10} /></p>
@@ -127,7 +153,7 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
 
         {tier === 2 && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
-            <p className="border-l-4 border-current pl-4 italic"><TypewriterText text="Timeline Expansion:" speed={10} /></p>
+            <p className="border-l-4 border-current pl-4 italic text-sm"><TypewriterText text="Timeline Expansion:" speed={10} /></p>
             <p><TypewriterText text="Started as a CSA Intern in July 2021 -> Full-Time Web/Content Developer Aug 2022 -> Oct 2025. Cross-departmental impact, attending SECtember and Skilljar 2023." speed={8} /></p>
             <p><TypewriterText text="The transition from high-pressure culinary environments to mission-critical cloud security engineering defined my approach to scale and reliability." speed={8} delay={2000} /></p>
           </motion.div>
@@ -146,7 +172,6 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
 
       {renderReturnButton()}
 
-      {/* SEO Layer */}
       <div className="sr-only">
         Full Stack Engineer, Creative Technologist, Western Washington University, Computer Science, Solutions Engineer, Web Developer, Content Developer, Cloud Security, React, TypeScript, Python, Ruby, Node.js, AWS.
       </div>
@@ -154,45 +179,41 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
   );
 
   const renderStack = () => (
-    <div className={`space-y-6 ${theme.font} ${theme.text} text-[14px] leading-relaxed relative h-full`}>
-      <div className="absolute -right-2 top-1/2 -translate-y-1/2 flex flex-col gap-4 opacity-20 text-[8px] font-bold uppercase tracking-widest pointer-events-none">
-        <div className={`transition-all duration-300 ${tier === 1 ? "opacity-100 scale-125 font-black" : ""}`}>↑ Tier 1</div>
-        <div className={`transition-all duration-300 ${tier === 2 ? "opacity-100 scale-125 font-black" : ""}`}>• Tier 2</div>
-        <div className={`transition-all duration-300 ${tier === 3 ? "opacity-100 scale-125 font-black" : ""}`}>↓ Tier 3</div>
-      </div>
+    <div className={`space-y-6 ${theme.font} ${theme.text} text-[15px] leading-relaxed relative h-full`}>
+      {renderTierControls()}
 
       <h3 className="text-xl font-black border-b-2 border-current pb-2 flex justify-between items-end text-lg uppercase tracking-tighter">
         <TypewriterText text="03_STACK" speed={30} />
         <span className="text-[10px] opacity-40 uppercase tracking-[0.2em]">Timeline: Tier {tier}</span>
       </h3>
 
-      <div className="flex-1 overflow-y-auto max-h-[220px] custom-scrollbar pr-4">
+      <div className="flex-1 overflow-y-auto max-h-[220px] custom-scrollbar pr-10">
         {tier === 1 && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6 py-4">
             <div className="grid grid-cols-2 gap-4">
-              <div className="border border-current p-3"><p className="text-[10px] opacity-50">THE CC ERA</p><p className="font-bold">C++ / Java</p></div>
-              <div className="border border-current p-3"><p className="text-[10px] opacity-50">THE WWU ERA</p><p className="font-bold">Objective-C / Java</p></div>
-              <div className="border border-current p-3"><p className="text-[10px] opacity-50">THE CSA ERA</p><p className="font-bold">Ruby / JS</p></div>
-              <div className={`border border-current p-3 ${theme.highlight}`}><p className="text-[10px] opacity-50">CURRENT ERA</p><p className="font-bold">Next.js / React</p></div>
+              <div className="border border-current p-3"><p className="text-[10px] opacity-50 font-black">THE CC ERA</p><p className="font-bold">C++ / Java</p></div>
+              <div className="border border-current p-3"><p className="text-[10px] opacity-50 font-black">THE WWU ERA</p><p className="font-bold">Objective-C / Java</p></div>
+              <div className="border border-current p-3"><p className="text-[10px] opacity-50 font-black">THE CSA ERA</p><p className="font-bold">Ruby / JS</p></div>
+              <div className={`border border-current p-3 ${theme.highlight}`}><p className="text-[10px] opacity-50 font-black">CURRENT ERA</p><p className="font-bold">Next.js / React</p></div>
             </div>
           </motion.div>
         )}
 
         {tier === 2 && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
-            <p className="text-xs uppercase tracking-widest font-bold opacity-50">Era Project Map:</p>
-            <ul className="space-y-2">
-              <li><span className="font-bold mr-2">[CC]</span> Mechanical Eng Path Simulation</li>
-              <li><span className="font-bold mr-2">[WWU]</span> Calendar App (React Native)</li>
-              <li><span className="font-bold mr-2">[CSA]</span> Skilljar CMS Overrides (Ruby)</li>
-              <li><span className="font-bold mr-2">[NOW]</span> Bogardt Band Platform (Next.js)</li>
+            <p className="text-xs uppercase tracking-widest font-black opacity-50 underline">Era Project Map:</p>
+            <ul className="space-y-2 text-sm">
+              <li><span className="font-black mr-2 opacity-60">[CC]</span> Mechanical Eng Path Simulation</li>
+              <li><span className="font-black mr-2 opacity-60">[WWU]</span> Calendar App (React Native)</li>
+              <li><span className="font-black mr-2 opacity-60">[CSA]</span> Skilljar CMS Overrides (Ruby)</li>
+              <li><span className="font-black mr-2 opacity-60">[NOW]</span> Bogardt Band Platform (Next.js)</li>
             </ul>
           </motion.div>
         )}
 
         {tier === 3 && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
-            <p className="text-xs uppercase tracking-widest font-bold opacity-50">The Grit (Challenges Overcome):</p>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4 text-sm">
+            <p className="text-xs uppercase tracking-widest font-black opacity-50 underline">The Grit (Challenges Overcome):</p>
             <div className="space-y-4">
               <div className="border-l-2 border-current pl-4">
                 <p className="italic font-bold"><TypewriterText text="'Self-funded transition from Community College to WWU during COVID lockdowns.'" speed={10} /></p>
@@ -223,10 +244,22 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
           <h3 className="text-xl font-black border-b-2 border-current pb-2 mb-4 pl-12 text-lg uppercase tracking-tighter">
             <TypewriterText text="02_PROJECTS" speed={30} />
           </h3>
-          <div className="flex-1 pl-12 pr-4 pb-10 flex items-center justify-center relative">
-            <div className="absolute left-1 top-1/2 -translate-y-1/2 flex flex-col gap-2 opacity-20 text-[10px]">
-              <div className="animate-bounce">↑</div>
-              <div className="animate-bounce" style={{ animationDelay: '0.2s' }}>↓</div>
+          <div className="flex-1 pl-12 pr-12 pb-10 flex items-center justify-center relative">
+            <div className="absolute right-2 top-1/2 -translate-y-1/2 flex flex-col gap-4 z-50">
+              <button 
+                onClick={() => setMenuIndex(Math.max(0, currentProjIdx - 1))}
+                disabled={currentProjIdx === 0}
+                className={`p-2 bg-current text-white/90 shadow-lg hover:scale-110 active:scale-95 transition-all disabled:opacity-10 ${theme.led}`}
+              >
+                ↑
+              </button>
+              <button 
+                onClick={() => setMenuIndex(Math.min(PROJECTS.length - 1, currentProjIdx + 1))}
+                disabled={currentProjIdx === PROJECTS.length - 1}
+                className={`p-2 bg-current text-white/90 shadow-lg hover:scale-110 active:scale-95 transition-all disabled:opacity-10 ${theme.led}`}
+              >
+                ↓
+              </button>
             </div>
 
             <AnimatePresence mode="wait">
@@ -248,9 +281,8 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
                   <TypewriterText key={`desc-${p.id}`} text={p.description} speed={5} delay={500} />
                 </p>
                 <div className="flex flex-wrap gap-2 pt-4 border-t border-current/10">
-                  {p.stack.map((item, i) => (
+                  {p.stack.map((item) => (
                     <span key={item} className="text-[9px] font-bold uppercase tracking-widest opacity-60">
-                      {i > 0 && <span className="mr-2 opacity-30">•</span>}
                       {item}
                     </span>
                   ))}
@@ -272,7 +304,7 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
     
     return (
       <div className={`flex flex-col h-full w-full relative ${theme.text} ${theme.font}`}>
-        <div className="flex justify-between items-end border-b-2 border-current pb-2 mb-4 pl-12">
+        <div className="flex justify-between items-end border-b-2 border-current pb-2 mb-4 pl-12 pr-12">
           <h3 className="text-xl font-black truncate max-w-[70%] text-lg uppercase tracking-tighter">
             <TypewriterText text={p.title} speed={20} />
           </h3>
@@ -286,7 +318,24 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
           </div>
         </div>
         
-        <div className="flex-1 pl-12 pr-4 pb-16 overflow-hidden relative">
+        <div className="flex-1 pl-12 pr-12 pb-16 overflow-hidden relative">
+          <div className="absolute right-2 top-1/2 -translate-y-1/2 flex flex-col gap-4 z-50">
+            <button 
+              onClick={() => setTabIndex(Math.max(0, currentTabIdx - 1))}
+              disabled={currentTabIdx === 0}
+              className={`p-2 bg-current text-white/90 shadow-lg hover:scale-110 active:scale-95 transition-all disabled:opacity-10 ${theme.led}`}
+            >
+              ↑
+            </button>
+            <button 
+              onClick={() => setTabIndex(Math.min(tabsCount - 1, currentTabIdx + 1))}
+              disabled={currentTabIdx === tabsCount - 1}
+              className={`p-2 bg-current text-white/90 shadow-lg hover:scale-110 active:scale-95 transition-all disabled:opacity-10 ${theme.led}`}
+            >
+              ↓
+            </button>
+          </div>
+
           <AnimatePresence mode="wait">
             {currentTabIdx < p.details.length ? (
               <motion.div 
@@ -320,17 +369,16 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
                     const handleAssetNext = (e: React.MouseEvent) => {
                       e.stopPropagation();
                       const nextIdx = Math.min(assetIdx + 1, p.assets.length - 1);
-                      setPanDepth((nextIdx / (p.assets.length - 1)) * 100);
+                      setPanDepth((nextIdx / Math.max(1, p.assets.length - 1)) * 100);
                     };
                     const handleAssetPrev = (e: React.MouseEvent) => {
                       e.stopPropagation();
                       const prevIdx = Math.max(assetIdx - 1, 0);
-                      setPanDepth((prevIdx / (p.assets.length - 1)) * 100);
+                      setPanDepth((prevIdx / Math.max(1, p.assets.length - 1)) * 100);
                     };
 
                     return (
                       <div className="h-full flex flex-col relative">
-                        {/* On-Screen Carousel Controls */}
                         <div className="absolute inset-y-0 -left-2 -right-2 flex justify-between items-center z-50 pointer-events-none">
                           {assetIdx > 0 && (
                             <button 
@@ -378,10 +426,9 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
           </AnimatePresence>
         </div>
         
-        {/* Sub-menu Back Navigation */}
         <button 
           onClick={handleProjectBack}
-          className={`absolute bottom-4 left-4 z-50 px-3 py-1.5 border-2 ${theme.border} ${theme.font} text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all bg-white/10`}
+          className={`absolute bottom-4 left-4 z-50 px-3 py-1.5 border-2 ${theme.border} ${theme.font} text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all bg-white/10 shadow-[4px_4px_0_rgba(0,0,0,0.1)]`}
         >
           [ &lt; RETURN TO INDEX ]
         </button>
