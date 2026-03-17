@@ -23,6 +23,19 @@ const TerminalText: React.FC<{ children: string }> = ({ children }) => {
     "AWS",
     "Systems Architect",
     "Full Stack Engineer",
+    "Android",
+    "P2P",
+    "encrypted",
+    "flash drive",
+    "offline",
+    "air-gapped",
+    "Android Studio",
+    "Zustand",
+    "Framer Motion",
+    "Next.js 15",
+    "Tailwind CSS 4",
+    "ETL",
+    "ETL pipelines",
   ];
   const regex = new RegExp(
     `\\b(${keywords.map((k) => k.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|")})\\b`,
@@ -63,38 +76,74 @@ const PROJECTS: Project[] = [
     id: "CSA_AUTO",
     title: "Cloud Security Alliance Automation",
     category: "BACK_END",
-    description: "Spearheaded reconstruction of core architectural infrastructure for learning portals.",
+    description:
+      "Spearheaded reconstruction of core architectural infrastructure for learning portals.",
     details: {
-      overview: "Spearheaded the reconstruction of core architectural infrastructure for institutional learning portals. Targeted legacy bottlenecks to achieve enterprise-grade performance and deployment velocity.",
-      breach: "A legacy PHP monolith coupled with manual SCORM packaging procedures created severe friction in scaling efforts. Enterprise clients were facing unacceptable deployment latency and mounting technical debt.",
-      deployment: "Engineered a robust Node.js CLI toolchain utilizing AST parsing for SCORM automation. Orchestrated a full migration to Next.js with React Server Components, optimizing for institutional-scale load patterns.",
-      result: ["> 50% increase in Time-to-Interactive (TTI).", "> Reduced manual deployment cycle from 45m to 12s.", "> Achieved 100% reliability in automated pipelines."],
+      overview:
+        "Spearheaded the reconstruction of core architectural infrastructure for institutional learning portals. Targeted legacy bottlenecks to achieve enterprise-grade performance and deployment velocity.",
+      breach:
+        "A legacy PHP monolith coupled with manual SCORM packaging procedures created severe friction in scaling efforts. Enterprise clients were facing unacceptable deployment latency and mounting technical debt.",
+      deployment:
+        "Engineered a robust Node.js CLI toolchain utilizing AST parsing for SCORM automation. Orchestrated a full migration to Next.js with React Server Components, optimizing for institutional-scale load patterns.",
+      result: [
+        "> 50% increase in Time-to-Interactive (TTI).",
+        "> Reduced manual deployment cycle from 45m to 12s.",
+        "> Achieved 100% reliability in automated pipelines.",
+      ],
+    },
+  },
+  {
+    id: "OFF_GRID_MED",
+    title: "OFF_GRID_MED_APP",
+    category: "SUPPORT",
+    description: "Android medical reference for Burmese soldiers in zero-connectivity zones.",
+    details: {
+      overview: "Android medical reference for Burmese soldiers in zero-connectivity zones.",
+      breach: "Extreme censorship and lack of internet required an air-gapped distribution model.",
+      deployment: "Android Studio / P2P Sharing / Physical encrypted flash drive distribution.",
+      result: ["100% offline availability in conflict zones."],
     }
   },
   {
     id: "PORTFOLIO_V2",
     title: "Audio Console Portfolio",
     category: "FRONT_END",
-    description: "High-fidelity interactive console interface built with Framer Motion and Zustand.",
+    description:
+      "High-fidelity interactive console interface built with Framer Motion and Zustand.",
     details: {
-      overview: "A highly interactive, skeuomorphic portfolio interface designed to showcase engineering depth through a unique audio console metaphor.",
-      breach: "Standard portfolios often lack technical personality and fail to demonstrate complex state management or physics-based UI interaction.",
-      deployment: "Built with Next.js 15, Tailwind CSS 4, and Framer Motion for hardware-accelerated animations. Managed complex system-wide state using Zustand.",
-      result: ["Achieved high-performance 60fps UI interactions.", "Implemented complex nested state management.", "Created a unique, memorable recruiter experience."],
-    }
+      overview:
+        "A highly interactive, skeuomorphic portfolio interface designed to showcase engineering depth through a unique audio console metaphor.",
+      breach:
+        "Standard portfolios often lack technical personality and fail to demonstrate complex state management or physics-based UI interaction.",
+      deployment:
+        "Built with Next.js 15, Tailwind CSS 4, and Framer Motion for hardware-accelerated animations. Managed complex system-wide state using Zustand.",
+      result: [
+        "Achieved high-performance 60fps UI interactions.",
+        "Implemented complex nested state management.",
+        "Created a unique, memorable recruiter experience.",
+      ],
+    },
   },
   {
     id: "SYSTEM_MIGRATION",
     title: "Enterprise System Migration",
     category: "SUPPORT",
-    description: "Managed large-scale data migration and infrastructure stabilization.",
+    description:
+      "Managed large-scale data migration and infrastructure stabilization.",
     details: {
-      overview: "Led the migration of legacy data systems to a modern PostgreSQL/AWS stack while ensuring zero downtime for existing users.",
-      breach: "Data silos and fragmented legacy databases caused inconsistent user experiences and difficult maintenance windows.",
-      deployment: "Automated ETL pipelines with Node.js and AWS Lambda. Optimized PostgreSQL queries for improved data retrieval speed.",
-      result: ["Successful migration of 1M+ records.", "Reduced query latency by 40%.", "Improved overall system uptime to 99.9%."],
-    }
-  }
+      overview:
+        "Led the migration of legacy data systems to a modern PostgreSQL/AWS stack while ensuring zero downtime for existing users.",
+      breach:
+        "Data silos and fragmented legacy databases caused inconsistent user experiences and difficult maintenance windows.",
+      deployment:
+        "Automated ETL pipelines with Node.js and AWS Lambda. Optimized PostgreSQL queries for improved data retrieval speed.",
+      result: [
+        "Successful migration of 1M+ records.",
+        "Reduced query latency by 40%.",
+        "Improved overall system uptime to 99.9%.",
+      ],
+    },
+  },
 ];
 
 interface LCDDisplayProps {
@@ -117,6 +166,7 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus, tabs }) => {
     contentDepth,
     setContentDepth,
     panDepth,
+    setPanDepth,
     activePreset,
     addLogMessage,
     triggerNavSpike,
@@ -173,7 +223,7 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus, tabs }) => {
       case "HACKER": // Computer Sciency
         return {
           bg: "bg-[#020617]",
-          text: "text-[#22d3ee]",
+          text: "text-[#67e8f9]", // Brightened cyan for better contrast
           highlight: "bg-[#22d3ee] text-[#020617]",
           border: "border-[#22d3ee]",
         };
@@ -223,6 +273,11 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus, tabs }) => {
                   addLogMessage(`UI_NAV_CLICK: [${menu}]`);
                   addLogMessage("LOAD_BALANCING_UI_THREAD...");
                   addLogMessage("PARSING_UPSTREAM_METRICS...");
+                  if (menu === "01_WHO_AM_I") {
+                    setContentDepth(0);
+                    setPanDepth(0);
+                    addLogMessage("SYSTEM_RESET: Snap-to-zero triggered.");
+                  }
                 }}
                 className={`p-2 transition-colors duration-75 flex gap-3 cursor-pointer text-left w-full outline-none focus:ring-2 focus:ring-inset focus:ring-current/20 pl-12 ${isSelected ? `${theme.highlight} font-bold` : "opacity-60 hover:bg-black/5"}`}
               >
@@ -238,13 +293,16 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus, tabs }) => {
       if (!selectedProject) {
         // Project Index View
         const filters = ["ALL", "FRONT_END", "BACK_END", "SUPPORT"];
-        const filteredProjects = projectFilter === "ALL" 
-          ? PROJECTS 
-          : PROJECTS.filter(p => p.category === projectFilter);
+        const filteredProjects =
+          projectFilter === "ALL"
+            ? PROJECTS
+            : PROJECTS.filter((p) => p.category === projectFilter);
 
         return (
           <div className="flex flex-col h-full w-full">
-            <div className={`flex gap-2 border-b-2 ${theme.border} pb-2 mb-4 shrink-0 overflow-x-auto [&::-webkit-scrollbar]:hidden pl-12`}>
+            <div
+              className={`flex gap-2 border-b-2 ${theme.border} pb-2 mb-4 shrink-0 overflow-x-auto [&::-webkit-scrollbar]:hidden pl-12`}
+            >
               {filters.map((f) => (
                 <button
                   key={f}
@@ -270,10 +328,16 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus, tabs }) => {
                     className="group border border-current/20 p-3 hover:bg-current/5 cursor-pointer transition-all text-left w-full outline-none focus:ring-2 focus:ring-current/10"
                   >
                     <div className="flex justify-between items-start mb-1">
-                      <h4 className="font-bold uppercase tracking-wide text-xs">{p.title}</h4>
-                      <span className="text-[8px] opacity-50 border border-current px-1">{p.category}</span>
+                      <h4 className="font-bold uppercase tracking-wide text-xs">
+                        {p.title}
+                      </h4>
+                      <span className="text-[8px] opacity-50 border border-current px-1">
+                        {p.category}
+                      </span>
                     </div>
-                    <p className="text-[11px] opacity-70 line-clamp-2 leading-relaxed">{p.description}</p>
+                    <p className="text-[11px] opacity-70 line-clamp-2 leading-relaxed">
+                      {p.description}
+                    </p>
                   </button>
                 ))}
               </div>
@@ -283,7 +347,7 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus, tabs }) => {
       }
 
       // Project Detail View
-      const project = PROJECTS.find(p => p.id === selectedProject);
+      const project = PROJECTS.find((p) => p.id === selectedProject);
       if (!project) return null;
 
       const activeTabName = tabs[tabIndex];
@@ -318,14 +382,10 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus, tabs }) => {
               {activeTabName === "OVERVIEW" && (
                 <div>
                   <p className="font-bold mb-2 uppercase border-b border-current/20 pb-1">
-                    <TerminalText>
-                      {project.title}
-                    </TerminalText>
+                    <TerminalText>{project.title}</TerminalText>
                   </p>
                   <p>
-                    <TerminalText>
-                      {project.details.overview}
-                    </TerminalText>
+                    <TerminalText>{project.details.overview}</TerminalText>
                   </p>
                 </div>
               )}
@@ -335,9 +395,7 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus, tabs }) => {
                     <TerminalText>[ THE BREACH ]</TerminalText>
                   </p>
                   <p>
-                    <TerminalText>
-                      {project.details.breach}
-                    </TerminalText>
+                    <TerminalText>{project.details.breach}</TerminalText>
                   </p>
                 </div>
               )}
@@ -347,9 +405,7 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus, tabs }) => {
                     <TerminalText>[ THE DEPLOYMENT ]</TerminalText>
                   </p>
                   <p>
-                    <TerminalText>
-                      {project.details.deployment}
-                    </TerminalText>
+                    <TerminalText>{project.details.deployment}</TerminalText>
                   </p>
                 </div>
               )}
@@ -361,9 +417,7 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus, tabs }) => {
                   <div className="space-y-2">
                     {project.details.result.map((r, i) => (
                       <p key={i}>
-                        <TerminalText>
-                          {r}
-                        </TerminalText>
+                        <TerminalText>{r}</TerminalText>
                       </p>
                     ))}
                   </div>
@@ -416,25 +470,27 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus, tabs }) => {
                 <p>
                   <TerminalText>Jerod Hollen</TerminalText>
                   <br />
-                  <TerminalText>Full Stack Engineer | Systems Architect</TerminalText>
-                </p>
-                <p>
                   <TerminalText>
-                    I specialize in building high-performance, resilient systems 
-                    that bridge the gap between complex backend architecture and 
-                    intuitive frontend experiences. 
+                    Full Stack Engineer | Systems Architect
                   </TerminalText>
                 </p>
                 <p>
                   <TerminalText>
-                    Western Washington University (2022)
-                    B.S. Computer Science
+                    I specialize in building high-performance, resilient systems
+                    that bridge the gap between complex backend architecture and
+                    intuitive frontend experiences.
                   </TerminalText>
                 </p>
                 <p>
                   <TerminalText>
-                    Based in Bellingham, WA. Currently advancing my expertise at 
-                    Everett Community College.
+                    Western Washington University (2022) B.S. Computer Science
+                  </TerminalText>
+                </p>
+                <p>
+                  <TerminalText>
+                    Based in Bellingham, WA. Currently advancing my expertise
+                    with LeetCode projects, full stack certifications, and side
+                    projects.
                   </TerminalText>
                 </p>
               </div>
@@ -442,21 +498,33 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus, tabs }) => {
             {activeSelection === "03_ENGINEERING_STACK" && (
               <div className="space-y-4">
                 <div>
-                  <p className="font-bold opacity-50 text-[10px] uppercase mb-1">Languages</p>
+                  <p className="font-bold opacity-50 text-[10px] uppercase mb-1">
+                    Languages
+                  </p>
                   <p>
-                    &gt; <TerminalText>TypeScript</TerminalText>, <TerminalText>JavaScript</TerminalText>, Ruby, <TerminalText>PHP</TerminalText>, Python, SQL
+                    &gt; <TerminalText>TypeScript</TerminalText>,{" "}
+                    <TerminalText>JavaScript</TerminalText>, Ruby,{" "}
+                    <TerminalText>PHP</TerminalText>, Python, SQL
                   </p>
                 </div>
                 <div>
-                  <p className="font-bold opacity-50 text-[10px] uppercase mb-1">Frameworks</p>
+                  <p className="font-bold opacity-50 text-[10px] uppercase mb-1">
+                    Frameworks
+                  </p>
                   <p>
-                    &gt; <TerminalText>React</TerminalText>, <TerminalText>Next.js</TerminalText>, <TerminalText>Node.js</TerminalText>, Ruby on Rails, Express
+                    &gt; <TerminalText>React</TerminalText>,{" "}
+                    <TerminalText>Next.js</TerminalText>,{" "}
+                    <TerminalText>Node.js</TerminalText>, Ruby on Rails, Express
                   </p>
                 </div>
                 <div>
-                  <p className="font-bold opacity-50 text-[10px] uppercase mb-1">Infrastructure</p>
+                  <p className="font-bold opacity-50 text-[10px] uppercase mb-1">
+                    Infrastructure
+                  </p>
                   <p>
-                    &gt; <TerminalText>AWS</TerminalText> (Lambda, S3, EC2), <TerminalText>PostgreSQL</TerminalText>, Prisma, Supabase, Docker
+                    &gt; <TerminalText>AWS</TerminalText> (Lambda, S3, EC2),{" "}
+                    <TerminalText>PostgreSQL</TerminalText>, Prisma, Supabase,
+                    Docker
                   </p>
                 </div>
               </div>
@@ -470,7 +538,8 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus, tabs }) => {
                   <p>LinkedIn: linkedin.com/in/jerodhollen</p>
                 </div>
                 <p className="text-[10px] opacity-50 italic mt-4">
-                  &quot;Available for strategic roles and high-impact engineering challenges.&quot;
+                  &quot;Available for strategic roles and high-impact
+                  engineering challenges.&quot;
                 </p>
               </div>
             )}
@@ -491,7 +560,9 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus, tabs }) => {
           className={`absolute top-2 left-2 z-40 p-2 transition-all duration-200 hover:scale-110 active:scale-95 flex items-center gap-2 group cursor-pointer ${theme.text}`}
           aria-label="Back"
         >
-          <div className={`p-1 rounded-sm border-2 ${theme.border} group-hover:bg-black/5`}>
+          <div
+            className={`p-1 rounded-sm border-2 ${theme.border} group-hover:bg-black/5`}
+          >
             <svg
               width="14"
               height="14"

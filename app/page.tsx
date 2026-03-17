@@ -20,6 +20,8 @@ export default function AudioConsolePage() {
     setTabIndex,
     activeSelection,
     setActiveSelection,
+    selectedProject,
+    setSelectedProject,
     contentDepth,
     setContentDepth,
     panDepth,
@@ -34,6 +36,7 @@ export default function AudioConsolePage() {
     "04_GET_IN_TOUCH",
   ];
   const tabs = ["OVERVIEW", "BREACH", "DEPLOY", "RESULT", "ASSETS"];
+  const projectIds = ["CSA_AUTO", "OFF_GRID_MED", "PORTFOLIO_V2", "SYSTEM_MIGRATION"];
 
   const leftMeterActivity = useMotionValue(0);
   const rightMeterActivity = useMotionValue(0);
@@ -78,13 +81,21 @@ export default function AudioConsolePage() {
                     maxLabel="+"
                     isActive={true}
                     activityMv={leftMeterActivity}
-                    steps={menus.length}
-                    value={menuIndex}
+                    steps={activeSelection === "02_CASE_STUDIES" && !selectedProject ? projectIds.length : menus.length}
+                    value={activeSelection === "02_CASE_STUDIES" && !selectedProject ? projectIds.indexOf(selectedProject || projectIds[0]) : menuIndex}
                     onChange={(newIdx) => {
-                      setMenuIndex(newIdx);
-                      addLogMessage(`NAVIGATOR: ${menus[newIdx]}`);
-                      if (activeSelection) {
-                        setActiveSelection(menus[newIdx] || "01_PROFILE");
+                      if (activeSelection === "02_CASE_STUDIES" && !selectedProject) {
+                        const nextProj = projectIds[newIdx];
+                        if (nextProj) {
+                          setSelectedProject(nextProj);
+                          addLogMessage(`PROJECT_MOUNTED: ${nextProj}`);
+                        }
+                      } else {
+                        setMenuIndex(newIdx);
+                        addLogMessage(`NAVIGATOR: ${menus[newIdx]}`);
+                        if (activeSelection) {
+                          setActiveSelection(menus[newIdx] || "01_WHO_AM_I");
+                        }
                       }
                     }}
                   />
@@ -102,12 +113,12 @@ export default function AudioConsolePage() {
                     minLabel="LEFT"
                     centerLabel="TAB"
                     maxLabel="RIGHT"
-                    isActive={activeSelection === "02_CASE_STUDIES"}
+                    isActive={!!selectedProject}
                     activityMv={leftMeterActivity}
                     steps={tabs.length}
                     value={tabIndex}
                     onChange={(newIndex) => {
-                      if (activeSelection === "02_CASE_STUDIES") {
+                      if (selectedProject) {
                         setTabIndex(newIndex);
                         addLogMessage(`INFO_GAIN: ${tabs[newIndex]}`);
                       }
