@@ -8,7 +8,6 @@ import { Knob } from "./components/Knob";
 import { SyncLed } from "./components/SyncLed";
 import { VCABank } from "./components/VCABank";
 import { VerticalMeter } from "./components/VerticalMeter";
-import { TelemetryDisplay } from "./components/TelemetryDisplay";
 import { DiagnosticsPanel } from "./components/DiagnosticsPanel";
 import { GitHubDisplay } from "./components/GitHubDisplay";
 
@@ -153,7 +152,7 @@ export default function AudioConsolePage() {
               </div>
 
               <div className="flex flex-col items-center gap-12">
-                {/* Traversal Dials - Centered with LCD */}
+                {/* Traversal Dials - Vertically Centered */}
                 <div className="flex flex-col gap-10">
                   <div className="flex flex-col items-center gap-2">
                     <Knob
@@ -190,8 +189,8 @@ export default function AudioConsolePage() {
                   </div>
                 </div>
 
-                {/* Hardware Control Section (Presets) - Moved Under Knobs */}
-                <div className="w-full flex flex-col gap-4 mt-4">
+                {/* Hardware Control Section (Presets) - Positioned Beneath Knobs */}
+                <div className="w-full flex flex-col gap-4">
                   <VCABank />
                 </div>
               </div>
