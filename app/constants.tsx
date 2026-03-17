@@ -99,7 +99,7 @@ export const PROJECTS: Project[] = [
         content: (
           <div className="flex flex-col items-center justify-center h-full text-center p-4">
             <p className="text-xs font-bold text-red-500 animate-pulse">TODO: CLI_LOG_SCREENSHOT</p>
-            <p className="text-[10px] opacity-60 mt-2 italic">Capture the Python terminal outputting 'SUCCESS' for multiple courses.</p>
+            <p className="text-[10px] opacity-60 mt-2 italic">Capture the Python terminal outputting &apos;SUCCESS&apos; for multiple courses.</p>
           </div>
         )
       }

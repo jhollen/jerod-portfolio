@@ -3,18 +3,7 @@
 import * as React from "react";
 import { useConsoleStore } from "@/app/useConsoleStore";
 
-const GITHUB_USERNAME = "jhollen"; // Centralized username
-
-/*
-  NOTE FOR RECRUITERS / COLLABORATORS:
-  The GitHub API has a rate limit for unauthenticated requests (60 per hour per IP).
-  To increase this limit, you can use a Personal Access Token (PAT).
-  
-  To authenticate:
-  1. Generate a PAT in GitHub Settings.
-  2. Add it to your .env.local as NEXT_PUBLIC_GITHUB_TOKEN.
-  3. Uncomment the Authorization header in the fetch call below.
-*/
+const GITHUB_USERNAME = "jhollen";
 
 interface GitHubEvent {
   id: string;
@@ -26,72 +15,129 @@ interface GitHubEvent {
   };
 }
 
+interface GitHubRepo {
+  id: number;
+  name: string;
+  description: string;
+  stargazers_count: number;
+  language: string;
+  updated_at: string;
+}
+
+interface GitHubPR {
+  id: number;
+  title: string;
+  state: string;
+  created_at: string;
+  user: { login: string };
+}
+
+type ViewMode = "FEED" | "REPOS" | "REPO_DETAIL";
+
 export const GitHubDisplay = () => {
+  const [viewMode, setViewMode] = React.useState<ViewMode>("FEED");
   const [events, setEvents] = React.useState<GitHubEvent[]>([]);
+  const [repos, setRepos] = React.useState<GitHubRepo[]>([]);
+  const [selectedRepo, setSelectedRepo] = React.useState<string | null>(null);
+  const [repoDetails, setRepoDetails] = React.useState<GitHubPR[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
   const { addLogMessage } = useConsoleStore();
   const scrollRef = React.useRef<HTMLDivElement>(null);
 
-  React.useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        setLoading(true);
-        addLogMessage(`GITHUB_SYNC: Initializing for [${GITHUB_USERNAME}]...`);
-        
-        const headers: Record<string, string> = {
-          "Accept": "application/vnd.github.v3+json",
-        };
-        
-        if (process.env.NEXT_PUBLIC_GITHUB_TOKEN) {
-          headers["Authorization"] = `token ${process.env.NEXT_PUBLIC_GITHUB_TOKEN}`;
-        }
-
-        const res = await fetch(`https://api.github.com/users/${GITHUB_USERNAME}/events/public?per_page=10`, {
-          headers
-        });
-
-        if (!res.ok) {
-          if (res.status === 403) throw new Error("RATE_LIMIT_EXCEEDED");
-          if (res.status === 404) throw new Error("USER_NOT_FOUND");
-          throw new Error(`STATUS_${res.status}`);
-        }
-
-        const data = await res.json();
-        setEvents(data);
-        setError(null);
-        addLogMessage("GITHUB_SYNC: Connection established.");
-      } catch (err: unknown) {
-        const message = err instanceof Error ? err.message : "COMM_FAILURE";
-        setError(message);
-        addLogMessage(`GITHUB_ERROR: ${message}`);
-      } finally {
-        setLoading(false);
-      }
+  const getHeaders = React.useCallback(() => {
+    const headers: Record<string, string> = {
+      "Accept": "application/vnd.github.v3+json",
     };
+    if (process.env.NEXT_PUBLIC_GITHUB_TOKEN) {
+      headers["Authorization"] = `token ${process.env.NEXT_PUBLIC_GITHUB_TOKEN}`;
+    }
+    return headers;
+  }, []);
 
-    fetchEvents();
-    const interval = setInterval(fetchEvents, 300000); // 5 mins
-    return () => clearInterval(interval);
-  }, [addLogMessage]);
+  const fetchEvents = React.useCallback(async () => {
+    try {
+      setLoading(true);
+      const res = await fetch(`https://api.github.com/users/${GITHUB_USERNAME}/events/public?per_page=10`, {
+        headers: getHeaders()
+      });
+      if (!res.ok) throw new Error(`STATUS_${res.status}`);
+      const data = await res.json();
+      setEvents(data);
+      setError(null);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "COMM_FAILURE");
+    } finally {
+      setLoading(false);
+    }
+  }, [getHeaders]);
 
-  const getThemeStyles = () => {
-    // Dark terminal style: Black background, Olive Green text
-    return "text-[#8fb379] bg-[#050505] border-[#1a1a1a]";
+  const fetchRepos = React.useCallback(async () => {
+    try {
+      setLoading(true);
+      const res = await fetch(`https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=updated&per_page=10`, {
+        headers: getHeaders()
+      });
+      if (!res.ok) throw new Error(`STATUS_${res.status}`);
+      const data = await res.json();
+      setRepos(data);
+      setError(null);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "COMM_FAILURE");
+    } finally {
+      setLoading(false);
+    }
+  }, [getHeaders]);
+
+  const fetchRepoPRs = React.useCallback(async (repoName: string) => {
+    try {
+      setLoading(true);
+      const res = await fetch(`https://api.github.com/repos/${GITHUB_USERNAME}/${repoName}/pulls?state=all&per_page=10`, {
+        headers: getHeaders()
+      });
+      if (!res.ok) throw new Error(`STATUS_${res.status}`);
+      const data = await res.json();
+      setRepoDetails(data);
+      setError(null);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "COMM_FAILURE");
+    } finally {
+      setLoading(false);
+    }
+  }, [getHeaders]);
+
+  React.useEffect(() => {
+    if (viewMode === "FEED") fetchEvents();
+    if (viewMode === "REPOS") fetchRepos();
+  }, [viewMode, fetchEvents, fetchRepos]);
+
+  const handleRepoClick = (repoName: string) => {
+    setSelectedRepo(repoName);
+    setViewMode("REPO_DETAIL");
+    fetchRepoPRs(repoName);
+    addLogMessage(`GITHUB_UPLINK: Fetching activity for [${repoName}]`);
   };
 
-  const formatEventType = (type: string) => {
-    return type.replace("Event", "").toUpperCase();
-  };
-
-  const formatRepoName = (name: string) => {
-    return name.split("/")[1] || name;
-  };
+  const formatRepoName = (name: string) => name.split("/")[1] || name;
 
   return (
-    <div className={`w-full h-32 border-2 rounded p-2 overflow-hidden flex flex-col font-mono text-[10px] shadow-[inset_0_2px_10px_rgba(0,0,0,0.8)] transition-colors duration-300 ${getThemeStyles()}`}>
+    <div className="w-full h-32 border-2 border-[#1a1a1a] rounded p-2 overflow-hidden flex flex-col font-mono text-[10px] shadow-[inset:0_2px_10px_rgba(0,0,0,0.8)] transition-colors duration-300 text-[#8fb379] bg-[#050505]">
       <div className="flex justify-between items-center border-b border-[#8fb379]/30 pb-1 mb-1 opacity-70">
-        <span className="font-bold tracking-widest uppercase">Feed: GitHub_Remote [{GITHUB_USERNAME}]</span>
+        <div className="flex gap-2">
+          <button 
+            onClick={() => setViewMode("FEED")}
+            className={`uppercase tracking-widest hover:text-white transition-colors ${viewMode === "FEED" ? "font-bold underline" : "opacity-50"}`}
+          >
+            Feed
+          </button>
+          <span className="opacity-20">|</span>
+          <button 
+            onClick={() => setViewMode("REPOS")}
+            className={`uppercase tracking-widest hover:text-white transition-colors ${viewMode === "REPOS" || viewMode === "REPO_DETAIL" ? "font-bold underline" : "opacity-50"}`}
+          >
+            Repos
+          </button>
+        </div>
         <div className="flex items-center gap-2">
           {loading && <span className="animate-spin text-[#8fb379]/50">⟳</span>}
           <span className={`${error ? "text-red-900 animate-pulse" : "animate-pulse text-[#8fb379]"}`}>● {error ? "LINK_FAILURE" : "LIVE_SYNC"}</span>
@@ -99,26 +145,50 @@ export const GitHubDisplay = () => {
       </div>
       
       <div ref={scrollRef} className="flex-1 overflow-y-auto space-y-1 [&::-webkit-scrollbar]:hidden">
-        {loading && events.length === 0 && <p className="animate-pulse opacity-50">NEGOTIATING_HANDSHAKE...</p>}
-        {error && (
-          <div className="flex flex-col gap-1 text-red-900 font-bold opacity-80">
-            <p>COMM_LINK_ERROR: {error}</p>
-            <p className="opacity-50 text-[8px]">CHECK_UPSTREAM_CONNECTION_OR_RATE_LIMITS</p>
-          </div>
-        )}
-        {!error && events.map((event) => (
+        {loading && events.length === 0 && repos.length === 0 && <p className="animate-pulse opacity-50 uppercase">Negotiating_Handshake...</p>}
+        
+        {viewMode === "FEED" && !error && events.map((event) => (
           <div key={event.id} className="flex gap-2 whitespace-nowrap opacity-60 hover:opacity-100 transition-opacity">
-            <span className="font-bold shrink-0 text-[#8fb379]/80">[{formatEventType(event.type)}]</span>
+            <span className="font-bold shrink-0 text-[#8fb379]/80">[{event.type.replace("Event", "").toUpperCase()}]</span>
             <span className="opacity-40 shrink-0">{new Date(event.created_at).toLocaleDateString()}</span>
             <span className="font-bold truncate max-w-[100px] text-[#8fb379]">{formatRepoName(event.repo.name)}</span>
             {event.type === "PushEvent" && (
-              <span className="opacity-40 italic truncate">
-                - {event.payload.commits?.[0]?.message || "COMMIT_PUSHED"}
-              </span>
+              <span className="opacity-40 italic truncate">- {event.payload.commits?.[0]?.message || "COMMIT_PUSHED"}</span>
             )}
           </div>
         ))}
-        {!loading && !error && events.length === 0 && <p className="opacity-40">NO_RECENT_UPSTREAM_ACTIVITY</p>}
+
+        {viewMode === "REPOS" && !error && repos.map((repo) => (
+          <button 
+            key={repo.id} 
+            onClick={() => handleRepoClick(repo.name)}
+            className="flex w-full gap-2 whitespace-nowrap opacity-60 hover:opacity-100 transition-opacity text-left outline-none"
+          >
+            <span className="font-bold shrink-0 text-[#8fb379]/80">[REPO]</span>
+            <span className="font-bold truncate max-w-[120px] text-[#8fb379] underline decoration-dotted">{repo.name}</span>
+            <span className="opacity-40 truncate flex-1 italic">{repo.description || "NO_DESC"}</span>
+            <span className="opacity-40 shrink-0">★{repo.stargazers_count}</span>
+          </button>
+        ))}
+
+        {viewMode === "REPO_DETAIL" && !error && (
+          <div className="space-y-1">
+            <div className="flex justify-between border-b border-[#8fb379]/10 pb-1 mb-1">
+              <span className="font-black uppercase tracking-widest text-[#8fb379]">Activity: {selectedRepo}</span>
+              <button onClick={() => setViewMode("REPOS")} className="opacity-50 hover:opacity-100 italic">[Back]</button>
+            </div>
+            {repoDetails.length === 0 && !loading && <p className="opacity-40 italic">NO_PULL_REQUESTS_FOUND</p>}
+            {repoDetails.map((pr) => (
+              <div key={pr.id} className="flex gap-2 whitespace-nowrap opacity-60">
+                <span className={`font-bold shrink-0 ${pr.state === "open" ? "text-emerald-500" : "text-purple-500"}`}>[{pr.state.toUpperCase()}]</span>
+                <span className="truncate flex-1">{pr.title}</span>
+                <span className="opacity-40 shrink-0 italic">@{pr.user.login}</span>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {error && <p className="text-red-900 font-bold opacity-80 uppercase">Comm_Link_Error: {error}</p>}
       </div>
     </div>
   );

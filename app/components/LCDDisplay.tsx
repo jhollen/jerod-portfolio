@@ -59,8 +59,6 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
     addLogMessage,
     triggerNavSpike,
     triggerNavDance,
-    triggerTabSpike,
-    triggerTabDance,
     setNavActivity,
     theme: globalTheme,
   } = useConsoleStore();
