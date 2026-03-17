@@ -8,22 +8,22 @@ import { motion, AnimatePresence } from "framer-motion";
 import { TypewriterText } from "./TypewriterText";
 import { PROJECTS } from "../constants";
 
-const AvatarLoop = ({ isKindle }: { isKindle: boolean }) => {
+const Avatar = ({ isKindle, triggerWink }: { isKindle: boolean; triggerWink: boolean }) => {
   const [isWinking, setIsWinking] = React.useState(false);
 
   React.useEffect(() => {
-    const interval = setInterval(() => {
+    if (triggerWink) {
       setIsWinking(true);
-      setTimeout(() => setIsWinking(false), 300);
-    }, 4000);
-    return () => clearInterval(interval);
-  }, []);
+      const timer = setTimeout(() => setIsWinking(false), 300);
+      return () => clearTimeout(timer);
+    }
+  }, [triggerWink]);
 
   return (
     <motion.div 
-      initial={{ opacity: 0, scale: 0.5, x: 20 }}
-      animate={{ opacity: 1, scale: 1, x: 0 }}
-      className={`absolute top-4 right-4 w-12 h-12 border border-current p-0.5 ${isKindle ? "bg-transparent" : "bg-black/5"} z-50 overflow-hidden`}
+      initial={{ opacity: 0, scale: 0.5, y: -20 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      className={`absolute top-4 left-1/2 -translate-x-1/2 w-12 h-12 border border-current p-0.5 ${isKindle ? "bg-transparent" : "bg-black/5"} z-50 overflow-hidden`}
     >
       {!isKindle && <div className="absolute inset-0 opacity-20 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] z-10 bg-[length:100%_2px,3px_100%]" />}
       <Image
@@ -51,7 +51,6 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
     activeSelection,
     setActiveSelection,
     selectedProject,
-    setSelectedProject,
     contentDepth,
     panDepth,
     addLogMessage,
@@ -60,6 +59,12 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
     setNavActivity,
     theme: globalTheme,
   } = useConsoleStore();
+
+  const [winkTrigger, setWinkTrigger] = React.useState(false);
+
+  const handleInteraction = () => {
+    setWinkTrigger(prev => !prev);
+  };
 
   React.useEffect(() => {
     if (isBooting) {
@@ -78,22 +83,12 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
     font: "font-serif" 
   } : { bg: globalTheme === "DARK" ? "bg-[#0a0a0a]" : "bg-[#ffffff]", text: globalTheme === "DARK" ? "text-[#e8e9e4]" : "text-[#0a0a0a]", highlight: globalTheme === "DARK" ? "bg-[#e8e9e4] text-[#0a0a0a]" : "bg-[#0a0a0a] text-[#ffffff]", border: globalTheme === "DARK" ? "border-[#e8e9e4]" : "border-[#0a0a0a]", font: "font-mono" };
 
-  const handleBack = () => {
-    if (selectedProject) {
-      setSelectedProject(null);
-      addLogMessage("SYSTEM: Return to Index");
-    } else {
-      setActiveSelection(null);
-      addLogMessage("SYSTEM: Return to Root");
-    }
-  };
-
   const tier = contentDepth < 34 ? 1 : contentDepth < 67 ? 2 : 3;
 
   const renderBio = () => (
-    <div className={`space-y-6 ${theme.font} text-[15px] leading-relaxed relative`}>
+    <div className={`space-y-6 ${theme.font} text-[15px] leading-relaxed relative pt-12`}>
       <h3 className="text-xl font-black border-b-2 border-current pb-2 flex justify-between items-end">
-        <TypewriterText text="01_BIO" speed={30} />
+        <TypewriterText text="Bio" speed={30} />
         <span className="text-[10px] opacity-40 uppercase tracking-[0.2em]">Zoom: Tier {tier}</span>
       </h3>
       
@@ -130,9 +125,9 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
   );
 
   const renderStack = () => (
-    <div className={`space-y-6 ${theme.font} text-[14px] leading-relaxed`}>
+    <div className={`space-y-6 ${theme.font} text-[14px] leading-relaxed pt-12`}>
       <h3 className="text-xl font-black border-b-2 border-current pb-2 flex justify-between items-end">
-        <TypewriterText text="03_STACK" speed={30} />
+        <TypewriterText text="Stack" speed={30} />
         <span className="text-[10px] opacity-40 uppercase tracking-[0.2em]">Timeline: Tier {tier}</span>
       </h3>
 
@@ -182,14 +177,14 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
   const renderProjects = () => {
     if (!selectedProject) {
       return (
-        <div className="flex flex-col h-full w-full">
-          <h3 className="text-xl font-black border-b-2 border-current pb-2 mb-4 pl-12"><TypewriterText text="02_PROJECTS" speed={30} /></h3>
+        <div className="flex flex-col h-full w-full pt-12">
+          <h3 className="text-xl font-black border-b-2 border-current pb-2 mb-4 pl-12"><TypewriterText text="Projects" speed={30} /></h3>
           <div className="flex-1 overflow-y-auto pl-12 pb-10 pr-4 space-y-4">
             {PROJECTS.map((p, idx) => (
               <button key={p.id} 
                 onMouseEnter={() => { setMenuIndex(idx % 5); triggerNavDance(); }}
                 onMouseLeave={() => setNavActivity(0)}
-                onClick={() => { setSelectedProject(p.id); setMenuIndex(0); triggerNavSpike(); addLogMessage(`MOUNT: ${p.id}`); }}
+                onClick={() => { handleInteraction(); setSelectedProject(p.id); setMenuIndex(0); triggerNavSpike(); addLogMessage(`MOUNT: ${p.id}`); }}
                 className="group border border-current/20 p-3 hover:bg-current/5 text-left w-full outline-none focus:ring-2 focus:ring-current/10">
                 <div className="flex justify-between items-start mb-1">
                   <h4 className="font-bold uppercase tracking-wide text-xs"><TypewriterText key={`title-${p.id}`} text={p.title} speed={10} delay={idx * 100} /></h4>
@@ -209,10 +204,10 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
     const currentSlide = p.slides[slideIdx];
 
     return (
-      <div className="flex flex-col h-full w-full">
+      <div className="flex flex-col h-full w-full pt-12">
         <h3 className="text-xl font-black border-b-2 border-current pb-2 mb-4 pl-12 flex justify-between items-end">
           <TypewriterText text={p.title} speed={20} />
-          <span className="text-[10px] opacity-40 uppercase tracking-[0.2em]">PAN: Slide {slideIdx + 1}/{p.slides.length}</span>
+          <span className="text-[10px] opacity-40 uppercase tracking-[0.2em]">Slide {slideIdx + 1}/{p.slides.length}</span>
         </h3>
         <div className="flex-1 pl-12 pr-4 pb-10 overflow-hidden relative">
           <AnimatePresence mode="wait">
@@ -234,8 +229,8 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
   };
 
   const renderContact = () => (
-    <div className={`space-y-6 ${theme.font} text-[15px] leading-relaxed`}>
-      <h3 className="text-xl font-black border-b-2 border-current pb-2"><TypewriterText text="04_CONTACT" speed={30} /></h3>
+    <div className={`space-y-6 ${theme.font} text-[15px] leading-relaxed pt-12`}>
+      <h3 className="text-xl font-black border-b-2 border-current pb-2"><TypewriterText text="Contact" speed={30} /></h3>
       <div className="space-y-6 py-4">
         <div className="border border-current/30 p-6 bg-current/5 space-y-4">
           <p className="font-bold text-center border-b border-current/20 pb-4 tracking-[0.2em] uppercase">LINK_STABLE: AWAITING_INPUT</p>
@@ -259,17 +254,21 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
     if (isBooting) return <BootScreen theme={theme} />;
     if (!activeSelection) {
       return (
-        <div className="flex flex-col gap-2 w-full mt-2">
-          <h3 className="font-bold uppercase tracking-widest mb-4 opacity-50 text-[10px] pl-12">SYSTEM_ROOT:</h3>
-          {menus.map((menu, idx) => (
-            <button key={menu} 
-              onMouseEnter={() => { setMenuIndex(idx); triggerNavDance(); }}
-              onMouseLeave={() => setNavActivity(0)}
-              onClick={() => { setActiveSelection(menu); setMenuIndex(0); triggerNavSpike(); addLogMessage(`EXEC: [${menu}]`); }}
-              className={`p-2 transition-colors duration-75 flex gap-3 cursor-pointer text-left w-full outline-none focus:ring-2 focus:ring-inset focus:ring-current/20 pl-12 ${idx === menuIndex ? `${theme.highlight} font-bold` : "opacity-60 hover:bg-black/5"}`}>
-              <TypewriterText key={`menu-${menu}`} text={`0${idx+1}_${menu}`} speed={30} delay={idx * 50} />
-            </button>
-          ))}
+        <div className="flex flex-col gap-2 w-full mt-2 pt-12">
+          <h3 className="font-bold uppercase tracking-widest mb-4 opacity-50 text-[10px] pl-12">System Root:</h3>
+          {menus.map((menu, idx) => {
+            const friendlyNames = ["Bio", "Projects", "Stack", "Contact"];
+            const name = friendlyNames[idx] || menu;
+            return (
+              <button key={menu} 
+                onMouseEnter={() => { setMenuIndex(idx); triggerNavDance(); }}
+                onMouseLeave={() => setNavActivity(0)}
+                onClick={() => { handleInteraction(); setActiveSelection(menu); setMenuIndex(0); triggerNavSpike(); addLogMessage(`EXEC: [${menu}]`); }}
+                className={`p-2 transition-colors duration-75 flex gap-3 cursor-pointer text-left w-full outline-none focus:ring-2 focus:ring-inset focus:ring-current/20 pl-12 ${idx === menuIndex ? `${theme.highlight} font-bold` : "opacity-60 hover:bg-black/5"}`}>
+                <TypewriterText key={`menu-${menu}`} text={`0${idx+1} ${name}`} speed={30} delay={idx * 50} />
+              </button>
+            );
+          })}
         </div>
       );
     }
@@ -284,12 +283,7 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
 
   return (
     <div className={`w-full aspect-[16/9] max-h-[400px] ${theme.bg} border-[25px] border-[#1a1a1a] p-3 md:p-6 relative shadow-[0_10px_50px_rgba(0,0,0,0.3)] overflow-hidden flex flex-col shrink-0 transition-all duration-700`}>
-      {activeSelection && (
-        <button onClick={handleBack} className={`absolute top-4 left-4 z-40 p-2 transition-all duration-200 hover:scale-110 active:scale-95 flex items-center gap-2 group cursor-pointer ${theme.text}`} aria-label="Back">
-          <div className={`p-1 border-2 ${theme.border} group-hover:bg-black/10`}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 19l-7-7 7-7" /></svg></div>
-        </button>
-      )}
-      {!isBooting && <AvatarLoop isKindle={isKindle} />}
+      {!isBooting && <Avatar isKindle={isKindle} triggerWink={winkTrigger} />}
       <div className={`absolute inset-0 pointer-events-none ${isKindle ? "shadow-[inset:0_0_100px_rgba(0,0,0,0.05)]" : "shadow-[inset:0_0_40px_rgba(0,0,0,0.1)]"} z-20`} />
       <div className={`flex-1 h-full overflow-hidden ${theme.text} leading-relaxed tracking-wide relative transition-colors duration-300 z-10`}>
         <div className="absolute inset-0 transition-transform duration-75 ease-linear">{renderMainContent()}</div>
