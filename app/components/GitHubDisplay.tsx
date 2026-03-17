@@ -39,11 +39,16 @@ export const GitHubDisplay = () => {
         setLoading(true);
         addLogMessage(`GITHUB_SYNC: Initializing for [${GITHUB_USERNAME}]...`);
         
+        const headers: Record<string, string> = {
+          "Accept": "application/vnd.github.v3+json",
+        };
+        
+        if (process.env.NEXT_PUBLIC_GITHUB_TOKEN) {
+          headers["Authorization"] = `token ${process.env.NEXT_PUBLIC_GITHUB_TOKEN}`;
+        }
+
         const res = await fetch(`https://api.github.com/users/${GITHUB_USERNAME}/events/public?per_page=10`, {
-          headers: {
-            "Accept": "application/vnd.github.v3+json",
-            // "Authorization": `token ${process.env.NEXT_PUBLIC_GITHUB_TOKEN}` // Uncomment to authenticate
-          }
+          headers
         });
 
         if (!res.ok) {
