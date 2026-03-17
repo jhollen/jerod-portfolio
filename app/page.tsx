@@ -142,13 +142,18 @@ export default function AudioConsolePage() {
 
             {/* Right Section: Auxiliary & Presets */}
             <div className="w-48 hidden lg:flex flex-col justify-between items-center h-full shrink-0">
+              {/* Hardware Control Section (Presets) - Moved Up */}
+              <div className="w-full flex flex-col gap-4">
+                <VCABank />
+              </div>
+
               {/* Telemetry */}
-              <div className="w-full">
+              <div className="w-full mt-4">
                 <TelemetryDisplay />
               </div>
 
-              {/* Traversal Dials */}
-              <div className="flex flex-col gap-10 mt-12">
+              {/* Traversal Dials - Moved Down */}
+              <div className="flex flex-col gap-10 mb-12">
                 <div className="flex flex-col items-center gap-2">
                   <Knob
                     label="SCRUB"
@@ -182,11 +187,6 @@ export default function AudioConsolePage() {
                     }
                   />
                 </div>
-              </div>
-
-              {/* Hardware Control Section */}
-              <div className="w-full flex flex-col gap-4">
-                <VCABank />
               </div>
 
               <div className="w-full flex justify-center pt-4 border-t border-black/30 shadow-[0_-1px_0_rgba(255,255,255,0.05)]">

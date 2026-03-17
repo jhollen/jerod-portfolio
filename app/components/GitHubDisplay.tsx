@@ -5,6 +5,17 @@ import { useConsoleStore } from "@/app/useConsoleStore";
 
 const GITHUB_USERNAME = "jhollen"; // Centralized username
 
+/*
+  NOTE FOR RECRUITERS / COLLABORATORS:
+  The GitHub API has a rate limit for unauthenticated requests (60 per hour per IP).
+  To increase this limit, you can use a Personal Access Token (PAT).
+  
+  To authenticate:
+  1. Generate a PAT in GitHub Settings.
+  2. Add it to your .env.local as NEXT_PUBLIC_GITHUB_TOKEN.
+  3. Uncomment the Authorization header in the fetch call below.
+*/
+
 interface GitHubEvent {
   id: string;
   type: string;
@@ -31,6 +42,7 @@ export const GitHubDisplay = () => {
         const res = await fetch(`https://api.github.com/users/${GITHUB_USERNAME}/events/public?per_page=10`, {
           headers: {
             "Accept": "application/vnd.github.v3+json",
+            // "Authorization": `token ${process.env.NEXT_PUBLIC_GITHUB_TOKEN}` // Uncomment to authenticate
           }
         });
 

@@ -21,6 +21,8 @@ const TerminalText: React.FC<{ children: string }> = ({ children }) => {
     "PostgreSQL",
     "AST parsing",
     "AWS",
+    "Systems Architect",
+    "Full Stack Engineer",
   ];
   const regex = new RegExp(
     `\\b(${keywords.map((k) => k.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|")})\\b`,
@@ -167,7 +169,7 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus, tabs }) => {
       );
     }
 
-    if (activeSelection === "02_INCIDENTS") {
+    if (activeSelection === "02_CASE_STUDIES") {
       const activeTabName = tabs[tabIndex];
 
       return (
@@ -201,14 +203,15 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus, tabs }) => {
                 <div>
                   <p className="font-bold mb-2">
                     <TerminalText>
-                      INCIDENT: Cloud Security Alliance
+                      INCIDENT: Cloud Security Alliance Automation
                     </TerminalText>
                   </p>
                   <p>
                     <TerminalText>
-                      Reconstructed the core architecture for institutional
-                      learning portals, targeting extreme load times and
-                      deployment bottlenecks.
+                      Spearheaded the reconstruction of core architectural 
+                      infrastructure for institutional learning portals. 
+                      Targeted legacy bottlenecks to achieve enterprise-grade 
+                      performance and deployment velocity.
                     </TerminalText>
                   </p>
                 </div>
@@ -220,9 +223,10 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus, tabs }) => {
                   </p>
                   <p>
                     <TerminalText>
-                      Legacy PHP monolith and manual SCORM packaging procedures
-                      severely hampered scaling efforts and caused significant
-                      friction for enterprise clients.
+                      A legacy PHP monolith coupled with manual SCORM packaging 
+                      procedures created severe friction in scaling efforts. 
+                      Enterprise clients were facing unacceptable deployment 
+                      latency and mounting technical debt.
                     </TerminalText>
                   </p>
                 </div>
@@ -234,9 +238,10 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus, tabs }) => {
                   </p>
                   <p>
                     <TerminalText>
-                      Engineered a Node.js CLI toolchain for AST parsing and
-                      SCORM automation. Migrated core frontend to Next.js 13 App
-                      Router with React Server Components.
+                      Engineered a robust Node.js CLI toolchain utilizing AST parsing 
+                      for SCORM automation. Orchestrated a full migration to 
+                      Next.js with React Server Components, optimizing for 
+                      institutional-scale load patterns.
                     </TerminalText>
                   </p>
                 </div>
@@ -246,21 +251,23 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus, tabs }) => {
                   <p className="font-bold mb-2">
                     <TerminalText>[ THE RESOLUTION ]</TerminalText>
                   </p>
-                  <p>
-                    <TerminalText>
-                      &gt; 50% performance increase in TTI.
-                    </TerminalText>
-                  </p>
-                  <p>
-                    <TerminalText>
-                      &gt; Reduced manual deployment from 45 mins to 12 secs.
-                    </TerminalText>
-                  </p>
-                  <p>
-                    <TerminalText>
-                      &gt; Achieved 0% defect rate in automated pipelines.
-                    </TerminalText>
-                  </p>
+                  <div className="space-y-2">
+                    <p>
+                      <TerminalText>
+                        &gt; 50% increase in Time-to-Interactive (TTI).
+                      </TerminalText>
+                    </p>
+                    <p>
+                      <TerminalText>
+                        &gt; Reduced manual deployment cycle from 45m to 12s.
+                      </TerminalText>
+                    </p>
+                    <p>
+                      <TerminalText>
+                        &gt; Achieved 100% reliability in automated pipelines.
+                      </TerminalText>
+                    </p>
+                  </div>
                 </div>
               )}
               {activeTabName === "ASSETS" && (
@@ -304,64 +311,68 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus, tabs }) => {
           <h3 className="font-bold uppercase tracking-widest mb-2 border-b border-current pb-2 pl-12">
             {activeSelection}
           </h3>
-          {activeSelection === "01_PROFILE" && (
-            <p>
-              <TerminalText>Jerod Hollen</TerminalText>
-              <br />
-              <TerminalText>Full Stack Engineer</TerminalText>
-              <br />
-              <br />
-              <TerminalText>Western Washington University (2022)</TerminalText>
-              <br />
-              <TerminalText>B.S. Computer Science</TerminalText>
-              <br />
-              <br />
-              <TerminalText>
-                Based in Bellingham, WA. Studying at Everett Community College.
-              </TerminalText>
-            </p>
+          {activeSelection === "01_WHO_AM_I" && (
+            <div className="space-y-4">
+              <p>
+                <TerminalText>Jerod Hollen</TerminalText>
+                <br />
+                <TerminalText>Full Stack Engineer | Systems Architect</TerminalText>
+              </p>
+              <p>
+                <TerminalText>
+                  I specialize in building high-performance, resilient systems 
+                  that bridge the gap between complex backend architecture and 
+                  intuitive frontend experiences. 
+                </TerminalText>
+              </p>
+              <p>
+                <TerminalText>
+                  Western Washington University (2022)
+                  B.S. Computer Science
+                </TerminalText>
+              </p>
+              <p>
+                <TerminalText>
+                  Based in Bellingham, WA. Currently advancing my expertise at 
+                  Everett Community College.
+                </TerminalText>
+              </p>
+            </div>
           )}
-          {activeSelection === "03_TECH_STACK" && (
-            <p>
-              &gt; <TerminalText>React</TerminalText> /{" "}
-              <TerminalText>Next.js</TerminalText>
-              <br />
-              &gt; <TerminalText>TypeScript</TerminalText>
-              <br />
-              &gt; <TerminalText>Tailwind CSS</TerminalText>
-              <br />
-              &gt; <TerminalText>Node.js</TerminalText>
-              <br />
-              &gt; Ruby on Rails
-              <br />
-              &gt; <TerminalText>PostgreSQL</TerminalText>
-              <br />
-              &gt; <TerminalText>AWS</TerminalText>
-            </p>
+          {activeSelection === "03_ENGINEERING_STACK" && (
+            <div className="space-y-4">
+              <div>
+                <p className="font-bold opacity-50 text-[10px] uppercase mb-1">Languages</p>
+                <p>
+                  &gt; <TerminalText>TypeScript</TerminalText>, <TerminalText>JavaScript</TerminalText>, Ruby, <TerminalText>PHP</TerminalText>, Python, SQL
+                </p>
+              </div>
+              <div>
+                <p className="font-bold opacity-50 text-[10px] uppercase mb-1">Frameworks</p>
+                <p>
+                  &gt; <TerminalText>React</TerminalText>, <TerminalText>Next.js</TerminalText>, <TerminalText>Node.js</TerminalText>, Ruby on Rails, Express
+                </p>
+              </div>
+              <div>
+                <p className="font-bold opacity-50 text-[10px] uppercase mb-1">Infrastructure</p>
+                <p>
+                  &gt; <TerminalText>AWS</TerminalText> (Lambda, S3, EC2), <TerminalText>PostgreSQL</TerminalText>, Prisma, Supabase, Docker
+                </p>
+              </div>
+            </div>
           )}
-          {activeSelection === "04_CONTACT" && (
-            <p>
-              COMM_LINK_ESTABLISHED
-              <br />
-              <br />
-              Email: jerod.a.hollen@gmail.com
-              <br />
-              GitHub: github.com/jhollen
-              <br />
-              LinkedIn: in/jerodhollen
-            </p>
-          )}
-          {activeSelection === "MUSIC" && (
-            <p>
-              BOGARDT_OS_ACTIVE
-              <br />
-              <br />
-              Loading audio interfaces...
-              <br />
-              Mounting VST plugins...
-              <br />
-              Ready.
-            </p>
+          {activeSelection === "04_GET_IN_TOUCH" && (
+            <div className="space-y-4">
+              <p className="animate-pulse">COMM_LINK_ESTABLISHED</p>
+              <div className="space-y-1">
+                <p>Email: jerod.a.hollen@gmail.com</p>
+                <p>GitHub: github.com/jhollen</p>
+                <p>LinkedIn: linkedin.com/in/jerodhollen</p>
+              </div>
+              <p className="text-[10px] opacity-50 italic mt-4">
+                &quot;Available for strategic roles and high-impact engineering challenges.&quot;
+              </p>
+            </div>
           )}
         </div>
       </div>
