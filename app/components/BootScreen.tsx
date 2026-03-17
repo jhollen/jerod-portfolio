@@ -2,72 +2,162 @@
 
 import * as React from "react";
 import Image from "next/image";
+import { motion, AnimatePresence } from "framer-motion";
 import { useConsoleStore } from "@/app/useConsoleStore";
-import { TypewriterText } from "./TypewriterText";
 
 interface ThemeStyles {
-  bg: string;
-  text: string;
-  highlight: string;
-  border: string;
   font?: string;
+  border: string;
 }
 
 export const BootScreen: React.FC<{ theme: ThemeStyles }> = ({ theme }) => {
+  const [phase, setPhase] = React.useState(1);
   const [avatarSrc, setAvatarSrc] = React.useState("images/avatar-static.png");
-  const [glitch, setGlitch] = React.useState(false);
-  const [showText, setShowText] = React.useState(false);
+  const [loadProgress, setLoadProgress] = React.useState(0);
   const setBooting = useConsoleStore((s) => s.setBooting);
 
   React.useEffect(() => {
-    const t1 = setTimeout(
-      () => setAvatarSrc("images/avatar-winking.png"),
-      1200,
-    );
-    const t2 = setTimeout(() => {
-      setAvatarSrc("images/avatar-static.png");
-      setShowText(true);
-    }, 1500);
-    const t3 = setTimeout(() => {
-      setGlitch(true);
-      const t4 = setTimeout(() => setBooting(false), 500);
-      return () => clearTimeout(t4);
-    }, 4500); // Increased delay to allow for typewriter
+    // Phase 1 (0.0s): Fade in 'JEROD HOLLEN' - handled by initial motion.div
+    
+    // Phase 2 (1.0s): Fade in subtitles
+    const t2 = setTimeout(() => setPhase(2), 1000);
+    
+    // Phase 3 (2.5s): Fade in avatar
+    const t3 = setTimeout(() => setPhase(3), 2500);
+    
+    // Phase 4 (3.5s): Display ASCII load bar
+    const t4 = setTimeout(() => setPhase(4), 3500);
+    
+    // Phase 5 (5.5s): Slow wink
+    const t5 = setTimeout(() => {
+      setPhase(5);
+      setAvatarSrc("images/avatar-winking.png");
+      setTimeout(() => setAvatarSrc("images/avatar-static.png"), 600);
+    }, 5500);
+    
+    // Phase 7 (8.5s): Smooth fade out / WELCOME
+    const t7 = setTimeout(() => setPhase(7), 8500);
+    
+    // Phase 8 (10.0s): Seamless transition
+    const t8 = setTimeout(() => {
+      setPhase(8);
+      setTimeout(() => setBooting(false), 500);
+    }, 10000);
 
     return () => {
-      clearTimeout(t1);
-      clearTimeout(t2);
-      clearTimeout(t3);
+      [t2, t3, t4, t5, t7, t8].forEach(clearTimeout);
     };
   }, [setBooting]);
 
+  // Loading bar logic
+  React.useEffect(() => {
+    if (phase === 4) {
+      const interval = setInterval(() => {
+        setLoadProgress(prev => (prev < 100 ? prev + 2 : 100));
+      }, 40);
+      return () => clearInterval(interval);
+    }
+  }, [phase]);
+
+  const barWidth = 20;
+  const filled = Math.floor((loadProgress / 100) * barWidth);
+  const barText = `[${"|".repeat(filled).padEnd(barWidth, " ")}]`;
+
   return (
-    <div
-      className={`flex flex-col items-center justify-center h-full text-center space-y-6 transition-opacity duration-300 ${glitch ? "opacity-0" : "opacity-100"} ${theme.font || "font-mono"}`}
-    >
-      <div className="relative">
-        <Image
-          src={avatarSrc}
-          alt="Avatar"
-          width={180}
-          height={180}
-          className={`border-4 ${theme.border} p-1 grayscale contrast-125`}
-          unoptimized
-        />
-        <div className="absolute -bottom-3 -right-3 bg-white px-2 py-0.5 border-2 border-current text-[10px] font-bold uppercase tracking-widest">
-          JH_OS v2.6
-        </div>
-      </div>
-      <div className="space-y-2">
-        <h1 className="text-2xl font-black uppercase tracking-[0.2em]">
-          <TypewriterText text="Jerod Hollen" speed={30} />
-        </h1>
-        {showText && (
-          <p className="text-[10px] font-bold uppercase tracking-[0.4em] opacity-40">
-            <TypewriterText text="MOUNTING_DRIVE: /HOME/JHOLLEN" speed={15} />
-          </p>
+    <div className={`flex flex-col items-center justify-center h-full text-center p-6 ${theme.font}`}>
+      <AnimatePresence mode="wait">
+        {phase < 7 ? (
+          <motion.div
+            key="booting"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="space-y-8 flex flex-col items-center"
+          >
+            {/* Phase 1 & 2: Name & Subtitles */}
+            <div className="space-y-2">
+              <motion.h1 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8 }}
+                className="text-3xl font-black uppercase tracking-[0.25em]"
+              >
+                Jerod Hollen
+              </motion.h1>
+              
+              {phase >= 2 && (
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-60"
+                >
+                  Web / Content Developer | Technical Solutions Engineer
+                </motion.p>
+              )}
+            </div>
+
+            {/* Phase 3: Avatar */}
+            {phase >= 3 && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="relative"
+              >
+                <Image
+                  src={avatarSrc}
+                  alt="Avatar"
+                  width={140}
+                  height={140}
+                  className={`border-4 ${theme.border} p-1 grayscale contrast-125`}
+                  unoptimized
+                />
+                <div className="absolute -bottom-3 -right-3 bg-white px-2 py-0.5 border-2 border-current text-[10px] font-bold uppercase tracking-widest">
+                  JH_OS v3.1
+                </div>
+              </motion.div>
+            )}
+
+            {/* Phase 4: Loading Bar */}
+            {phase >= 4 && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="font-mono text-[10px] space-y-2"
+              >
+                <p className="tracking-[0.3em] animate-pulse">
+                  {loadProgress < 100 ? "INITIALIZING SYSTEM..." : "SYSTEM READY"}
+                </p>
+                <p className="font-bold">{barText} {loadProgress}%</p>
+              </motion.div>
+            )}
+          </motion.div>
+        ) : (
+          <motion.div
+            key="welcome"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0 }}
+            className="flex flex-col items-center space-y-4"
+          >
+            <motion.div 
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring", damping: 12 }}
+              className="text-6xl text-emerald-500"
+            >
+              [ ✔ ]
+            </motion.div>
+            <motion.h2 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+              className="text-2xl font-black uppercase tracking-[0.5em]"
+            >
+              Welcome
+            </motion.h2>
+          </motion.div>
         )}
-      </div>
+      </AnimatePresence>
     </div>
   );
 };

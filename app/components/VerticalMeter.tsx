@@ -52,6 +52,8 @@ export const VerticalMeter: React.FC<VerticalMeterProps> = ({
   const spikeLevel = useMeterPhysics(spikeMv);
   const combinedLevel = Math.max(level, level2, spikeLevel);
 
+  const activePreset = store.activePreset;
+
   return (
     <div className="flex flex-row items-stretch gap-1.5 h-full w-full justify-center min-h-0">
       <div className="flex flex-col justify-between h-full py-1 text-[7px] font-bold text-gray-500 font-mono items-end tracking-tighter w-6">
@@ -84,28 +86,32 @@ export const VerticalMeter: React.FC<VerticalMeterProps> = ({
         </span>
       </div>
 
-      <div className="w-4 sm:w-5 h-full bg-[#0a0a0a] border-[1.5px] border-[#181a1f] rounded-sm flex flex-col justify-end p-[2px] gap-[2px] shadow-[inset_0_2px_5px_rgba(0,0,0,1),0_1px_1px_rgba(255,255,255,0.05)] overflow-hidden">
+      <div className="w-4 sm:w-5 h-full bg-[#0a0a0a] border-[1.5px] border-[#181a1f] rounded-sm flex flex-col justify-end p-[2px] gap-[2px] shadow-[inset:0_2px_5px_rgba(0,0,0,1),0_1px_1px_rgba(255,255,255,0.05)] overflow-hidden">
         {Array.from({ length: 40 }).map((_, i) => {
           const active = 40 - i <= combinedLevel;
-          // i=0 is the top LED. i=39 is the bottom LED.
           const isRed = i === 0;
-          const isAmber = i > 0 && i <= 15;
+          const isMid = i > 0 && i <= 15;
 
-          const color = isRed
-            ? "bg-red-500"
-            : isAmber
-              ? "bg-amber-500"
-              : "bg-emerald-500";
-          const shadowColor = isRed
-            ? "#ef4444"
-            : isAmber
-              ? "#f59e0b"
-              : "#10b981";
-          const dimColor = isRed
-            ? "bg-[#3f0f0f]"
-            : isAmber
-              ? "bg-[#3f2c0f]"
-              : "bg-[#064e3b]";
+          let color, shadowColor, dimColor;
+
+          if (isRed) {
+            color = "bg-red-500";
+            shadowColor = "#ef4444";
+            dimColor = "bg-[#3f0f0f]";
+          } else if (activePreset === "HACKER") {
+            color = isMid ? "bg-blue-500" : "bg-cyan-400";
+            shadowColor = isMid ? "#3b82f6" : "#22d3ee";
+            dimColor = isMid ? "bg-[#1e3a8a]" : "bg-[#083344]";
+          } else if (activePreset === "RETRO") {
+            color = isMid ? "bg-orange-500" : "bg-amber-400";
+            shadowColor = isMid ? "#f97316" : "#fbbf24";
+            dimColor = isMid ? "bg-[#431407]" : "bg-[#451a03]";
+          } else {
+            // ORIGINAL
+            color = isMid ? "bg-amber-500" : "bg-emerald-500";
+            shadowColor = isMid ? "#f59e0b" : "#10b981";
+            dimColor = isMid ? "bg-[#3f2c0f]" : "bg-[#064e3b]";
+          }
 
           return (
             <div

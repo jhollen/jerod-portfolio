@@ -26,6 +26,7 @@ export default function AudioConsolePage() {
     panDepth,
     setPanDepth,
     addLogMessage,
+    activePreset,
   } = useConsoleStore();
 
   const menus = ["BIO", "PROJECTS", "STACK", "CONTACT"];
@@ -36,11 +37,15 @@ export default function AudioConsolePage() {
 
   return (
     <main className="fixed inset-0 w-screen h-screen overflow-hidden bg-[#0a0a0a] flex items-center justify-center p-4 lg:p-8 font-sans select-none touch-none overscroll-none">
-      <div className="w-full max-w-7xl h-full max-h-[90vh] flex flex-col rounded-2xl bg-brushed-metal border-[3px] border-[#181a1f] shadow-[inset_0_15px_30px_rgba(255,255,255,0.03),inset_0_-10px_20px_rgba(0,0,0,0.6),0_40px_80px_rgba(0,0,0,1)] relative overflow-hidden">
+      <div className="w-full max-w-7xl h-full max-h-[90vh] flex flex-col rounded-2xl bg-brushed-metal border-[3px] border-[#181a1f] shadow-[inset:0_15px_30px_rgba(255,255,255,0.03),inset_0_-10px_20px_rgba(0,0,0,0.6),0_40px_80px_rgba(0,0,0,1)] relative overflow-hidden">
         {/* Branding Header */}
         <div className="h-14 shrink-0 flex items-center justify-between px-8 z-20 border-b border-black/20">
           <div className="flex items-center gap-4">
-            <div className="w-4 h-4 rounded-full bg-cyan-500 shadow-[0_0_10px_#06b6d4] border border-black" />
+            <div className={`w-4 h-4 rounded-full border border-black shadow-[0_0_10px] transition-all duration-500 ${
+              activePreset === "HACKER" ? "bg-[#00f3ff] shadow-[#00f3ff]" :
+              activePreset === "RETRO" ? "bg-[#ffb000] shadow-[#ffb000]" :
+              "bg-cyan-500 shadow-[#06b6d4]"
+            }`} />
             <div className="flex flex-col">
               <span className="text-white font-bold tracking-[0.2em] text-sm uppercase">
                 Jerod Hollen
@@ -52,7 +57,7 @@ export default function AudioConsolePage() {
           </div>
           <div className="hidden md:block text-right">
             <span className="text-gray-600 font-bold tracking-[0.3em] text-[9px] uppercase">
-              PORTFOLIO COMPRESSOR V2.0
+              PORTFOLIO COMPRESSOR V3.1
             </span>
           </div>
         </div>
@@ -197,10 +202,13 @@ export default function AudioConsolePage() {
                     {/* Carousel Progress LED */}
                     <div className="absolute -bottom-8 w-1 h-6 bg-black/40 rounded-full overflow-hidden border border-white/5">
                       <motion.div 
-                        className="w-full bg-cyan-500 shadow-[0_0_5px_#06b6d4]"
+                        className={`w-full ${
+                          activePreset === "HACKER" ? "bg-[#00f3ff] shadow-[0_0_5px_#00f3ff]" :
+                          activePreset === "RETRO" ? "bg-[#ffb000] shadow-[0_0_5px_#ffb000]" :
+                          "bg-cyan-500 shadow-[0_0_5px_#06b6d4]"
+                        }`}
                         style={{ 
                           height: `${panDepth}%`,
-                          filter: "brightness(1.5)"
                         }}
                         animate={{ 
                           opacity: activeSelection === "PROJECTS" ? 1 : 0.2,

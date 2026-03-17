@@ -4,7 +4,7 @@ import * as React from "react";
 import { useConsoleStore } from "@/app/useConsoleStore";
 
 export const DiagnosticsPanel = () => {
-  const logMessages = useConsoleStore((s) => s.logMessages);
+  const { logMessages, activePreset } = useConsoleStore();
   const scrollRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
@@ -13,10 +13,16 @@ export const DiagnosticsPanel = () => {
     }
   }, [logMessages]);
 
+  const textColor = React.useMemo(() => {
+    if (activePreset === "HACKER") return "text-[#00f3ff]/70";
+    if (activePreset === "RETRO") return "text-[#ffb000]/70";
+    return "text-emerald-400/70";
+  }, [activePreset]);
+
   return (
-    <div className="w-full h-24 bg-[#0a0a0a] border-2 border-black/80 rounded p-3 shadow-[inset_0_3px_10px_rgba(0,0,0,0.8)] flex gap-4">
+    <div className="w-full h-24 bg-[#0a0a0a] border-2 border-black/80 rounded p-3 shadow-[inset:0_3px_10px_rgba(0,0,0,0.8)] flex gap-4">
       <div className="w-1/3 h-full border border-gray-700/50 rounded-sm p-2 flex flex-col items-center justify-center text-gray-600">
-        <svg viewBox="0 0 100 50" className="w-full h-full">
+        <svg viewBox="0 0 100 50" className="w-full h-full transition-colors duration-500">
           <text
             x="2"
             y="10"
@@ -62,7 +68,7 @@ export const DiagnosticsPanel = () => {
       </div>
       <div
         ref={scrollRef}
-        className="flex-1 h-full overflow-y-auto text-[9px] font-mono text-emerald-400/70 space-y-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+        className={`flex-1 h-full overflow-y-auto text-[9px] font-mono transition-colors duration-500 ${textColor} space-y-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]`}
       >
         {logMessages.map((msg, i) => (
           <p key={i} className="whitespace-nowrap">{`> ${msg}`}</p>
