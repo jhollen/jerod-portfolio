@@ -30,7 +30,7 @@ export const GitHubDisplay = () => {
   const [events, setEvents] = React.useState<GitHubEvent[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
-  const { activePreset, addLogMessage } = useConsoleStore();
+  const { addLogMessage } = useConsoleStore();
   const scrollRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {

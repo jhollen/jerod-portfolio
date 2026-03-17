@@ -32,6 +32,8 @@ export interface ConsoleState {
   setLastInteraction: () => void;
   triggerNavSpike: () => void;
   triggerTabSpike: () => void;
+  triggerNavDance: () => void;
+  triggerTabDance: () => void;
   setNavActivity: (val: number) => void;
   setTabActivity: (val: number) => void;
 }
@@ -73,6 +75,8 @@ export const useConsoleStore = create<ConsoleState>((set) => ({
   setLastInteraction: () => set({ lastInteraction: Date.now() }),
   triggerNavSpike: () => set({ navActivity: 95 }),
   triggerTabSpike: () => set({ tabActivity: 95 }),
+  triggerNavDance: () => set({ navActivity: 99 }),
+  triggerTabDance: () => set({ tabActivity: 99 }),
   setNavActivity: (val) => set({ navActivity: val }),
   setTabActivity: (val) => set({ tabActivity: val }),
   applyPreset: (preset) => {

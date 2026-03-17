@@ -24,7 +24,16 @@ export const VerticalMeter: React.FC<VerticalMeterProps> = ({
     if (type === "nav") target = store.navActivity;
     if (type === "tab") target = store.tabActivity;
 
-    if (target > 0) {
+    if (target === 99) {
+      // Sustained dance effect
+      const interval = setInterval(() => {
+        spikeMv.set(60 + Math.random() * 35);
+      }, 50);
+      return () => {
+        clearInterval(interval);
+        spikeMv.set(0);
+      };
+    } else if (target > 0) {
       spikeMv.set(target);
       // Reset store value after triggering spike
       if (type === "nav") store.setNavActivity(0);

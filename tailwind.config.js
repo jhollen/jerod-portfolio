@@ -59,7 +59,8 @@ module.exports = {
         "2xs": "6px",
       },
       fontFamily: {
-        sans: ["Roboto", "system-ui", "sans-serif"],
+        sans: ["var(--font-roboto)", "system-ui", "sans-serif"],
+        serif: ["var(--font-merriweather)", "serif"],
       },
     },
   },

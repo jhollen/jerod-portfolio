@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useMotionValue } from "framer-motion";
+import { motion, useMotionValue } from "framer-motion";
 import { useConsoleStore } from "./useConsoleStore";
 import { LCDDisplay } from "./components/LCDDisplay";
 import { Knob } from "./components/Knob";
@@ -20,7 +20,6 @@ export default function AudioConsolePage() {
     activeSelection,
     setActiveSelection,
     selectedProject,
-    setSelectedProject,
     contentDepth,
     setContentDepth,
     panDepth,
@@ -28,19 +27,14 @@ export default function AudioConsolePage() {
     addLogMessage,
   } = useConsoleStore();
 
-  const menus = [
-    "01_WHO_AM_I",
-    "02_CASE_STUDIES",
-    "03_ENGINEERING_STACK",
-    "04_GET_IN_TOUCH",
-  ];
+  const menus = ["BIO", "PROJECTS", "STACK", "CONTACT"];
   const tabs = ["OVERVIEW", "BREACH", "DEPLOY", "RESULT", "ASSETS"];
   const projectIds = [
-    "SCORM_AUTO",
-    "OFF_GRID_MED",
-    "SKILLJAR_REDESIGN",
-    "IMAGE_PIPELINE",
-    "CONTRIBUTOR_SYSTEM",
+    "SCORM AUTO",
+    "MEDICAL GUIDELINES MOBILE APP",
+    "CSA TRAINING CENTER SKILLJAR REDESIGN",
+    "AUTO IMAGE OPTIMIZATION PIPELINE",
+    "DYNAMIC CONTRIBUTOR PAGES FOR CSA WEBSITE",
   ];
 
   const leftMeterActivity = useMotionValue(0);
@@ -144,7 +138,7 @@ export default function AudioConsolePage() {
               <div className="w-full flex flex-col pt-1 h-full gap-4">
                 {/* LCD Displays */}
                 <div className="flex-1 flex flex-col">
-                  <LCDDisplay menus={menus} tabs={tabs} />
+                  <LCDDisplay menus={menus} />
                 </div>
 
                 {/* GitHub Secondary Display */}
@@ -176,15 +170,15 @@ export default function AudioConsolePage() {
                       }}
                       activityMv={rightMeterActivity}
                       isActive={
-                        activeSelection !== null &&
-                        !(
-                          activeSelection === "02_CASE_STUDIES" &&
-                          tabIndex === 4
-                        )
+                        activeSelection === "BIO" || activeSelection === "STACK"
+                      }
+                      isDisabled={
+                        activeSelection === "CONTACT" || 
+                        activeSelection === "PROJECTS"
                       }
                     />
                   </div>
-                  <div className="flex flex-col items-center gap-2">
+                  <div className="flex flex-col items-center gap-2 relative">
                     <Knob
                       label="PAN"
                       minLabel="LEFT"
@@ -195,10 +189,26 @@ export default function AudioConsolePage() {
                         setPanDepth(val);
                       }}
                       activityMv={rightMeterActivity}
-                      isActive={
-                        activeSelection === "02_CASE_STUDIES" && tabIndex === 4
-                      }
+                      isActive={activeSelection === "PROJECTS"}
+                      isDisabled={activeSelection !== "PROJECTS"}
                     />
+                    {/* Carousel Progress LED */}
+                    <div className="absolute -bottom-8 w-1 h-6 bg-black/40 rounded-full overflow-hidden border border-white/5">
+                      <motion.div 
+                        className="w-full bg-cyan-500 shadow-[0_0_5px_#06b6d4]"
+                        style={{ 
+                          height: `${panDepth}%`,
+                          filter: "brightness(1.5)"
+                        }}
+                        animate={{ 
+                          opacity: activeSelection === "PROJECTS" ? 1 : 0.2,
+                          scaleX: [1, 1.2, 1],
+                        }}
+                        transition={{ 
+                          scaleX: { repeat: Infinity, duration: 0.1, ease: "linear" } 
+                        }}
+                      />
+                    </div>
                   </div>
                 </div>
 
