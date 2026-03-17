@@ -65,6 +65,12 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
 
   const renderBio = () => (
     <div className={`space-y-6 ${theme.font} text-[15px] leading-relaxed relative`}>
+      <div className="absolute -right-2 top-1/2 -translate-y-1/2 flex flex-col gap-4 opacity-20 text-[8px] font-bold uppercase tracking-widest pointer-events-none">
+        <div className={`transition-all duration-300 ${tier === 1 ? "opacity-100 scale-125" : ""}`}>↑ Tier 1</div>
+        <div className={`transition-all duration-300 ${tier === 2 ? "opacity-100 scale-125" : ""}`}>• Tier 2</div>
+        <div className={`transition-all duration-300 ${tier === 3 ? "opacity-100 scale-125" : ""}`}>↓ Tier 3</div>
+      </div>
+
       <h3 className="text-xl font-black border-b-2 border-current pb-2 flex justify-between items-end text-lg">
         <TypewriterText text="Bio" speed={30} />
         <span className="text-[10px] opacity-40 uppercase tracking-[0.2em]">Zoom: Tier {tier}</span>
@@ -103,7 +109,13 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
   );
 
   const renderStack = () => (
-    <div className={`space-y-6 ${theme.font} text-[14px] leading-relaxed`}>
+    <div className={`space-y-6 ${theme.font} text-[14px] leading-relaxed relative`}>
+      <div className="absolute -right-2 top-1/2 -translate-y-1/2 flex flex-col gap-4 opacity-20 text-[8px] font-bold uppercase tracking-widest pointer-events-none">
+        <div className={`transition-all duration-300 ${tier === 1 ? "opacity-100 scale-125" : ""}`}>↑ Tier 1</div>
+        <div className={`transition-all duration-300 ${tier === 2 ? "opacity-100 scale-125" : ""}`}>• Tier 2</div>
+        <div className={`transition-all duration-300 ${tier === 3 ? "opacity-100 scale-125" : ""}`}>↓ Tier 3</div>
+      </div>
+
       <h3 className="text-xl font-black border-b-2 border-current pb-2 flex justify-between items-end text-lg">
         <TypewriterText text="Stack" speed={30} />
         <span className="text-[10px] opacity-40 uppercase tracking-[0.2em]">Timeline: Tier {tier}</span>
@@ -162,7 +174,12 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
           <h3 className="text-xl font-black border-b-2 border-current pb-2 mb-4 pl-12 text-lg">
             <TypewriterText text="Projects" speed={30} />
           </h3>
-          <div className="flex-1 pl-12 pr-4 pb-10 flex items-center justify-center">
+          <div className="flex-1 pl-12 pr-4 pb-10 flex items-center justify-center relative">
+            <div className="absolute left-1 top-1/2 -translate-y-1/2 flex flex-col gap-2 opacity-20 text-[10px]">
+              <div className="animate-bounce">↑</div>
+              <div className="animate-bounce" style={{ animationDelay: '0.2s' }}>↓</div>
+            </div>
+
             <AnimatePresence mode="wait">
               <motion.button 
                 key={p.id}
@@ -252,7 +269,12 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
                     const assetIdx = Math.min(Math.floor((panDepth / 100) * p.assets.length), p.assets.length - 1);
                     const currentAsset = p.assets[assetIdx];
                     return (
-                      <div className="h-full flex flex-col">
+                      <div className="h-full flex flex-col relative">
+                        <div className="absolute inset-y-0 -left-4 -right-4 flex justify-between items-center z-10 pointer-events-none opacity-20">
+                          <div className="animate-pulse text-lg">←</div>
+                          <div className="animate-pulse text-lg">→</div>
+                        </div>
+
                         <div className="flex-1 bg-current/5 border border-current/20 p-4 mb-2 relative">
                           <AnimatePresence mode="wait">
                             <motion.div 
@@ -280,14 +302,6 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
             )}
           </AnimatePresence>
         </div>
-        
-        {/* Back control hint */}
-        <button 
-          onClick={handleBack}
-          className="absolute bottom-4 left-16 z-50 text-[8px] font-bold uppercase tracking-[0.3em] opacity-40 hover:opacity-100 transition-opacity border border-current px-2 py-1 bg-white/50 backdrop-blur-sm"
-        >
-          &lt; Return
-        </button>
       </div>
     );
   };
@@ -348,6 +362,18 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
   return (
     <div className={`w-full aspect-[16/9] max-h-[400px] ${theme.bg} border-[25px] border-[#1a1a1a] p-3 md:p-6 relative shadow-[0_10px_50px_rgba(0,0,0,0.3)] overflow-hidden flex flex-col shrink-0 transition-all duration-700`}>
       <div className={`absolute inset-0 pointer-events-none ${isKindle ? "shadow-[inset:0_0_100px_rgba(0,0,0,0.05)]" : "shadow-[inset:0_0_40px_rgba(0,0,0,0.1)]"} z-20`} />
+      
+      {/* Global Back Indicator */}
+      {activeSelection && (
+        <button 
+          onClick={handleBack}
+          className="absolute top-2 left-2 z-50 flex items-center gap-1.5 px-2 py-1 border border-current/20 bg-current/5 hover:bg-current/10 transition-all opacity-40 hover:opacity-100 group"
+        >
+          <span className="text-[10px] font-bold">←</span>
+          <span className="text-[8px] font-bold uppercase tracking-widest hidden group-hover:inline">Back</span>
+        </button>
+      )}
+
       <div className={`flex-1 h-full overflow-hidden ${theme.text} leading-relaxed tracking-wide relative transition-colors duration-300 z-10`}>
         <div className="absolute inset-0 transition-transform duration-75 ease-linear">{renderMainContent()}</div>
       </div>
