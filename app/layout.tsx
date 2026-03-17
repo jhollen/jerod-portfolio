@@ -7,8 +7,6 @@ export const metadata: Metadata = {
   description: "Portfolio of Jerod Hollen - Developer, Designer, and Creative",
 };
 
-import ClientLayout from "../components/ClientLayout";
-
 export default function RootLayout({
   children,
 }: {
@@ -30,8 +28,8 @@ export default function RootLayout({
           `}
         </style>
       </head>
-      <body>
-        <ClientLayout showBreadcrumbs>{children}</ClientLayout>
+      <body className="bg-[#121212] m-0 p-0 text-white antialiased">
+        {children}
       </body>
     </html>
   );
