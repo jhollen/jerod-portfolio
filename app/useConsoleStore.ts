@@ -14,6 +14,8 @@ export interface ConsoleState {
   theme: ThemeMode;
   logMessages: string[];
   lastInteraction: number;
+  navActivity: number;
+  tabActivity: number;
 
   setBooting: (booting: boolean) => void;
   setActivePreset: (preset: PresetMode) => void;
@@ -26,6 +28,10 @@ export interface ConsoleState {
   toggleTheme: () => void;
   addLogMessage: (message: string) => void;
   setLastInteraction: () => void;
+  triggerNavSpike: () => void;
+  triggerTabSpike: () => void;
+  setNavActivity: (val: number) => void;
+  setTabActivity: (val: number) => void;
 }
 
 export const useConsoleStore = create<ConsoleState>((set) => ({
@@ -39,6 +45,8 @@ export const useConsoleStore = create<ConsoleState>((set) => ({
   theme: "DARK",
   logMessages: ["SYSTEM BOOT..."],
   lastInteraction: 0,
+  navActivity: 0,
+  tabActivity: 0,
 
   setBooting: (booting) => set({ isBooting: booting }),
   setActivePreset: (preset) => set({ activePreset: preset }),
@@ -54,9 +62,13 @@ export const useConsoleStore = create<ConsoleState>((set) => ({
     set((state) => ({ theme: state.theme === "DARK" ? "LIGHT" : "DARK" })),
   addLogMessage: (message) =>
     set((state) => ({
-      logMessages: [...state.logMessages.slice(-4), message], // Keep last 5 messages
+      logMessages: [...state.logMessages.slice(-14), message], // Keep last 15 messages
     })),
   setLastInteraction: () => set({ lastInteraction: Date.now() }),
+  triggerNavSpike: () => set({ navActivity: 95 }),
+  triggerTabSpike: () => set({ tabActivity: 95 }),
+  setNavActivity: (val) => set({ navActivity: val }),
+  setTabActivity: (val) => set({ tabActivity: val }),
   applyPreset: (preset) => {
     set((state) => {
       if (state.activePreset === preset) {

@@ -4,7 +4,14 @@ import * as React from "react";
 import Image from "next/image";
 import { useConsoleStore } from "@/app/useConsoleStore";
 
-export const BootScreen: React.FC<{ theme: any }> = ({ theme }) => {
+interface ThemeStyles {
+  bg: string;
+  text: string;
+  highlight: string;
+  border: string;
+}
+
+export const BootScreen: React.FC<{ theme: ThemeStyles }> = ({ theme }) => {
   const [avatarSrc, setAvatarSrc] = React.useState("images/avatar-static.png");
   const [glitch, setGlitch] = React.useState(false);
   const [showText, setShowText] = React.useState(false);

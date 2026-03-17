@@ -32,10 +32,7 @@ const TerminalText: React.FC<{ children: string }> = ({ children }) => {
       {children.split(regex).map((part, i) => {
         if (keywords.some((k) => k.toLowerCase() === part.toLowerCase())) {
           return (
-            <span
-              key={i}
-              className="text-cyan-400 font-bold glow-text"
-            >
+            <span key={i} className="text-cyan-400 font-bold glow-text">
               {part}
             </span>
           );
@@ -66,6 +63,8 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus, tabs }) => {
     panDepth,
     activePreset,
     addLogMessage,
+    triggerNavSpike,
+    triggerTabSpike,
   } = useConsoleStore();
 
   const scrollRef = React.useRef<HTMLDivElement>(null);
@@ -97,8 +96,8 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus, tabs }) => {
     isInternalScroll.current = true;
     const depth = (el.scrollTop / maxScroll) * 100;
     setContentDepth(depth);
-    
-    // Reset after a short delay to allow Knob to sync back if needed, 
+
+    // Reset after a short delay to allow Knob to sync back if needed,
     // but mostly to prevent feedback loops
     setTimeout(() => {
       isInternalScroll.current = false;
@@ -153,7 +152,10 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus, tabs }) => {
                 onClick={() => {
                   setMenuIndex(idx);
                   setActiveSelection(menu);
-                  addLogMessage(`CLICK_NAV: ${menu}`);
+                  triggerNavSpike();
+                  addLogMessage(`UI_NAV_CLICK: [${menu}]`);
+                  addLogMessage("LOAD_BALANCING_UI_THREAD...");
+                  addLogMessage("PARSING_UPSTREAM_METRICS...");
                 }}
                 className={`p-2 transition-colors duration-75 flex gap-3 cursor-pointer hover:bg-black/5 ${isSelected ? `${theme.highlight} font-bold` : "opacity-60"}`}
               >
@@ -178,7 +180,10 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus, tabs }) => {
                 key={tab}
                 onClick={() => {
                   setTabIndex(idx);
-                  addLogMessage(`CLICK_TAB: ${tab}`);
+                  triggerTabSpike();
+                  addLogMessage(`UI_TAB_CLICK: [${tab}]`);
+                  addLogMessage("HYDRATING_DOM_SUBTREE...");
+                  addLogMessage("TRANSLATING_JSON_TO_UI_LAYER...");
                 }}
                 className={`px-2 py-1 text-[10px] font-bold tracking-widest uppercase rounded-sm cursor-pointer transition-all ${idx === tabIndex ? theme.highlight : "opacity-60 hover:opacity-100 hover:bg-black/5"}`}
               >
@@ -186,7 +191,7 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus, tabs }) => {
               </div>
             ))}
           </div>
-          <div 
+          <div
             ref={scrollRef}
             onScroll={handleScroll}
             className="flex-1 overflow-y-auto relative scroll-smooth [&::-webkit-scrollbar]:hidden"
@@ -290,7 +295,7 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus, tabs }) => {
     }
 
     return (
-      <div 
+      <div
         ref={scrollRef}
         onScroll={handleScroll}
         className="flex-1 overflow-y-auto relative scroll-smooth [&::-webkit-scrollbar]:hidden w-full h-full"
@@ -318,7 +323,8 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus, tabs }) => {
           )}
           {activeSelection === "03_TECH_STACK" && (
             <p>
-              &gt; <TerminalText>React</TerminalText> / <TerminalText>Next.js</TerminalText>
+              &gt; <TerminalText>React</TerminalText> /{" "}
+              <TerminalText>Next.js</TerminalText>
               <br />
               &gt; <TerminalText>TypeScript</TerminalText>
               <br />
@@ -338,9 +344,9 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus, tabs }) => {
               COMM_LINK_ESTABLISHED
               <br />
               <br />
-              Email: hello@example.com
+              Email: jerod.a.hollen@gmail.com
               <br />
-              GitHub: github.com/jerodhollen
+              GitHub: github.com/jhollen
               <br />
               LinkedIn: in/jerodhollen
             </p>

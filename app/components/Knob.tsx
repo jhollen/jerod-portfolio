@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { motion, useMotionValue, PanInfo, animate } from "framer-motion";
+import { motion, useMotionValue, PanInfo, animate, MotionValue } from "framer-motion";
 
 interface KnobProps {
   label: string;
@@ -12,7 +12,7 @@ interface KnobProps {
   value: number;
   onChange: (val: number) => void;
   onClick?: () => void;
-  activityMv?: any;
+  activityMv?: MotionValue<number>;
   isActive?: boolean;
   steps?: number;
 }
@@ -59,7 +59,7 @@ export const Knob: React.FC<KnobProps> = ({
     activityMvRef.current = activityMv; // Update the ref
   }, [value, onChange, stepAngle, rotation, activityMv, steps]);
 
-  const handleInteraction = (delta: number) => {
+  const handleInteraction = React.useCallback((delta: number) => {
     if (!isActive) return;
     const newRotation = rotation.get() + delta;
     const clampedRotation = Math.max(-130, Math.min(130, newRotation));
@@ -82,9 +82,9 @@ export const Knob: React.FC<KnobProps> = ({
         onChangeRef.current(newValue);
       }
     }
-  };
+  }, [isActive, rotation, stepAngle, steps]);
 
-  const handlePan = (e: any, info: PanInfo) =>
+  const handlePan = (e: unknown, info: PanInfo) =>
     handleInteraction(-info.delta.y * 1.5);
   const handlePanStart = () => {
     isDragging.current = true;
@@ -112,7 +112,7 @@ export const Knob: React.FC<KnobProps> = ({
     };
     el.addEventListener("wheel", handleNativeWheel, { passive: false });
     return () => el.removeEventListener("wheel", handleNativeWheel);
-  }, [isActive, rotation, steps, stepAngle]); // Removed activityMv from here as it's now a ref
+  }, [handleInteraction]); // Removed activityMv from here as it's now a ref
 
   const sizes = {
     small: {
