@@ -148,7 +148,7 @@ export default function AudioConsolePage() {
               </div>
 
               {/* Traversal Dials */}
-              <div className="flex flex-col gap-6">
+              <div className="flex flex-col gap-10 mt-12">
                 <div className="flex flex-col items-center gap-2">
                   <Knob
                     label="SCRUB"
@@ -186,20 +186,6 @@ export default function AudioConsolePage() {
 
               {/* Hardware Control Section */}
               <div className="w-full flex flex-col gap-4">
-                <button
-                  onClick={() => {
-                    setActiveSelection(null);
-                    addLogMessage(`SYSTEM_RESET: Returning to root`);
-                  }}
-                  disabled={!activeSelection}
-                  className={`w-full py-3 rounded-sm border border-black shadow-[0_4px_6px_rgba(0,0,0,0.4)] font-bold text-[10px] tracking-[0.2em] uppercase transition-all active:translate-y-1 ${
-                    activeSelection
-                      ? "bg-gradient-to-b from-red-600 to-red-800 text-white hover:from-red-500 cursor-pointer"
-                      : "bg-gray-800 text-gray-600 border-gray-900 cursor-not-allowed opacity-50 shadow-none"
-                  }`}
-                >
-                  Global Back
-                </button>
                 <VCABank />
               </div>
 

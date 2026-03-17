@@ -173,7 +173,7 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus, tabs }) => {
       return (
         <div className="flex flex-col h-full w-full">
           <div
-            className={`flex gap-2 border-b-2 ${theme.border} pb-2 mb-4 shrink-0 overflow-x-auto [&::-webkit-scrollbar]:hidden`}
+            className={`flex gap-2 border-b-2 ${theme.border} pb-2 mb-4 shrink-0 overflow-x-auto [&::-webkit-scrollbar]:hidden pl-12`}
           >
             {tabs.map((tab, idx) => (
               <div
@@ -301,7 +301,7 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus, tabs }) => {
         className="flex-1 overflow-y-auto relative scroll-smooth [&::-webkit-scrollbar]:hidden w-full h-full"
       >
         <div className="flex flex-col gap-4 font-mono text-[13px] leading-relaxed pb-10">
-          <h3 className="font-bold uppercase tracking-widest mb-2 border-b border-current pb-2">
+          <h3 className="font-bold uppercase tracking-widest mb-2 border-b border-current pb-2 pl-12">
             {activeSelection}
           </h3>
           {activeSelection === "01_PROFILE" && (
@@ -372,6 +372,36 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus, tabs }) => {
     <div
       className={`w-full aspect-[16/9] max-h-[400px] ${theme.bg} border-[30px] border-[#0a0a0a] p-3 md:p-4 relative shadow-[inset_0_4px_20px_rgba(0,0,0,0.15)] overflow-hidden flex flex-col shrink-0 transition-colors duration-300`}
     >
+      {/* Back Button (Arrow) */}
+      {activeSelection && (
+        <button
+          onClick={() => {
+            setActiveSelection(null);
+            addLogMessage("SYSTEM_RESET: Returning to root");
+          }}
+          className={`absolute top-2 left-2 z-40 p-2 transition-all duration-200 hover:scale-110 active:scale-95 flex items-center gap-2 group cursor-pointer ${theme.text}`}
+          aria-label="Back to Main Menu"
+        >
+          <div className={`p-1 rounded-sm border-2 ${theme.border} group-hover:bg-black/5`}>
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="3"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M19 12H5M12 19l-7-7 7-7" />
+            </svg>
+          </div>
+          <span className="text-[10px] font-bold tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
+            BACK
+          </span>
+        </button>
+      )}
+
       {/* Inner Shadow / Vignette overlay */}
       <div className="absolute inset-0 pointer-events-none shadow-[inset_0_0_40px_rgba(0,0,0,0.05)] z-20" />
 
