@@ -48,14 +48,19 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
     setBooting,
     menuIndex,
     setMenuIndex,
+    tabIndex,
+    setTabIndex,
     activeSelection,
     setActiveSelection,
     selectedProject,
+    setSelectedProject,
     contentDepth,
     panDepth,
     addLogMessage,
     triggerNavSpike,
     triggerNavDance,
+    triggerTabSpike,
+    triggerTabDance,
     setNavActivity,
     theme: globalTheme,
   } = useConsoleStore();
@@ -84,6 +89,18 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
   } : { bg: globalTheme === "DARK" ? "bg-[#0a0a0a]" : "bg-[#ffffff]", text: globalTheme === "DARK" ? "text-[#e8e9e4]" : "text-[#0a0a0a]", highlight: globalTheme === "DARK" ? "bg-[#e8e9e4] text-[#0a0a0a]" : "bg-[#0a0a0a] text-[#ffffff]", border: globalTheme === "DARK" ? "border-[#e8e9e4]" : "border-[#0a0a0a]", font: "font-mono" };
 
   const tier = contentDepth < 34 ? 1 : contentDepth < 67 ? 2 : 3;
+
+  const handleBack = () => {
+    if (selectedProject) {
+      setSelectedProject(null);
+      setTabIndex(0);
+      addLogMessage("SYSTEM: Return to Index");
+    } else {
+      setActiveSelection(null);
+      setMenuIndex(1); // Set to PROJECTS index in main menu
+      addLogMessage("SYSTEM: Return to Root");
+    }
+  };
 
   const renderBio = () => (
     <div className={`space-y-6 ${theme.font} text-[15px] leading-relaxed relative pt-12`}>
@@ -176,23 +193,45 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
 
   const renderProjects = () => {
     if (!selectedProject) {
+      const currentProjIdx = menuIndex % PROJECTS.length;
+      const p = PROJECTS[currentProjIdx];
+      
       return (
-        <div className="flex flex-col h-full w-full pt-12">
-          <h3 className="text-xl font-black border-b-2 border-current pb-2 mb-4 pl-12"><TypewriterText text="Projects" speed={30} /></h3>
-          <div className="flex-1 overflow-y-auto pl-12 pb-10 pr-4 space-y-4">
-            {PROJECTS.map((p, idx) => (
-              <button key={p.id} 
-                onMouseEnter={() => { setMenuIndex(idx % 5); triggerNavDance(); }}
-                onMouseLeave={() => setNavActivity(0)}
-                onClick={() => { handleInteraction(); setSelectedProject(p.id); setMenuIndex(0); triggerNavSpike(); addLogMessage(`MOUNT: ${p.id}`); }}
-                className="group border border-current/20 p-3 hover:bg-current/5 text-left w-full outline-none focus:ring-2 focus:ring-current/10">
-                <div className="flex justify-between items-start mb-1">
-                  <h4 className="font-bold uppercase tracking-wide text-xs"><TypewriterText key={`title-${p.id}`} text={p.title} speed={10} delay={idx * 100} /></h4>
-                  <span className="text-[8px] opacity-50 border border-current px-1">{p.category}</span>
+        <div className="flex flex-col h-full w-full pt-12 relative overflow-hidden">
+          <h3 className="text-xl font-black border-b-2 border-current pb-2 mb-4 pl-12">
+            <TypewriterText text="Projects" speed={30} />
+          </h3>
+          <div className="flex-1 pl-12 pr-4 pb-10 flex items-center justify-center">
+            <AnimatePresence mode="wait">
+              <motion.button 
+                key={p.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                onClick={() => { handleInteraction(); setSelectedProject(p.id); setTabIndex(0); triggerNavSpike(); addLogMessage(`MOUNT: ${p.id}`); }}
+                className="group border-2 border-current p-6 hover:bg-current/5 text-left w-full outline-none focus:ring-4 focus:ring-current/10 relative transition-all"
+              >
+                <div className="flex justify-between items-start mb-4">
+                  <h4 className="font-black uppercase tracking-wide text-lg leading-tight w-2/3">
+                    <TypewriterText key={`title-${p.id}`} text={p.title} speed={10} />
+                  </h4>
+                  <span className="text-[10px] font-bold border border-current px-2 py-0.5 whitespace-nowrap bg-current text-white uppercase tracking-tighter shadow-sm">{p.category}</span>
                 </div>
-                <p className="text-[11px] opacity-70 italic"><TypewriterText key={`desc-${p.id}`} text={p.description} speed={5} delay={idx * 100 + 200} /></p>
-              </button>
-            ))}
+                <p className="text-[13px] leading-relaxed mb-6 italic opacity-80 border-l-2 border-current/20 pl-4 py-1">
+                  <TypewriterText key={`desc-${p.id}`} text={p.description} speed={5} delay={500} />
+                </p>
+                <div className="flex flex-wrap gap-2 pt-4 border-t border-current/10">
+                  {p.stack.map((item, i) => (
+                    <span key={item} className="text-[9px] font-bold uppercase tracking-widest opacity-60">
+                      {i > 0 && <span className="mr-2 opacity-30">•</span>}
+                      {item}
+                    </span>
+                  ))}
+                </div>
+                {/* Visual context indicator for carousel */}
+                <div className="absolute right-4 bottom-4 opacity-20 text-[8px] font-bold uppercase tracking-[0.5em]">Frame {currentProjIdx + 1}/{PROJECTS.length}</div>
+              </motion.button>
+            </AnimatePresence>
           </div>
         </div>
       );
@@ -200,30 +239,94 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
 
     const p = PROJECTS.find(proj => proj.id === selectedProject);
     if (!p) return null;
-    const slideIdx = Math.min(Math.floor((panDepth / 100) * p.slides.length), p.slides.length - 1);
-    const currentSlide = p.slides[slideIdx];
-
+    
+    // Total tabs: details length + 1 (for assets tab)
+    const tabsCount = p.details.length + 1;
+    const currentTabIdx = Math.min(tabIndex, tabsCount - 1);
+    
     return (
       <div className="flex flex-col h-full w-full pt-12">
-        <h3 className="text-xl font-black border-b-2 border-current pb-2 mb-4 pl-12 flex justify-between items-end">
-          <TypewriterText text={p.title} speed={20} />
-          <span className="text-[10px] opacity-40 uppercase tracking-[0.2em]">Slide {slideIdx + 1}/{p.slides.length}</span>
-        </h3>
+        <div className="flex justify-between items-end border-b-2 border-current pb-2 mb-4 pl-12">
+          <h3 className="text-xl font-black truncate max-w-[70%]">
+            <TypewriterText text={p.title} speed={20} />
+          </h3>
+          <div className="flex gap-2 mb-0.5">
+            {Array.from({ length: tabsCount }).map((_, i) => (
+              <div 
+                key={i} 
+                className={`w-2 h-2 border border-current transition-colors ${i === currentTabIdx ? "bg-current" : "opacity-30"}`}
+              />
+            ))}
+          </div>
+        </div>
+        
         <div className="flex-1 pl-12 pr-4 pb-10 overflow-hidden relative">
           <AnimatePresence mode="wait">
-            <motion.div 
-              key={`${selectedProject}-${slideIdx}`}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              className="h-full"
-            >
-              <div className="mb-2 text-[10px] font-bold opacity-50 tracking-[0.3em] uppercase">[ {currentSlide.label} ]</div>
-              <div className="text-[14px] leading-relaxed">{currentSlide.content}</div>
-              <div className="sr-only">{currentSlide.srText}</div>
-            </motion.div>
+            {currentTabIdx < p.details.length ? (
+              <motion.div 
+                key={`${selectedProject}-tab-${currentTabIdx}`}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                className="h-full flex flex-col"
+              >
+                <div className="mb-2 text-[10px] font-bold opacity-50 tracking-[0.3em] uppercase">[ {p.details[currentTabIdx].label} ]</div>
+                <h4 className="font-bold mb-4 border-b border-current/10 pb-1 italic text-xs tracking-widest">{p.details[currentTabIdx].title}</h4>
+                <div className="text-[14px] leading-relaxed flex-1 overflow-y-auto pr-2 custom-scrollbar">
+                  {p.details[currentTabIdx].content}
+                </div>
+                <div className="sr-only">{p.details[currentTabIdx].srText}</div>
+              </motion.div>
+            ) : (
+              <motion.div 
+                key={`${selectedProject}-assets`}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                className="h-full flex flex-col"
+              >
+                <div className="mb-2 text-[10px] font-bold opacity-50 tracking-[0.3em] uppercase">[ ASSETS_CAROUSEL ]</div>
+                <div className="flex-1 relative overflow-hidden">
+                  {(() => {
+                    const assetIdx = Math.min(Math.floor((panDepth / 100) * p.assets.length), p.assets.length - 1);
+                    const currentAsset = p.assets[assetIdx];
+                    return (
+                      <div className="h-full flex flex-col">
+                        <div className="flex-1 bg-current/5 border border-current/20 p-4 mb-2 relative">
+                          <AnimatePresence mode="wait">
+                            <motion.div 
+                              key={`${selectedProject}-asset-${assetIdx}`}
+                              initial={{ opacity: 0, scale: 0.95 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              className="h-full w-full"
+                            >
+                              {currentAsset.content}
+                            </motion.div>
+                          </AnimatePresence>
+                          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1 opacity-40">
+                            {p.assets.map((_, i) => (
+                              <div key={i} className={`w-1 h-1 rounded-full bg-current ${i === assetIdx ? "scale-125" : "opacity-30"}`} />
+                            ))}
+                          </div>
+                        </div>
+                        <div className="text-[9px] font-bold opacity-50 tracking-widest uppercase text-center">{currentAsset.label} ({assetIdx + 1}/{p.assets.length})</div>
+                        <div className="sr-only">{currentAsset.srText}</div>
+                      </div>
+                    );
+                  })()}
+                </div>
+              </motion.div>
+            )}
           </AnimatePresence>
         </div>
+        
+        {/* Back control hint */}
+        <button 
+          onClick={handleBack}
+          className="absolute bottom-4 left-16 z-50 text-[8px] font-bold uppercase tracking-[0.3em] opacity-40 hover:opacity-100 transition-opacity border border-current px-2 py-1 bg-white/50 backdrop-blur-sm"
+        >
+          &lt; Return
+        </button>
       </div>
     );
   };

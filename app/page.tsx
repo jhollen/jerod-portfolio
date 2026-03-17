@@ -10,6 +10,7 @@ import { VCABank } from "./components/VCABank";
 import { VerticalMeter } from "./components/VerticalMeter";
 import { DiagnosticsPanel } from "./components/DiagnosticsPanel";
 import { GitHubDisplay } from "./components/GitHubDisplay";
+import { PROJECTS } from "./constants";
 
 export default function AudioConsolePage() {
   const {
@@ -29,13 +30,6 @@ export default function AudioConsolePage() {
 
   const menus = ["BIO", "PROJECTS", "STACK", "CONTACT"];
   const tabs = ["OVERVIEW", "BREACH", "DEPLOY", "RESULT", "ASSETS"];
-  const projectIds = [
-    "SCORM AUTO",
-    "MEDICAL GUIDELINES MOBILE APP",
-    "CSA TRAINING CENTER SKILLJAR REDESIGN",
-    "AUTO IMAGE OPTIMIZATION PIPELINE",
-    "DYNAMIC CONTRIBUTOR PAGES FOR CSA WEBSITE",
-  ];
 
   const leftMeterActivity = useMotionValue(0);
   const rightMeterActivity = useMotionValue(0);
@@ -81,24 +75,24 @@ export default function AudioConsolePage() {
                     isActive={true}
                     activityMv={leftMeterActivity}
                     steps={
-                      activeSelection === "02_CASE_STUDIES" && !selectedProject
-                        ? projectIds.length
+                      activeSelection === "PROJECTS" && !selectedProject
+                        ? PROJECTS.length
                         : menus.length
                     }
                     value={menuIndex}
                     onChange={(newIdx) => {
                       setMenuIndex(newIdx);
                       if (
-                        activeSelection === "02_CASE_STUDIES" &&
+                        activeSelection === "PROJECTS" &&
                         !selectedProject
                       ) {
                         addLogMessage(
-                          `NAVIGATOR: [PROJECT_PREVIEW: ${projectIds[newIdx]}]`,
+                          `NAVIGATOR: [PROJECT_PREVIEW: ${PROJECTS[newIdx].title}]`,
                         );
                       } else {
                         addLogMessage(`NAVIGATOR: ${menus[newIdx]}`);
                         if (!activeSelection) {
-                          setActiveSelection(menus[newIdx] || "01_WHO_AM_I");
+                          setActiveSelection(menus[newIdx]);
                         }
                       }
                     }}
@@ -119,12 +113,20 @@ export default function AudioConsolePage() {
                     maxLabel="RIGHT"
                     isActive={!!selectedProject}
                     activityMv={leftMeterActivity}
-                    steps={tabs.length}
+                    steps={
+                      selectedProject 
+                        ? (PROJECTS.find(p => p.id === selectedProject)?.details.length || 0) + 1
+                        : tabs.length
+                    }
                     value={tabIndex}
                     onChange={(newIndex) => {
                       if (selectedProject) {
                         setTabIndex(newIndex);
-                        addLogMessage(`INFO_GAIN: ${tabs[newIndex]}`);
+                        const p = PROJECTS.find(proj => proj.id === selectedProject);
+                        const label = newIndex < (p?.details.length || 0) 
+                          ? p?.details[newIndex].label 
+                          : "ASSETS";
+                        addLogMessage(`INFO_GAIN: ${label}`);
                       }
                     }}
                   />
