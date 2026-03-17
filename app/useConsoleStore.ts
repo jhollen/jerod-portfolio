@@ -9,6 +9,7 @@ export interface ConsoleState {
   menuIndex: number;
   tabIndex: number;
   activeSelection: string | null;
+  selectedProject: string | null; // New state for nested navigation
   contentDepth: number; // 0-100
   panDepth: number; // 0-100
   theme: ThemeMode;
@@ -22,6 +23,7 @@ export interface ConsoleState {
   setMenuIndex: (index: number) => void;
   setTabIndex: (index: number) => void;
   setActiveSelection: (id: string | null) => void;
+  setSelectedProject: (id: string | null) => void; // New setter
   setContentDepth: (depth: number) => void;
   setPanDepth: (depth: number) => void;
   applyPreset: (preset: PresetMode) => void;
@@ -40,6 +42,7 @@ export const useConsoleStore = create<ConsoleState>((set) => ({
   menuIndex: 0,
   tabIndex: 0,
   activeSelection: null,
+  selectedProject: null,
   contentDepth: 0,
   panDepth: 0,
   theme: "DARK",
@@ -54,10 +57,13 @@ export const useConsoleStore = create<ConsoleState>((set) => ({
   setTabIndex: (index) =>
     set({ tabIndex: index, contentDepth: 0, panDepth: 0 }),
   setActiveSelection: (id) =>
-    set({ activeSelection: id, contentDepth: 0, tabIndex: 0, panDepth: 0 }),
+    set({ activeSelection: id, contentDepth: 0, tabIndex: 0, panDepth: 0, selectedProject: null }),
+  setSelectedProject: (id) =>
+    set({ selectedProject: id, tabIndex: 0, contentDepth: 0 }),
   setContentDepth: (depth) =>
     set({ contentDepth: Math.max(0, Math.min(100, depth)) }),
   setPanDepth: (depth) => set({ panDepth: Math.max(0, Math.min(100, depth)) }),
+
   toggleTheme: () =>
     set((state) => ({ theme: state.theme === "DARK" ? "LIGHT" : "DARK" })),
   addLogMessage: (message) =>
