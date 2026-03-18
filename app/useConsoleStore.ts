@@ -9,7 +9,7 @@ export interface ConsoleState {
   menuIndex: number;
   tabIndex: number;
   activeSelection: string | null;
-  selectedProject: string | null; // New state for nested navigation
+  selectedProject: string | null;
   contentDepth: number; // 0-100
   panDepth: number; // 0-100
   theme: ThemeMode;
@@ -23,17 +23,15 @@ export interface ConsoleState {
   setMenuIndex: (index: number) => void;
   setTabIndex: (index: number) => void;
   setActiveSelection: (id: string | null) => void;
-  setSelectedProject: (id: string | null) => void; // New setter
+  setSelectedProject: (id: string | null) => void;
   setContentDepth: (depth: number) => void;
   setPanDepth: (depth: number) => void;
   applyPreset: (preset: PresetMode) => void;
   toggleTheme: () => void;
   addLogMessage: (message: string) => void;
   setLastInteraction: () => void;
-  triggerNavSpike: () => void;
-  triggerTabSpike: () => void;
-  triggerNavDance: () => void;
-  triggerTabDance: () => void;
+  triggerNavSpike: (val?: number) => void;
+  triggerTabSpike: (val?: number) => void;
   setNavActivity: (val: number) => void;
   setTabActivity: (val: number) => void;
 }
@@ -70,19 +68,16 @@ export const useConsoleStore = create<ConsoleState>((set) => ({
     set((state) => ({ theme: state.theme === "DARK" ? "LIGHT" : "DARK" })),
   addLogMessage: (message) =>
     set((state) => ({
-      logMessages: [...state.logMessages.slice(-14), message], // Keep last 15 messages
+      logMessages: [...state.logMessages.slice(-14), message],
     })),
   setLastInteraction: () => set({ lastInteraction: Date.now() }),
-  triggerNavSpike: () => set({ navActivity: 95 }),
-  triggerTabSpike: () => set({ tabActivity: 95 }),
-  triggerNavDance: () => set({ navActivity: 99 }),
-  triggerTabDance: () => set({ tabActivity: 99 }),
+  triggerNavSpike: (val) => set({ navActivity: val ?? 40 + Math.random() * 55 }),
+  triggerTabSpike: (val) => set({ tabActivity: val ?? 40 + Math.random() * 55 }),
   setNavActivity: (val) => set({ navActivity: val }),
   setTabActivity: (val) => set({ tabActivity: val }),
   applyPreset: (preset) => {
     set((state) => {
       if (state.activePreset === preset) {
-        // Toggle off if clicking the already active preset
         return {
           activePreset: null,
           activeSelection: null,

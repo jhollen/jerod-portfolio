@@ -19,25 +19,25 @@ export const BootScreen: React.FC<{ theme: ThemeStyles }> = ({ theme }) => {
   React.useEffect(() => {
     // Phase 1 (0.0s): Synchronized Entry: Avatar + Name (handled by initial state)
 
-    // Phase 2 (1.2s): Start Loading
-    const t2 = setTimeout(() => setPhase(2), 1200);
+    // Phase 2 (0.6s): Start Loading (Faster)
+    const t2 = setTimeout(() => setPhase(2), 600);
 
-    // Phase 3 (3.5s): Loading Complete & Flash "System_Ready"
-    const t3 = setTimeout(() => setPhase(3), 3500);
+    // Phase 3 (2.0s): Loading Complete & Flash "System_Ready"
+    const t3 = setTimeout(() => setPhase(3), 2000);
 
-    // Phase 4 (4.0s): Wink Happens AFTER Loading
+    // Phase 4 (2.2s): Wink Happens right after Loading
     const t4 = setTimeout(() => {
       setAvatarSrc("images/avatar-winking.png");
-      setTimeout(() => setAvatarSrc("images/avatar-static.png"), 600);
-    }, 4000);
+      setTimeout(() => setAvatarSrc("images/avatar-static.png"), 400);
+    }, 2200);
 
-    // Phase 5 (5.5s): Welcome message
-    const t5 = setTimeout(() => setPhase(4), 5500);
+    // Phase 5 (3.5s): Welcome message
+    const t5 = setTimeout(() => setPhase(4), 3500);
 
-    // Phase 6 (6.5s): Done
+    // Phase 6 (5.5s): Done (2 seconds after Welcome)
     const t6 = setTimeout(() => {
       setBooting(false);
-    }, 6500);
+    }, 5500);
 
     return () => {
       [t2, t3, t4, t5, t6].forEach(clearTimeout);

@@ -19,27 +19,20 @@ export const VerticalMeter: React.FC<VerticalMeterProps> = ({
   const store = useConsoleStore();
   const spikeMv = useMotionValue(0);
 
+  // Handle Spikes (Random jump and decay)
   React.useEffect(() => {
     let target = 0;
     if (type === "nav") target = store.navActivity;
     if (type === "tab") target = store.tabActivity;
 
-    if (target === 99) {
-      // Sustained dance effect
-      const interval = setInterval(() => {
-        spikeMv.set(60 + Math.random() * 35);
-      }, 50);
-      return () => {
-        clearInterval(interval);
-        spikeMv.set(0);
-      };
-    } else if (target > 0) {
+    if (target > 0) {
       spikeMv.set(target);
+      
       // Reset store value after triggering spike
       if (type === "nav") store.setNavActivity(0);
       if (type === "tab") store.setTabActivity(0);
       
-      // Decay spike
+      // Animate decay
       animate(spikeMv, 0, {
         duration: 0.8,
         ease: "easeOut",
@@ -107,7 +100,6 @@ export const VerticalMeter: React.FC<VerticalMeterProps> = ({
             shadowColor = isMid ? "#f97316" : "#fbbf24";
             dimColor = isMid ? "bg-[#431407]" : "bg-[#451a03]";
           } else {
-            // ORIGINAL
             color = isMid ? "bg-amber-500" : "bg-emerald-500";
             shadowColor = isMid ? "#f59e0b" : "#10b981";
             dimColor = isMid ? "bg-[#3f2c0f]" : "bg-[#064e3b]";
@@ -116,7 +108,7 @@ export const VerticalMeter: React.FC<VerticalMeterProps> = ({
           return (
             <div
               key={i}
-              className={`w-full flex-1 rounded-[1px] transition-all duration-75 ${active ? color : dimColor}`}
+              className={`w-full flex-1 rounded-[1px] ${active ? color : dimColor}`}
               style={{
                 opacity: active ? 1 : 0.6,
                 boxShadow: active ? `0 0 4px ${shadowColor}` : "none",

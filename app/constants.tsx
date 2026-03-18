@@ -21,7 +21,12 @@ export const PROJECTS_DATA = [
     breach: "Manual deployment of SCORM packets for the CCSK course was a literal 8-hour bottleneck per update, eating up massive amounts of engineering and training team time.",
     deploy: "Python, Playwright, Skilljar API, Google Drive API, GitHub Actions.",
     result: "Turned a full day of LEAi → Skilljar publishing into a 20-minute automated run. Saved roughly 160 hours of manual labor per quarter.",
-    stack: ["Python", "Playwright", "Skilljar API", "Google Drive API", "GitHub Actions"]
+    stack: ["Python", "Playwright", "Skilljar API", "Google Drive API", "GitHub Actions"],
+    media: [
+      { type: "diagram", label: "Pipeline Architecture", description: "Flowchart showing LEAi export to Skilljar ingestion via Python worker." },
+      { type: "todo", label: "Automation Logs", description: "Capture real-time GitHub Action logs showing the 20-minute completion state." },
+      { type: "screenshot", label: "Dashboard", description: "Internal monitoring UI for tracking SCORM package versions." }
+    ]
   },
   {
     id: "OFF_GRID_MED",
@@ -31,7 +36,12 @@ export const PROJECTS_DATA = [
     breach: "Stakeholders required immediate access to critical drug guidelines in active conflict zones with zero internet access, no App Store availability, and extreme security censorship.",
     deploy: "Android Studio, Java, P2P (Peer-to-Peer) Sharing Architecture, Physical Encrypted Flash Drive Distribution.",
     result: "Successfully bypassed digital blockades to deliver life-saving data. Achieved 100% offline uptime and enabled rapid deployment across units via decentralized sharing.",
-    stack: ["Android Studio", "Java", "P2P Architecture", "Encryption"]
+    stack: ["Android Studio", "Java", "P2P Architecture", "Encryption"],
+    media: [
+      { type: "diagram", label: "P2P Sync Logic", description: "Visualizing the mesh-network handshake between Android devices via Bluetooth/Wi-Fi Direct." },
+      { type: "screenshot", label: "Rugged UI", description: "High-contrast, low-light optimized interface for field use." },
+      { type: "todo", label: "Encryption Flow", description: "Diagram explaining the flash-drive physical key injection process." }
+    ]
   },
   {
     id: "CSA_TRAINING",
@@ -41,7 +51,11 @@ export const PROJECTS_DATA = [
     breach: "The organization needed to rapidly deploy massive, high-quality audio/visual training modules (CCSK v5 and CCZT) without a bloated production budget or timeline.",
     deploy: "Ruby on Rails, WellSaid Labs (AI Audio), Vimeo API, Canva, LEAi.",
     result: "Delivered all 12 modules of the CCSK v5 and Modules 3-7 of the CCZT in record time, operating as a full-fledged hybrid member of the training and engineering teams.",
-    stack: ["Ruby on Rails", "AI Audio", "Vimeo API", "Canva", "LEAi"]
+    stack: ["Ruby on Rails", "AI Audio", "Vimeo API", "Canva", "LEAi"],
+    media: [
+      { type: "screenshot", label: "Module 1 Preview", description: "Sample of the interactive CCSK v5 training interface." },
+      { type: "todo", label: "Production Stack", description: "Internal workflow diagram showing the 'LEAi -> AI Audio -> LMS' pipeline." }
+    ]
   },
   {
     id: "DYNAMIC_CONTRIBUTOR",
@@ -51,7 +65,11 @@ export const PROJECTS_DATA = [
     breach: "Adding new course authors required manual HTML edits by developers for every single page, creating a massive bottleneck for the Product team.",
     deploy: "Ruby on Rails, Rails Admin, Blaze UI.",
     result: "Engineered a dynamic data model and human-centered UI that removed the developer bottleneck. Time-to-publish for new contributors dropped from 2 days to 5 minutes.",
-    stack: ["Ruby on Rails", "PostgreSQL", "Rails Admin", "Blaze UI"]
+    stack: ["Ruby on Rails", "PostgreSQL", "Rails Admin", "Blaze UI"],
+    media: [
+      { type: "diagram", label: "Schema Design", description: "Relational diagram of the Contributor <-> Resource mapping." },
+      { type: "screenshot", label: "Admin Panel", description: "Custom UI for admins to update author bios and headshots without code." }
+    ]
   },
   {
     id: "BOGARDT_PLATFORM",
@@ -61,7 +79,11 @@ export const PROJECTS_DATA = [
     breach: "Needed a centralized, highly-performant hub to manage media, upcoming shows, and provide band members with secure admin access and custom G-Suite integration.",
     deploy: "Next.js, Tailwind CSS, Vercel, Google Domains, React Server Components.",
     result: "Currently migrating from basic hosting to a full Next.js edge-deployed architecture to support scalable media delivery and custom member dashboards.",
-    stack: ["Next.js", "React", "Tailwind CSS", "Vercel", "G-Suite API"]
+    stack: ["Next.js", "React", "Tailwind CSS", "Vercel", "G-Suite API"],
+    media: [
+      { type: "screenshot", label: "Live Site", description: "Mobile-responsive landing page for the band's media hub." },
+      { type: "todo", label: "Admin Dashboard", description: "Interface for band members to manage their show calendar and media assets." }
+    ]
   }
 ];
 

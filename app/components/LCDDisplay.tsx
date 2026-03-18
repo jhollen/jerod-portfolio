@@ -14,6 +14,8 @@ interface ThemeStyles {
   border: string;
   font: string;
   text: string;
+  highlight: string;
+  bg: string;
   led: string;
 }
 
@@ -29,16 +31,25 @@ const NavigationHeader = ({
   theme: ThemeStyles;
 }) => {
   const [isHovered, setIsHovered] = React.useState(false);
+  const { triggerTabSpike } = useConsoleStore();
 
   return (
     <div className="flex items-center gap-3 mb-6 relative z-50">
       <motion.button
-        onMouseEnter={() => setIsHovered(true)}
+        onMouseEnter={() => {
+          setIsHovered(true);
+          triggerTabSpike();
+        }}
         onMouseLeave={() => setIsHovered(false)}
         onClick={onBack}
-        className={`flex items-center gap-1.5 px-2.5 py-1 border-2 ${theme.border} ${theme.font} text-xs font-black hover:scale-105 active:scale-95 transition-all shadow-[2px_2px_0_rgba(0,0,0,0.1)] bg-white/10 backdrop-blur-md ${theme.text} shrink-0`}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        className={`flex items-center gap-1.5 px-2.5 py-1.5 md:py-1 border-2 ${theme.border} ${theme.font} text-[10px] md:text-xs font-black shadow-[2px_2px_0_rgba(0,0,0,0.1)] bg-white/10 backdrop-blur-md ${theme.text} shrink-0`}
       >
         <span className="text-sm">‹</span>
+        <span className="md:hidden uppercase tracking-tighter text-[9px]">
+          BACK
+        </span>
         <AnimatePresence>
           {isHovered && (
             <motion.span
@@ -46,8 +57,10 @@ const NavigationHeader = ({
               animate={{ width: "auto", opacity: 1 }}
               exit={{ width: 0, opacity: 0 }}
               transition={{ type: "spring", stiffness: 400, damping: 30 }}
-              className="overflow-hidden whitespace-nowrap text-[10px] uppercase tracking-tighter pr-1"
-            ></motion.span>
+              className="hidden md:block overflow-hidden whitespace-nowrap text-[10px] uppercase tracking-tighter pr-1"
+            >
+              {backLabel}
+            </motion.span>
           )}
         </AnimatePresence>
       </motion.button>
@@ -55,7 +68,7 @@ const NavigationHeader = ({
       <motion.h3
         layout
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
-        className="text-xl font-black border-b-2 border-current flex-1 flex justify-between items-end text-lg uppercase tracking-tighter h-9"
+        className={`text-base md:text-xl font-black border-b-2 border-current flex-1 flex justify-between items-end uppercase tracking-tighter h-9 ${theme.text}`}
       >
         {title}
       </motion.h3>
@@ -81,15 +94,28 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
     setPanDepth,
     addLogMessage,
     triggerNavSpike,
-    triggerNavDance,
     triggerTabSpike,
-    setNavActivity,
     activePreset,
   } = useConsoleStore();
 
+  const scrollRef = React.useRef<HTMLDivElement>(null);
+
+  const handleEdgeScroll = (e: React.MouseEvent) => {
+    if (!scrollRef.current) return;
+    const { top, height } = scrollRef.current.getBoundingClientRect();
+    const relativeY = e.clientY - top;
+    const threshold = height * 0.15;
+
+    if (relativeY < threshold) {
+      scrollRef.current.scrollBy({ top: -8, behavior: "auto" });
+    } else if (relativeY > height - threshold) {
+      scrollRef.current.scrollBy({ top: 8, behavior: "auto" });
+    }
+  };
+
   React.useEffect(() => {
     if (isBooting) {
-      const t = setTimeout(() => setBooting(false), 6800);
+      const t = setTimeout(() => setBooting(false), 5500);
       return () => clearTimeout(t);
     }
   }, [isBooting, setBooting]);
@@ -98,28 +124,27 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
   const isHacker = activePreset === "HACKER";
   const isKindle = !isRetro && !isHacker;
 
-  const theme = React.useMemo(() => {
+  const theme: ThemeStyles = React.useMemo(() => {
     if (isRetro) {
       return {
         bg: "bg-[#2a1a0a]",
-        text: "text-black",
-        highlight: "bg-[#ffb000] text-black",
-        border: "border-black",
+        text: "text-[#ffb000]",
+        highlight: "bg-[#ffb000] text-[#2a1a0a]",
+        border: "border-[#ffb000]",
         font: "font-mono",
-        led: "bg-black",
+        led: "bg-[#ffb000]",
       };
     }
     if (isHacker) {
       return {
         bg: "bg-[#050a15]",
-        text: "text-black",
-        highlight: "bg-[#00f3ff] text-black",
-        border: "border-black",
+        text: "text-[#00f3ff]",
+        highlight: "bg-[#00f3ff] text-[#050a15]",
+        border: "border-[#00f3ff]",
         font: "font-mono",
-        led: "bg-black",
+        led: "bg-[#00f3ff]",
       };
     }
-    // Kindle Default: Pure Black Text
     return {
       bg: "bg-[#e8e9e4]",
       text: "text-black",
@@ -166,35 +191,42 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
 
   const renderControlColumn = () => (
     <div
-      className={`w-24 border-l-2 ${theme.border} flex flex-col items-center justify-center gap-6 px-2 shrink-0`}
+      className={`hidden md:flex w-24 border-l-2 ${theme.border} flex flex-col items-center justify-center gap-6 px-2 shrink-0`}
     >
       <button
         onClick={zoomIn}
+        onMouseEnter={() => triggerNavSpike()}
         disabled={tier === 2}
         className={`w-full py-3 border-2 ${theme.border} ${theme.font} text-[9px] font-black uppercase tracking-tighter hover:scale-105 active:scale-95 transition-all disabled:opacity-20 shadow-[2px_2px_0_rgba(0,0,0,0.1)] ${theme.text}`}
       >
         [ + ]<br />
         ZOOM IN
       </button>
-      <div className="flex flex-col gap-2 opacity-40 text-[8px] font-black uppercase tracking-widest pointer-events-none items-center">
+      <div
+        className={`flex flex-col gap-2 opacity-40 text-[8px] font-black uppercase tracking-widest pointer-events-none items-center ${theme.text}`}
+      >
         <div
-          className={`transition-all duration-300 ${tier === 0 ? "opacity-100 scale-125 font-black underline" : ""}`}
+          onMouseEnter={() => triggerNavSpike()}
+          className={`transition-all duration-300 ${tier === 0 ? "opacity-100 scale-125 underline" : ""}`}
         >
-          T0
+          {tier === 0 ? <b>T0</b> : "T0"}
         </div>
         <div
-          className={`transition-all duration-300 ${tier === 1 ? "opacity-100 scale-125 font-black underline" : ""}`}
+          onMouseEnter={() => triggerNavSpike()}
+          className={`transition-all duration-300 ${tier === 1 ? "opacity-100 scale-125 underline" : ""}`}
         >
-          T1
+          {tier === 1 ? <b>T1</b> : "T1"}
         </div>
         <div
-          className={`transition-all duration-300 ${tier === 2 ? "opacity-100 scale-125 font-black underline" : ""}`}
+          onMouseEnter={() => triggerNavSpike()}
+          className={`transition-all duration-300 ${tier === 2 ? "opacity-100 scale-125 underline" : ""}`}
         >
-          T2
+          {tier === 2 ? <b>T2</b> : "T2"}
         </div>
       </div>
       <button
         onClick={zoomOut}
+        onMouseEnter={() => triggerNavSpike()}
         disabled={tier === 0}
         className={`w-full py-3 border-2 ${theme.border} ${theme.font} text-[9px] font-black uppercase tracking-tighter hover:scale-105 active:scale-95 transition-all disabled:opacity-20 shadow-[2px_2px_0_rgba(0,0,0,0.1)] ${theme.text}`}
       >
@@ -210,9 +242,10 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
     onPrev: () => void,
     onNext: () => void,
   ) => (
-    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 flex items-center gap-8 z-50">
+    <div className="hidden md:flex absolute bottom-0 left-1/2 -translate-x-1/2 flex items-center gap-8 z-50">
       <button
         onClick={onPrev}
+        onMouseEnter={() => triggerTabSpike()}
         disabled={currentIdx === 0}
         className={`p-3 -m-3 text-xl font-black transition-all disabled:opacity-5 hover:scale-150 active:scale-95 ${theme.text} flex items-center justify-center`}
         aria-label="Previous"
@@ -224,6 +257,7 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
         {Array.from({ length: total }).map((_, i) => (
           <button
             key={i}
+            onMouseEnter={() => triggerTabSpike()}
             onClick={() => {
               if (activeSelection === "PROJECTS" && !selectedProject) {
                 setPanDepth((i / (total - 1)) * 100);
@@ -239,6 +273,7 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
 
       <button
         onClick={onNext}
+        onMouseEnter={() => triggerTabSpike()}
         disabled={currentIdx === total - 1}
         className={`p-3 -m-3 text-xl font-black transition-all disabled:opacity-5 hover:scale-150 active:scale-95 ${theme.text} flex items-center justify-center`}
         aria-label="Next"
@@ -250,17 +285,17 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
 
   const renderBio = () => (
     <div
-      className={`space-y-6 ${theme.font} ${theme.text} text-[16px] leading-relaxed relative h-full pt-4 flex pl-10`}
+      className={`space-y-6 ${theme.font} ${theme.text} text-[14px] md:text-[16px] leading-relaxed relative h-full pt-4 flex pl-4 md:pl-10`}
     >
       <div className="flex-1 flex flex-col pr-4">
         <NavigationHeader
           title="BIO"
-          backLabel="Return to System"
+          backLabel="Menu"
           onBack={handleReturnToSystem}
           theme={theme}
         />
 
-        <div className="flex-1 overflow-y-auto  custom-scrollbar pr-4">
+        <div className="flex-1 overflow-y-auto md:overflow-y-auto custom-scrollbar pr-4">
           {tier === 0 && (
             <motion.div
               initial={{ opacity: 0 }}
@@ -304,27 +339,28 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
 
   const renderStack = () => (
     <div
-      className={`space-y-6 ${theme.font} ${theme.text} text-[15px] leading-relaxed relative h-full pt-4 flex pl-10`}
+      className={`space-y-6 ${theme.font} ${theme.text} text-[14px] md:text-[15px] leading-relaxed relative h-full pt-4 flex pl-4 md:pl-10`}
     >
       <div className="flex-1 flex flex-col pr-4">
         <NavigationHeader
           title="STACK"
-          backLabel="Return to System"
+          backLabel="Menu"
           onBack={handleReturnToSystem}
           theme={theme}
         />
 
-        <div className="flex-1 overflow-y-auto custom-scrollbar pr-4">
+        <div className="flex-1 overflow-y-auto md:overflow-y-auto custom-scrollbar pr-4">
           {tier === 0 && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               className="space-y-6 py-4"
             >
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {STACK_DATA.map((s) => (
                   <div
                     key={s.era}
+                    onMouseEnter={() => triggerNavSpike()}
                     className={`border border-current p-3 text-center bg-current/5`}
                   >
                     <p className="text-[10px] opacity-50 font-black">{s.era}</p>
@@ -343,6 +379,7 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
               {STACK_DATA.map((s) => (
                 <div
                   key={s.era}
+                  onMouseEnter={() => triggerNavSpike()}
                   className="border-l-2 border-current pl-4 mb-4"
                 >
                   <p className="text-xs font-black uppercase">{s.title}</p>
@@ -364,7 +401,11 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
               </p>
               <div className="space-y-4">
                 {STACK_DATA.map((s) => (
-                  <div key={s.era} className="border-b border-current/10 pb-2">
+                  <div
+                    key={s.era}
+                    onMouseEnter={() => triggerNavSpike()}
+                    className="border-b border-current/10 pb-2"
+                  >
                     <p className="text-[9px] font-black opacity-40 uppercase tracking-tighter">
                       {s.title}
                     </p>
@@ -381,181 +422,253 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
   );
 
   const renderProjects = () => {
-    if (!selectedProject) {
-      const currentProjIdx = Math.min(
-        Math.floor((panDepth / 100) * PROJECTS_DATA.length),
-        PROJECTS_DATA.length - 1,
-      );
-      const p = PROJECTS_DATA[currentProjIdx];
+    const categories = [
+      "ALL",
+      ...Array.from(
+        new Set(PROJECTS_DATA.map((p) => p.category.split(" / ")[0])),
+      ),
+    ];
+    const activeCategory = categories[tabIndex % categories.length];
+
+    const filteredProjects =
+      activeCategory === "ALL"
+        ? PROJECTS_DATA
+        : PROJECTS_DATA.filter((p) => p.category.startsWith(activeCategory));
+
+    if (selectedProject) {
+      const p = PROJECTS_DATA.find((proj) => proj.id === selectedProject);
+      if (!p) return null;
+
+      const tabs = ["OVERVIEW", "THE BREACH", "DEPLOYMENT", "RESULTS", "MEDIA"];
+      const currentTabIdx = Math.min(tabIndex, tabs.length - 1);
 
       return (
         <div
-          className={`flex flex-col h-full w-full relative overflow-hidden ${theme.text} ${theme.font} pt-2`}
+          className={`flex flex-col h-full w-full relative pt-4 pl-4 md:pl-10 ${theme.text}`}
         >
           <NavigationHeader
-            title="PROJECTS"
-            backLabel="Return to System"
-            onBack={handleReturnToSystem}
+            title={p.title}
+            backLabel="Return to Index"
+            onBack={handleProjectBack}
             theme={theme}
           />
 
-          <div className="flex-1 pr-4 pb-20 flex items-center justify-center relative">
+          {/* Fixed Tab Header */}
+          <div className="flex border-b border-current/20 mb-4 mr-4 overflow-x-auto [&::-webkit-scrollbar]:hidden shrink-0">
+            {tabs.map((label, i) => (
+              <button
+                key={label}
+                onMouseEnter={() => triggerTabSpike()}
+                onClick={() => {
+                  setTabIndex(i);
+                  triggerTabSpike();
+                }}
+                className={`px-3 md:px-4 py-2 text-[9px] md:text-[10px] font-black uppercase tracking-widest whitespace-nowrap border-b-2 transition-all ${
+                  i === currentTabIdx
+                    ? "border-current opacity-100 scale-105"
+                    : "border-transparent opacity-40 hover:opacity-60"
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+
+          <div className="flex-1 pr-4 pb-12 md:pb-20 overflow-hidden relative">
             <AnimatePresence mode="wait">
+              <motion.div
+                key={`${selectedProject}-tab-${currentTabIdx}`}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                className="h-full flex flex-col"
+              >
+                <div className="text-[14px] leading-relaxed flex-1 overflow-y-auto pr-2 custom-scrollbar">
+                  {currentTabIdx === 0 && <p>{p.overview}</p>}
+                  {currentTabIdx === 1 && <p>{p.breach}</p>}
+                  {currentTabIdx === 2 && <p>{p.deploy}</p>}
+                  {currentTabIdx === 3 && <p>{p.result}</p>}
+                  {currentTabIdx === 4 && (
+                    <div className="space-y-6">
+                      <div className="flex gap-4 overflow-x-auto pb-4 snap-x [&::-webkit-scrollbar]:hidden">
+                        {(p as any).media?.map((m: any, i: number) => {
+                          const assetCount = (p as any).media.length;
+                          const isActive =
+                            Math.min(
+                              Math.floor((panDepth / 100) * assetCount),
+                              assetCount - 1,
+                            ) === i;
+                          return (
+                            <div
+                              key={i}
+                              onMouseEnter={() => triggerTabSpike()}
+                              className={`min-w-[280px] border-2 ${theme.border} p-4 bg-white/5 snap-center transition-all ${isActive ? "scale-105 border-current shadow-[0_0_15px_rgba(0,0,0,0.2)]" : "opacity-40"}`}
+                            >
+                              <div className="flex justify-between items-start mb-2">
+                                <span
+                                  className={`text-[8px] font-black uppercase px-1.5 py-0.5 ${theme.highlight}`}
+                                >
+                                  {m.type}
+                                </span>
+                                <span className="text-[10px] font-black opacity-40">
+                                  0{i + 1}
+                                </span>
+                              </div>
+                              <h5 className="font-black text-xs mb-2 uppercase">
+                                {m.label}
+                              </h5>
+                              <p className="text-[11px] italic opacity-70 leading-snug">
+                                {m.description}
+                              </p>
+                            </div>
+                          );
+                        })}
+                      </div>
+                      <div className="border-t border-current/10 pt-4">
+                        <p className="text-[10px] font-black opacity-40 uppercase tracking-widest mb-2">
+                          Technical Telemetry:
+                        </p>
+                        <p className="text-[11px] font-mono opacity-60 bg-black/20 p-2 rounded whitespace-pre-wrap">
+                          {`> HORIZONTAL_ASSETS_LOADED: ${(p as any).media?.length || 0}\n> PAN_CONTROL: ACTIVE\n> SCRUB_CONTROL: DISABLED`}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div
+        className={`flex flex-col h-full w-full relative overflow-hidden pt-2 px-4 md:px-0 ${theme.text} ${theme.font}`}
+      >
+        <NavigationHeader
+          title="PROJECTS"
+          backLabel="Menu"
+          onBack={handleReturnToSystem}
+          theme={theme}
+        />
+
+        {/* Category Filter Tabs (Controlled by Info Gain/Tab state) */}
+        <div className="flex border-b border-current/20 mb-4 mr-4 overflow-x-auto [&::-webkit-scrollbar]:hidden shrink-0">
+          {categories.map((cat, i) => (
+            <button
+              key={cat}
+              onMouseEnter={() => triggerTabSpike()}
+              onClick={() => {
+                setTabIndex(i);
+                triggerTabSpike();
+              }}
+              className={`px-4 py-2 text-[10px] font-black uppercase tracking-widest whitespace-nowrap border-b-2 transition-all duration-300 outline-none ${
+                i === tabIndex
+                  ? "border-current opacity-100 scale-105"
+                  : "border-transparent opacity-30 hover:opacity-60"
+              }`}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+
+        {/* Project List (Vertical Scroll) */}
+        <div
+          ref={scrollRef}
+          onMouseMove={handleEdgeScroll}
+          className="flex-1 overflow-y-auto custom-scrollbar pr-4 pb-10"
+        >
+          <div className="space-y-4">
+            {filteredProjects.map((p, idx) => (
               <motion.button
                 key={p.id}
-                initial={{ opacity: 0, x: 50 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -50 }}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.05 }}
+                onMouseEnter={() => triggerNavSpike()}
                 onClick={() => {
                   setSelectedProject(p.id);
                   setTabIndex(0);
                   triggerNavSpike();
                   addLogMessage(`MOUNT: ${p.id}`);
                 }}
-                className={`group border-4 ${theme.border} p-6 hover:bg-current/5 text-left w-full  flex flex-col justify-between outline-none focus:ring-4 focus:ring-current/10 relative transition-all shadow-[8px_8px_0_rgba(0,0,0,0.15)] bg-white/5`}
+                className={`w-full text-left group border-2 ${theme.border} p-3 md:p-4 hover:bg-current/5 transition-all outline-none focus:ring-2 focus:ring-current/20 relative shadow-[4px_4px_0_rgba(0,0,0,0.1)] bg-white/5 flex flex-col gap-2 ${theme.text}`}
               >
-                <div>
-                  <div className="flex justify-between items-start mb-3">
-                    <h4 className="font-black uppercase tracking-wide text-lg leading-tight w-2/3">
-                      {p.title}
-                    </h4>
+                <div className="flex justify-between items-center">
+                  <h4 className="font-black uppercase tracking-tight text-sm md:text-base leading-none">
+                    {p.title}
+                  </h4>
+                  {tier > 0 && (
                     <span
-                      className={`text-[10px] font-bold border ${theme.border} px-2 py-0.5 whitespace-nowrap ${theme.highlight} uppercase tracking-tighter shadow-sm`}
+                      className={`text-[8px] font-bold border ${theme.border} px-1.5 py-0.5 ${theme.highlight} uppercase tracking-tighter`}
                     >
-                      {p.category}
+                      {p.category.split(" / ")[0]}
                     </span>
-                  </div>
-                  <p className="text-[13px] leading-relaxed mb-4 italic opacity-80 border-l-2 border-current/20 pl-4 py-1">
+                  )}
+                </div>
+
+                {tier >= 1 && (
+                  <p className="text-[11px] md:text-[12px] italic opacity-70 border-l border-current/30 pl-3 py-0.5 line-clamp-1">
                     {p.overview}
                   </p>
-                </div>
-                <div className="flex flex-wrap gap-x-4 gap-y-1 pt-3 border-t border-current/10">
-                  {p.stack.map((item) => (
-                    <span
-                      key={item}
-                      className="text-[9px] font-bold uppercase tracking-widest opacity-60"
-                    >
-                      {item}
-                    </span>
-                  ))}
-                </div>
+                )}
+
+                {tier === 2 && (
+                  <div className="flex flex-wrap gap-x-3 gap-y-1 pt-2 border-t border-current/10 mt-1">
+                    {p.stack.slice(0, 5).map((item) => (
+                      <span
+                        key={item}
+                        className="text-[8px] font-bold uppercase tracking-widest opacity-50"
+                      >
+                        {item}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </motion.button>
-            </AnimatePresence>
-          </div>
+            ))}
 
-          {renderBottomNav(
-            currentProjIdx,
-            PROJECTS_DATA.length,
-            () =>
-              setPanDepth(
-                (Math.max(0, currentProjIdx - 1) / (PROJECTS_DATA.length - 1)) *
-                  100,
-              ),
-            () =>
-              setPanDepth(
-                (Math.min(PROJECTS_DATA.length - 1, currentProjIdx + 1) /
-                  (PROJECTS_DATA.length - 1)) *
-                  100,
-              ),
-          )}
-        </div>
-      );
-    }
-
-    const p = PROJECTS_DATA.find((proj) => proj.id === selectedProject);
-    if (!p) return null;
-
-    const tabs = ["OVERVIEW", "THE BREACH", "DEPLOYMENT", "RESULTS"];
-    const currentTabIdx = Math.min(tabIndex, tabs.length - 1);
-
-    return (
-      <div
-        className={`flex flex-col h-full w-full relative ${theme.text} ${theme.font} pt-4 pl-10`}
-      >
-        <NavigationHeader
-          title={p.title}
-          backLabel="Return to Index"
-          onBack={handleProjectBack}
-          theme={theme}
-        />
-
-        {/* Fixed Tab Header */}
-        <div className="flex border-b border-current/20 mb-4 mr-4 overflow-x-auto [&::-webkit-scrollbar]:hidden">
-          {tabs.map((label, i) => (
-            <button
-              key={label}
-              onClick={() => {
-                setTabIndex(i);
-                triggerTabSpike();
-              }}
-              className={`px-4 py-2 text-[10px] font-black uppercase tracking-widest whitespace-nowrap border-b-2 transition-all ${
-                i === currentTabIdx
-                  ? "border-current opacity-100 scale-105"
-                  : "border-transparent opacity-40 hover:opacity-60"
-              }`}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-
-        <div className="flex-1 pr-4 pb-20 overflow-hidden relative">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={`${selectedProject}-tab-${currentTabIdx}`}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              className="h-full flex flex-col"
-            >
-              <div className="text-[14px] leading-relaxed flex-1 overflow-y-auto pr-2 custom-scrollbar">
-                {currentTabIdx === 0 && <p>{p.overview}</p>}
-                {currentTabIdx === 1 && <p>{p.breach}</p>}
-                {currentTabIdx === 2 && <p>{p.deploy}</p>}
-                {currentTabIdx === 3 && <p>{p.result}</p>}
+            {filteredProjects.length === 0 && (
+              <div className="py-20 text-center opacity-30 italic text-xs uppercase tracking-widest">
+                No projects in this category
               </div>
-            </motion.div>
-          </AnimatePresence>
+            )}
+          </div>
         </div>
-
-        {renderBottomNav(
-          currentTabIdx,
-          4,
-          () => setTabIndex(Math.max(0, currentTabIdx - 1)),
-          () => setTabIndex(Math.min(3, currentTabIdx + 1)),
-        )}
       </div>
     );
   };
 
   const renderContact = () => (
     <div
-      className={`space-y-6 ${theme.font} ${theme.text} text-[15px] leading-relaxed relative h-full pt-4 pl-10`}
+      className={`space-y-6 ${theme.font} ${theme.text} text-[14px] md:text-[15px] leading-relaxed relative h-full pt-4 flex pl-4 md:pl-10`}
     >
       <NavigationHeader
         title="CONTACT"
-        backLabel="Return to System"
+        backLabel="Menu"
         onBack={handleReturnToSystem}
         theme={theme}
       />
 
-      <div className="space-y-6 py-4 pr-4">
-        <div className="border-4 border-current/30 p-6 bg-current/5 space-y-4 shadow-[8px_8px_0_rgba(0,0,0,0.1)]">
-          <p className="font-black text-center border-b border-current/20 pb-4 tracking-[0.2em] uppercase text-xs underline decoration-dotted">
+      <div className="space-y-6 py-4 pr-4 overflow-y-auto custom-scrollbar h-full pb-20">
+        <div className="border-4 border-current/30 p-4 md:p-6 bg-current/5 space-y-4 shadow-[8px_8px_0_rgba(0,0,0,0.1)]">
+          <p className="font-black text-center border-b border-current/20 pb-4 tracking-[0.2em] uppercase text-[10px] md:text-xs underline decoration-dotted">
             UPLINK_STABLE: AWAITING_INPUT
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="space-y-4">
-              <div>
-                <p className="text-[10px] opacity-40 uppercase mb-1 font-black">
+              <div onMouseEnter={() => triggerNavSpike()}>
+                <p className="text-[9px] md:text-[10px] opacity-40 uppercase mb-1 font-black">
                   Email
                 </p>
-                <p className="font-bold underline decoration-dotted">
+                <p className="font-bold underline decoration-dotted break-all">
                   jerod.a.hollen@gmail.com
                 </p>
               </div>
-              <div>
-                <p className="text-[10px] opacity-40 uppercase mb-1 font-black">
+              <div onMouseEnter={() => triggerNavSpike()}>
+                <p className="text-[9px] md:text-[10px] opacity-40 uppercase mb-1 font-black">
                   GitHub
                 </p>
                 <p className="font-bold underline decoration-dotted">
@@ -564,23 +677,19 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
               </div>
             </div>
             <div className="space-y-4">
-              <div>
-                <p className="text-[10px] opacity-40 uppercase mb-1 font-black">
+              <div onMouseEnter={() => triggerNavSpike()}>
+                <p className="text-[9px] md:text-[10px] opacity-40 uppercase mb-1 font-black">
                   LinkedIn
                 </p>
                 <p className="font-bold underline decoration-dotted">
                   in/jerodhollen
                 </p>
               </div>
-              <div className="pt-2 italic text-xs border-t border-current/10 opacity-60 font-medium">
+              <div className="pt-2 italic text-[11px] md:text-xs border-t border-current/10 opacity-60 font-medium">
                 &quot;Strategic high-impact engineering roles only.&quot;
               </div>
             </div>
           </div>
-        </div>
-        <div className="sr-only">
-          Contact Jerod Hollen: jerod.a.hollen@gmail.com. Expertise in React,
-          Node, Python, AWS, Cloud Security.
         </div>
       </div>
     </div>
@@ -588,7 +697,7 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
 
   const renderMainMenu = () => (
     <div
-      className={`flex flex-col gap-2 w-full mt-2 ${theme.text} ${theme.font}`}
+      className={`flex flex-col gap-2 w-full mt-2 ${theme.text} ${theme.font} px-4 md:px-0`}
     >
       <h3 className="font-black uppercase tracking-widest mb-4 opacity-50 text-[10px]">
         Main Menu:
@@ -601,16 +710,15 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
             key={menu}
             onMouseEnter={() => {
               setMenuIndex(idx);
-              triggerNavDance();
+              triggerNavSpike();
             }}
-            onMouseLeave={() => setNavActivity(0)}
             onClick={() => {
               setActiveSelection(menu);
               setMenuIndex(0);
               triggerNavSpike();
               addLogMessage(`EXEC: [${name}]`);
             }}
-            className={`p-3 transition-all duration-75 flex gap-3 cursor-pointer text-left w-full outline-none focus:ring-4 focus:ring-inset focus:ring-current/20 border-l-4 border-transparent ${idx === menuIndex ? `${theme.highlight} font-black border-current translate-x-2` : "opacity-60 hover:bg-black/5 hover:translate-x-1"}`}
+            className={`p-3 md:p-3 transition-all duration-75 flex gap-3 cursor-pointer text-left w-full outline-none focus:ring-4 focus:ring-inset focus:ring-current/20 border-l-4 border-transparent ${idx === menuIndex ? `${theme.highlight} font-black border-current translate-x-2` : "opacity-60 hover:bg-black/5 hover:translate-x-1"}`}
           >
             {`${idx + 1}. ${name.toUpperCase()}`}
           </button>
@@ -631,7 +739,7 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
 
   return (
     <div
-      className={`w-full aspect-[16/9] max-h-[400px] ${theme.bg} border-[25px] border-black p-3 md:p-6 relative shadow-[0_10px_50px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col shrink-0 transition-all duration-700`}
+      className={`w-full h-full md:aspect-[16/9] md:max-h-[400px] ${theme.bg} md:border-[25px] border-black p-3 md:p-6 relative md:shadow-[0_10px_50px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col shrink-0 transition-colors duration-700`}
     >
       <div
         className={`absolute inset-0 pointer-events-none ${isKindle ? "shadow-[inset:0_0_100px_rgba(0,0,0,0.05)]" : "shadow-[inset:0_0_150px_rgba(0,0,0,0.3)]"} z-20`}
@@ -642,9 +750,9 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
       )}
 
       <div
-        className={`flex-1 h-full overflow-hidden leading-relaxed tracking-wide relative transition-colors duration-300 z-10`}
+        className={`flex-1 h-full overflow-hidden leading-relaxed tracking-wide relative z-10`}
       >
-        <div className="absolute inset-0 transition-transform duration-75 ease-linear">
+        <div className="absolute inset-0 overflow-y-auto md:overflow-visible text-[14px]">
           {renderMainContent()}
         </div>
       </div>

@@ -10,9 +10,10 @@ export function useMeterPhysics(activityMv?: MotionValue<number>) {
     if (!activityMv) return;
 
     const updateLevel = (val: number) => {
-      // Scale the input velocity to a 0-40 range for the meter LEDs
-      const scaledActivity = Math.min(40, val);
-      setLevel((prev) => Math.min(40, Math.max(prev, scaledActivity)));
+      // Scale the 0-100 input to 0-40 segments
+      const scaledActivity = (val / 100) * 40;
+      const clamped = Math.min(40, Math.max(0, scaledActivity));
+      setLevel((prev) => Math.max(prev, clamped));
     };
 
     const unsubscribe = activityMv.on("change", updateLevel);

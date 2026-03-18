@@ -1,7 +1,14 @@
 "use client";
 
 import * as React from "react";
-import { motion, useMotionValue, PanInfo, animate, MotionValue, AnimatePresence } from "framer-motion";
+import {
+  motion,
+  useMotionValue,
+  PanInfo,
+  animate,
+  MotionValue,
+  AnimatePresence,
+} from "framer-motion";
 
 interface KnobProps {
   label: string;
@@ -16,6 +23,7 @@ interface KnobProps {
   isActive?: boolean;
   isDisabled?: boolean;
   steps?: number;
+  hideStatusLed?: boolean;
 }
 
 export const Knob: React.FC<KnobProps> = ({
@@ -31,6 +39,7 @@ export const Knob: React.FC<KnobProps> = ({
   isActive = true,
   isDisabled = false,
   steps,
+  hideStatusLed = false,
 }) => {
   const rotation = useMotionValue(0);
   const isDragging = React.useRef(false);
@@ -60,29 +69,32 @@ export const Knob: React.FC<KnobProps> = ({
     activityMvRef.current = activityMv;
   }, [value, onChange, stepAngle, rotation, activityMv, steps]);
 
-  const handleInteraction = React.useCallback((delta: number) => {
-    if (!isActive || isDisabled) return;
-    const newRotation = rotation.get() + delta;
-    const clampedRotation = Math.max(-130, Math.min(130, newRotation));
-    rotation.set(clampedRotation);
+  const handleInteraction = React.useCallback(
+    (delta: number) => {
+      if (!isActive || isDisabled) return;
+      const newRotation = rotation.get() + delta;
+      const clampedRotation = Math.max(-130, Math.min(130, newRotation));
+      rotation.set(clampedRotation);
 
-    const currentActivityMv = activityMvRef.current;
-    if (currentActivityMv && typeof currentActivityMv.set === "function") {
-      currentActivityMv.set(Math.abs(delta * 4));
-    }
+      const currentActivityMv = activityMvRef.current;
+      if (currentActivityMv && typeof currentActivityMv.set === "function") {
+        currentActivityMv.set(Math.abs(delta * 4));
+      }
 
-    if (steps && steps > 1) {
-      const currentStep = Math.round((clampedRotation + 130) / stepAngle);
-      if (currentStep !== valueRef.current) {
-        onChangeRef.current(currentStep);
+      if (steps && steps > 1) {
+        const currentStep = Math.round((clampedRotation + 130) / stepAngle);
+        if (currentStep !== valueRef.current) {
+          onChangeRef.current(currentStep);
+        }
+      } else {
+        const newValue = ((clampedRotation + 130) / 260) * 100;
+        if (Math.abs(newValue - valueRef.current) > 0.1) {
+          onChangeRef.current(newValue);
+        }
       }
-    } else {
-      const newValue = ((clampedRotation + 130) / 260) * 100;
-      if (Math.abs(newValue - valueRef.current) > 0.1) {
-        onChangeRef.current(newValue);
-      }
-    }
-  }, [isActive, isDisabled, rotation, stepAngle, steps]);
+    },
+    [isActive, isDisabled, rotation, stepAngle, steps],
+  );
 
   const handlePan = (e: unknown, info: PanInfo) =>
     handleInteraction(-info.delta.y * 1.5);
@@ -141,13 +153,19 @@ export const Knob: React.FC<KnobProps> = ({
       ref={knobRef}
     >
       <div className="relative touch-none overscroll-none">
-        <span className={`absolute -bottom-2 -left-6 w-8 text-right text-[7px] font-bold font-mono tracking-tighter uppercase whitespace-nowrap transition-colors duration-500 ${isActive && !isDisabled ? "text-gray-400" : "text-gray-700"}`}>
+        <span
+          className={`absolute -bottom-2 -left-6 w-8 text-right text-[7px] font-bold font-mono tracking-tighter uppercase whitespace-nowrap transition-colors duration-500 ${isActive && !isDisabled ? "text-gray-400" : "text-gray-700"}`}
+        >
           {minLabel}
         </span>
-        <span className={`absolute -top-4 left-1/2 -translate-x-1/2 text-[7px] font-bold font-mono tracking-tighter uppercase whitespace-nowrap transition-colors duration-500 ${isActive && !isDisabled ? "text-gray-400" : "text-gray-700"}`}>
+        <span
+          className={`absolute -top-4 left-1/2 -translate-x-1/2 text-[7px] font-bold font-mono tracking-tighter uppercase whitespace-nowrap transition-colors duration-500 ${isActive && !isDisabled ? "text-gray-400" : "text-gray-700"}`}
+        >
           {centerLabel}
         </span>
-        <span className={`absolute -bottom-2 -right-6 w-8 text-left text-[7px] font-bold font-mono tracking-tighter uppercase whitespace-nowrap transition-colors duration-500 ${isActive && !isDisabled ? "text-gray-400" : "text-gray-700"}`}>
+        <span
+          className={`absolute -bottom-2 -right-6 w-8 text-left text-[7px] font-bold font-mono tracking-tighter uppercase whitespace-nowrap transition-colors duration-500 ${isActive && !isDisabled ? "text-gray-400" : "text-gray-700"}`}
+        >
           {maxLabel}
         </span>
         <div
@@ -166,7 +184,15 @@ export const Knob: React.FC<KnobProps> = ({
                   y1="3"
                   x2="50"
                   y2={isMajor ? "10" : "6"}
-                  stroke={isActive && !isDisabled ? (isMajor ? "#aaa" : "#555") : (isMajor ? "#444" : "#222")}
+                  stroke={
+                    isActive && !isDisabled
+                      ? isMajor
+                        ? "#aaa"
+                        : "#555"
+                      : isMajor
+                        ? "#444"
+                        : "#222"
+                  }
                   strokeWidth={isMajor ? "1.5" : "1"}
                   transform={`rotate(${-130 + i * 13} 50 50)`}
                   className="transition-colors duration-500"
@@ -192,24 +218,28 @@ export const Knob: React.FC<KnobProps> = ({
         </div>
       </div>
       <div className="flex flex-col items-center mt-2 text-center shrink-0 gap-1.5">
-        <span className={`text-[10px] font-bold uppercase tracking-widest transition-all duration-500 ${isActive && !isDisabled ? "text-gray-200 drop-shadow-[0_0_2px_rgba(16,185,129,0.3)]" : "text-gray-600"}`}>
+        <span
+          className={`text-[10px] font-bold uppercase tracking-widest transition-all duration-500 ${isActive && !isDisabled ? "text-gray-200 drop-shadow-[0_0_2px_rgba(16,185,129,0.3)]" : "text-gray-600"}`}
+        >
           {label}
         </span>
-        <div className="w-2.5 h-2.5 rounded-full border border-black/80 flex items-center justify-center bg-black shadow-[inset_0_1.5px_3px_rgba(0,0,0,1)] relative">
-          <AnimatePresence>
-            {isActive && !isDisabled && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0 }}
-                className="absolute inset-0 rounded-full bg-emerald-500/20 blur-[2px]"
-              />
-            )}
-          </AnimatePresence>
-          <div
-            className={`w-1.5 h-1.5 rounded-full transition-all duration-500 ${isActive && !isDisabled ? "bg-emerald-500 shadow-[0_0_8px_#10b981]" : "bg-[#0a0f0a]"}`}
-          />
-        </div>
+        {!hideStatusLed && (
+          <div className="w-2.5 h-2.5 rounded-full border border-black/80 flex items-center justify-center bg-black shadow-[inset:0_1.5px_3px_rgba(0,0,0,1)] relative">
+            <AnimatePresence>
+              {isActive && !isDisabled && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0 }}
+                  className="absolute inset-0 rounded-full bg-emerald-500/20 blur-[2px]"
+                />
+              )}
+            </AnimatePresence>
+            <div
+              className={`w-1.5 h-1.5 rounded-full transition-all duration-500 ${isActive && !isDisabled ? "bg-emerald-500 shadow-[0_0_8px_#10b981]" : "bg-[#0a0f0a]"}`}
+            />
+          </div>
+        )}
       </div>
     </div>
   );
