@@ -4,6 +4,7 @@ import * as React from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { useConsoleStore } from "@/app/useConsoleStore";
+import { TypewriterText } from "./TypewriterText";
 
 interface ThemeStyles {
   font?: string;
@@ -17,31 +18,36 @@ export const BootScreen: React.FC<{ theme: ThemeStyles }> = ({ theme }) => {
   const setBooting = useConsoleStore((s) => s.setBooting);
 
   React.useEffect(() => {
-    // Condensed Timeline
-    const t2 = setTimeout(() => setPhase(2), 500);
-    const t3 = setTimeout(() => setPhase(3), 1200);
-    const t4 = setTimeout(() => setPhase(4), 1800);
-    const t5 = setTimeout(() => {
-      setPhase(5);
+    // Initial: Fade in Name + Avatar immediately
+    
+    // Phase 2 (1.2s): Wink
+    const t2 = setTimeout(() => {
+      setPhase(2);
       setAvatarSrc("images/avatar-winking.png");
       setTimeout(() => setAvatarSrc("images/avatar-static.png"), 400);
-    }, 3000);
-    const t7 = setTimeout(() => setPhase(7), 3800);
-    const t8 = setTimeout(() => {
-      setPhase(8);
-      setTimeout(() => setBooting(false), 300);
-    }, 4500);
+    }, 1200);
+
+    // Phase 3 (2.0s): Start Loading
+    const t3 = setTimeout(() => setPhase(3), 2000);
+
+    // Phase 4 (4.0s): Welcome message
+    const t4 = setTimeout(() => setPhase(4), 4000);
+
+    // Phase 5 (5.0s): Done
+    const t5 = setTimeout(() => {
+      setBooting(false);
+    }, 5000);
 
     return () => {
-      [t2, t3, t4, t5, t7, t8].forEach(clearTimeout);
+      [t2, t3, t4, t5].forEach(clearTimeout);
     };
   }, [setBooting]);
 
   React.useEffect(() => {
-    if (phase === 4) {
+    if (phase === 3) {
       const interval = setInterval(() => {
         setLoadProgress((prev) => (prev < 100 ? prev + 5 : 100));
-      }, 30);
+      }, 40);
       return () => clearInterval(interval);
     }
   }, [phase]);
@@ -51,11 +57,9 @@ export const BootScreen: React.FC<{ theme: ThemeStyles }> = ({ theme }) => {
   const barText = `[${"|".repeat(filled).padEnd(barWidth, " ")}]`;
 
   return (
-    <div
-      className={`flex flex-col items-center justify-center h-full text-center p-6 relative overflow-hidden font-inter`}
-    >
+    <div className={`flex flex-col items-center justify-center h-full text-center p-6 relative overflow-hidden font-inter`}>
       <AnimatePresence mode="wait">
-        {phase < 7 ? (
+        {phase < 4 ? (
           <motion.div
             key="booting"
             initial={{ opacity: 0 }}
@@ -63,61 +67,45 @@ export const BootScreen: React.FC<{ theme: ThemeStyles }> = ({ theme }) => {
             exit={{ opacity: 0 }}
             className="flex flex-col items-center w-full max-w-md"
           >
-            {/* Slot 2: Avatar (Fixed size container) */}
-            <div className="flex items-center justify-center">
-              {phase >= 2 && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="relative"
-                >
-                  <Image
-                    src={avatarSrc}
-                    alt="Avatar"
-                    width={120}
-                    height={120}
-                    className={`border-4 ${theme.border} p-1 grayscale contrast-125 bg-white/5`}
-                    unoptimized
-                  />
-                </motion.div>
-              )}
+            {/* Synchronized Entry: Avatar + Name */}
+            <div className="h-40 flex items-center justify-center mb-4">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="relative"
+              >
+                <Image
+                  src={avatarSrc}
+                  alt="Avatar"
+                  width={120}
+                  height={120}
+                  className={`border-4 ${theme.border} p-1 grayscale contrast-125 bg-white/5`}
+                  unoptimized
+                />
+              </motion.div>
             </div>
 
-            {/* Slot 1: Name & Subtitles (Fixed Height to prevent shift) */}
-            <div className=" text-black flex flex-col justify-center mb-4">
-              <motion.h1
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="text-4xl font-black uppercase tracking-tight font-playfair mb-1"
-              >
-                Jerod Hollen
-              </motion.h1>
-
+            <div className="text-black flex flex-col justify-center mb-6 h-24">
+              <h1 className="text-4xl font-black uppercase tracking-tight font-playfair mb-1">
+                <TypewriterText text="Jerod Hollen" speed={40} />
+              </h1>
               <div className="h-4">
-                {phase >= 2 && (
-                  <motion.p
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="text-[10px] font-bold uppercase tracking-[0.15em] opacity-70"
-                  >
-                    Web Developer | Technical Solutions Engineer
-                  </motion.p>
-                )}
+                <p className="text-[10px] font-bold uppercase tracking-[0.15em] opacity-70">
+                  <TypewriterText text="Web Developer | Technical Solutions Engineer" speed={20} delay={800} />
+                </p>
               </div>
             </div>
 
-            {/* Slot 3: Loading Bar */}
+            {/* Loading Bar (Fixed height slot) */}
             <div className="h-12 text-black flex flex-col items-center justify-center">
-              {phase >= 4 && (
+              {phase >= 3 && (
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   className="font-mono text-[9px] space-y-1"
                 >
-                  <p className="tracking-[0.2em] font-bold opacity-60">
-                    {loadProgress < 100
-                      ? "INITIALIZING_SYSTEM"
-                      : "SYSTEM_READY"}
+                  <p className="tracking-[0.2em] font-bold opacity-60 uppercase">
+                    {loadProgress < 100 ? "Initializing_System" : "System_Ready"}
                   </p>
                   <p className="font-bold tracking-tighter">
                     {barText} {loadProgress}%

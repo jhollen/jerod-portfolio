@@ -90,7 +90,7 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
 
   React.useEffect(() => {
     if (isBooting) {
-      const t = setTimeout(() => setBooting(false), 4800);
+      const t = setTimeout(() => setBooting(false), 5300);
       return () => clearTimeout(t);
     }
   }, [isBooting, setBooting]);
@@ -229,7 +229,7 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
     <div className={`space-y-6 ${theme.font} ${theme.text} text-[16px] leading-relaxed relative h-full pt-4 flex pl-10`}>
       <div className="flex-1 flex flex-col pr-4">
         <NavigationHeader 
-          title="01_BIO" 
+          title="BIO" 
           backLabel="Return to System" 
           onBack={handleReturnToSystem} 
           theme={theme} 
@@ -266,7 +266,7 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
     <div className={`space-y-6 ${theme.font} ${theme.text} text-[15px] leading-relaxed relative h-full pt-4 flex pl-10`}>
       <div className="flex-1 flex flex-col pr-4">
         <NavigationHeader 
-          title="03_STACK" 
+          title="STACK" 
           backLabel="Return to System" 
           onBack={handleReturnToSystem} 
           theme={theme} 
@@ -327,7 +327,7 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
       return (
         <div className={`flex flex-col h-full w-full relative overflow-hidden ${theme.text} ${theme.font} pt-4 pl-10`}>
           <NavigationHeader 
-            title="02_PROJECTS" 
+            title="PROJECTS" 
             backLabel="Return to System" 
             onBack={handleReturnToSystem} 
             theme={theme} 
@@ -425,7 +425,7 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
   const renderContact = () => (
     <div className={`space-y-6 ${theme.font} ${theme.text} text-[15px] leading-relaxed relative h-full pt-4 pl-10`}>
       <NavigationHeader 
-        title="04_CONTACT" 
+        title="CONTACT" 
         backLabel="Return to System" 
         onBack={handleReturnToSystem} 
         theme={theme} 
@@ -460,9 +460,9 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
           <button key={menu} 
             onMouseEnter={() => { setMenuIndex(idx); triggerNavDance(); }}
             onMouseLeave={() => setNavActivity(0)}
-            onClick={() => { setActiveSelection(menu); setMenuIndex(0); triggerNavSpike(); addLogMessage(`EXEC: [${menu}]`); }}
+            onClick={() => { setActiveSelection(menu); setMenuIndex(0); triggerNavSpike(); addLogMessage(`EXEC: [${name}]`); }}
             className={`p-3 transition-all duration-75 flex gap-3 cursor-pointer text-left w-full outline-none focus:ring-4 focus:ring-inset focus:ring-current/20 border-l-4 border-transparent ${idx === menuIndex ? `${theme.highlight} font-black border-current translate-x-2` : "opacity-60 hover:bg-black/5 hover:translate-x-1"}`}>
-            <TypewriterText key={`menu-${menu}`} text={`0${idx+1}_${name.toUpperCase()}`} speed={30} delay={idx * 50} />
+            <TypewriterText key={`menu-${menu}`} text={`${idx+1}. ${name.toUpperCase()}`} speed={30} delay={idx * 50} />
           </button>
         );
       })}
