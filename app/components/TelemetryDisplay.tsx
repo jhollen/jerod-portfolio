@@ -9,11 +9,11 @@ export const TelemetryDisplay = () => {
   if (activePreset === "RETRO" || activeSelection === "MUSIC") {
     tel1 = "AUDIO: ACTIVE";
     tel2 = "BPM: 85";
-  } else if (activeSelection === "02_INCIDENTS") {
+  } else if (activeSelection === "INCIDENTS") {
     tel1 = "STATUS: CRITICAL";
     tel2 = "LOAD: 99%";
   } else if (
-    activeSelection === "01_PROFILE" ||
+    activeSelection === "PROFILE" ||
     (!activeSelection && menuIndex === 0)
   ) {
     tel1 = "LOC: BELLINGHAM";

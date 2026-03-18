@@ -64,8 +64,8 @@ export const BootScreen: React.FC<{ theme: ThemeStyles }> = ({ theme }) => {
             className="flex flex-col items-center w-full max-w-md"
           >
             {/* Slot 2: Avatar (Fixed size container) */}
-            <div className="h-40 flex items-center justify-center mb-6">
-              {phase >= 3 && (
+            <div className="flex items-center justify-center">
+              {phase >= 2 && (
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
@@ -74,8 +74,8 @@ export const BootScreen: React.FC<{ theme: ThemeStyles }> = ({ theme }) => {
                   <Image
                     src={avatarSrc}
                     alt="Avatar"
-                    width={100}
-                    height={100}
+                    width={120}
+                    height={120}
                     className={`border-4 ${theme.border} p-1 grayscale contrast-125 bg-white/5`}
                     unoptimized
                   />
@@ -145,7 +145,7 @@ export const BootScreen: React.FC<{ theme: ThemeStyles }> = ({ theme }) => {
             <motion.h2
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="text-3xl font-black uppercase tracking-[0.4em] font-playfair"
+              className="text-3xl text-gray-800 uppercase tracking-[0.4em] font-playfair"
             >
               Welcome
             </motion.h2>

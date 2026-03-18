@@ -10,7 +10,7 @@ import { VCABank } from "./components/VCABank";
 import { VerticalMeter } from "./components/VerticalMeter";
 import { DiagnosticsPanel } from "./components/DiagnosticsPanel";
 import { GitHubDisplay } from "./components/GitHubDisplay";
-import { PROJECTS } from "./constants";
+import { PROJECTS_DATA } from "./constants";
 
 export default function AudioConsolePage() {
   const {
@@ -31,9 +31,7 @@ export default function AudioConsolePage() {
   } = useConsoleStore();
 
   const menus = ["BIO", "PROJECTS", "STACK", "CONTACT"];
-  const tabsCount = selectedProject 
-    ? (PROJECTS.find(p => p.id === selectedProject)?.details.length || 0) + 1
-    : 0;
+  const tabsCount = selectedProject ? 4 : 0;
 
   const leftMeterActivity = useMotionValue(0);
   const rightMeterActivity = useMotionValue(0);
@@ -94,7 +92,7 @@ export default function AudioConsolePage() {
                     activityMv={leftMeterActivity}
                     steps={
                       activeSelection === "PROJECTS" && !selectedProject
-                        ? PROJECTS.length
+                        ? PROJECTS_DATA.length
                         : menus.length
                     }
                     value={menuIndex}
@@ -105,7 +103,7 @@ export default function AudioConsolePage() {
                         !selectedProject
                       ) {
                         addLogMessage(
-                          `NAVIGATOR: [PROJECT_PREVIEW: ${PROJECTS[newIdx].title}]`,
+                          `NAVIGATOR: [PROJECT_PREVIEW: ${PROJECTS_DATA[newIdx].title}]`,
                         );
                       } else {
                         addLogMessage(`NAVIGATOR: ${menus[newIdx]}`);
@@ -136,11 +134,8 @@ export default function AudioConsolePage() {
                     onChange={(newIndex) => {
                       if (selectedProject) {
                         setTabIndex(newIndex);
-                        const p = PROJECTS.find(proj => proj.id === selectedProject);
-                        const label = newIndex < (p?.details.length || 0) 
-                          ? p?.details[newIndex].label 
-                          : "ASSETS";
-                        addLogMessage(`INFO_GAIN: ${label}`);
+                        const labels = ["OVERVIEW", "THE BREACH", "DEPLOYMENT", "RESULTS"];
+                        addLogMessage(`INFO_GAIN: ${labels[newIndex] || "UNKNOWN"}`);
                       }
                     }}
                   />
