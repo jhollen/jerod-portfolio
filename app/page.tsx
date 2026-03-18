@@ -52,11 +52,15 @@ export default function AudioConsolePage() {
         {/* Branding Header */}
         <div className="h-14 shrink-0 flex items-center justify-between px-8 z-20 border-b border-black/20">
           <div className="flex items-center gap-4">
-            <div className={`w-4 h-4 rounded-full border border-black shadow-[0_0_10px] transition-all duration-500 ${
-              activePreset === "HACKER" ? "bg-[#00f3ff] shadow-[#00f3ff]" :
-              activePreset === "RETRO" ? "bg-[#ffb000] shadow-[#ffb000]" :
-              "bg-cyan-500 shadow-[#06b6d4]"
-            }`} />
+            <div
+              className={`w-4 h-4 rounded-full border border-black shadow-[0_0_10px] transition-all duration-500 ${
+                activePreset === "HACKER"
+                  ? "bg-[#00f3ff] shadow-[#00f3ff]"
+                  : activePreset === "RETRO"
+                    ? "bg-[#ffb000] shadow-[#ffb000]"
+                    : "bg-cyan-500 shadow-[#06b6d4]"
+              }`}
+            />
             <div className="flex flex-col">
               <span className="text-white font-bold tracking-[0.2em] text-sm uppercase">
                 Jerod Hollen
@@ -98,10 +102,7 @@ export default function AudioConsolePage() {
                     value={menuIndex}
                     onChange={(newIdx) => {
                       setMenuIndex(newIdx);
-                      if (
-                        activeSelection === "PROJECTS" &&
-                        !selectedProject
-                      ) {
+                      if (activeSelection === "PROJECTS" && !selectedProject) {
                         addLogMessage(
                           `NAVIGATOR: [PROJECT_PREVIEW: ${PROJECTS_DATA[newIdx].title}]`,
                         );
@@ -134,8 +135,15 @@ export default function AudioConsolePage() {
                     onChange={(newIndex) => {
                       if (selectedProject) {
                         setTabIndex(newIndex);
-                        const labels = ["OVERVIEW", "THE BREACH", "DEPLOYMENT", "RESULTS"];
-                        addLogMessage(`INFO_GAIN: ${labels[newIndex] || "UNKNOWN"}`);
+                        const labels = [
+                          "OVERVIEW",
+                          "THE BREACH",
+                          "DEPLOYMENT",
+                          "RESULTS",
+                        ];
+                        addLogMessage(
+                          `INFO_GAIN: ${labels[newIndex] || "UNKNOWN"}`,
+                        );
                       }
                     }}
                   />
@@ -148,7 +156,7 @@ export default function AudioConsolePage() {
             <div className="flex flex-col flex-1 max-w-[800px] w-full mx-auto gap-4 items-center">
               <div className="w-full flex flex-col pt-1 h-full gap-4">
                 {/* LCD Displays */}
-                <div className="flex-1 flex flex-col">
+                <div className="relative flex-1 flex flex-col">
                   <LCDDisplay menus={menus} />
                 </div>
 
@@ -181,10 +189,12 @@ export default function AudioConsolePage() {
                       }}
                       activityMv={rightMeterActivity}
                       isActive={
-                        (activeSelection === "BIO" || activeSelection === "STACK") && !selectedProject
+                        (activeSelection === "BIO" ||
+                          activeSelection === "STACK") &&
+                        !selectedProject
                       }
                       isDisabled={
-                        activeSelection === "CONTACT" || 
+                        activeSelection === "CONTACT" ||
                         activeSelection === "PROJECTS" ||
                         !!selectedProject
                       }
@@ -212,21 +222,27 @@ export default function AudioConsolePage() {
                     />
                     {/* Carousel Progress LED */}
                     <div className="absolute -bottom-8 w-1 h-6 bg-black/40 rounded-full overflow-hidden border border-white/5">
-                      <motion.div 
+                      <motion.div
                         className={`w-full ${
-                          activePreset === "HACKER" ? "bg-[#00f3ff] shadow-[0_0_5px_#00f3ff]" :
-                          activePreset === "RETRO" ? "bg-[#ffb000] shadow-[0_0_5px_#ffb000]" :
-                          "bg-cyan-500 shadow-[0_0_5px_#06b6d4]"
+                          activePreset === "HACKER"
+                            ? "bg-[#00f3ff] shadow-[0_0_5px_#00f3ff]"
+                            : activePreset === "RETRO"
+                              ? "bg-[#ffb000] shadow-[0_0_5px_#ffb000]"
+                              : "bg-cyan-500 shadow-[0_0_5px_#06b6d4]"
                         }`}
-                        style={{ 
+                        style={{
                           height: `${selectedProject ? (tabIndex / (tabsCount - 1)) * 100 : panDepth}%`,
                         }}
-                        animate={{ 
+                        animate={{
                           opacity: activeSelection === "PROJECTS" ? 1 : 0.2,
                           scaleX: [1, 1.2, 1],
                         }}
-                        transition={{ 
-                          scaleX: { repeat: Infinity, duration: 0.1, ease: "linear" } 
+                        transition={{
+                          scaleX: {
+                            repeat: Infinity,
+                            duration: 0.1,
+                            ease: "linear",
+                          },
                         }}
                       />
                     </div>
