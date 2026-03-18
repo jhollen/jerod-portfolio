@@ -30,6 +30,7 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
     addLogMessage,
     triggerNavSpike,
     triggerNavDance,
+    triggerTabSpike,
     setNavActivity,
     activePreset,
   } = useConsoleStore();
@@ -112,7 +113,9 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
   const cycleTab = () => {
     const p = PROJECTS.find(proj => proj.id === selectedProject);
     const tabsCount = (p?.details.length || 0) + 1;
-    setTabIndex((tabIndex + 1) % tabsCount);
+    const nextTab = (tabIndex + 1) % tabsCount;
+    setTabIndex(nextTab);
+    triggerTabSpike();
   };
 
   const renderReturnButton = () => (
@@ -296,18 +299,27 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
     
     return (
       <div className={`flex flex-col h-full w-full relative ${theme.text} ${theme.font} pt-12`}>
-        <div className="flex justify-between items-end border-b-2 border-current pb-2 mb-4 pl-12 pr-4">
-          <h3 className="text-xl font-black truncate max-w-[70%] text-lg uppercase tracking-tighter">
-            <TypewriterText text={p.title} speed={20} />
-          </h3>
-          <div className="flex gap-2 mb-0.5">
-            {Array.from({ length: tabsCount }).map((_, i) => (
-              <div 
-                key={i} 
-                className={`w-2 h-2 border border-current transition-colors ${i === currentTabIdx ? "bg-current" : "opacity-30"}`}
-              />
-            ))}
-          </div>
+        {/* Fixed Tab Header */}
+        <div className="flex border-b border-current/20 mb-4 ml-12 mr-4 overflow-x-auto [&::-webkit-scrollbar]:hidden">
+          {p.details.map((detail, i) => (
+            <button
+              key={detail.label}
+              onClick={() => { setTabIndex(i); triggerTabSpike(); }}
+              className={`px-4 py-2 text-[10px] font-black uppercase tracking-widest whitespace-nowrap border-b-2 transition-all ${
+                i === currentTabIdx ? "border-current opacity-100 scale-105" : "border-transparent opacity-40 hover:opacity-60"
+              }`}
+            >
+              {detail.label}
+            </button>
+          ))}
+          <button
+            onClick={() => { setTabIndex(p.details.length); triggerTabSpike(); }}
+            className={`px-4 py-2 text-[10px] font-black uppercase tracking-widest whitespace-nowrap border-b-2 transition-all ${
+              currentTabIdx === p.details.length ? "border-current opacity-100 scale-105" : "border-transparent opacity-40 hover:opacity-60"
+            }`}
+          >
+            ASSETS
+          </button>
         </div>
         
         <div className="flex-1 pl-12 pr-4 pb-16 overflow-hidden relative">
@@ -320,8 +332,7 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
                 exit={{ opacity: 0, x: -20 }}
                 className="h-full flex flex-col"
               >
-                <div className="mb-2 text-[10px] font-bold opacity-50 tracking-[0.3em] uppercase">[ {p.details[currentTabIdx].label} ]</div>
-                <h4 className="font-bold mb-4 border-b border-current/10 pb-1 italic text-xs tracking-widest">{p.details[currentTabIdx].title}</h4>
+                <h4 className="font-bold mb-4 border-b border-current/10 pb-1 italic text-xs tracking-widest uppercase">{p.details[currentTabIdx].title}</h4>
                 <div className="text-[14px] leading-relaxed flex-1 overflow-y-auto pr-2 custom-scrollbar">
                   {p.details[currentTabIdx].content}
                 </div>
@@ -335,7 +346,6 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
                 exit={{ opacity: 0, x: -20 }}
                 className="h-full flex flex-col"
               >
-                <div className="mb-2 text-[10px] font-bold opacity-50 tracking-[0.3em] uppercase">[ ASSETS_CAROUSEL ]</div>
                 <div className="flex-1 relative overflow-hidden group">
                   {(() => {
                     const assetIdx = Math.min(Math.floor((panDepth / 100) * p.assets.length), p.assets.length - 1);
@@ -354,6 +364,7 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
 
                     return (
                       <div className="h-full flex flex-col relative">
+                        {/* On-Screen Carousel Controls */}
                         <div className="absolute inset-y-0 -left-2 -right-2 flex justify-between items-center z-50 pointer-events-none">
                           <button 
                             onClick={handleAssetPrev}
@@ -423,11 +434,12 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
         <div className="sr-only">Contact Jerod Hollen: jerod.a.hollen@gmail.com. Expertise in React, Node, Python, AWS, Cloud Security.</div>
       </div>
       {renderReturnButton()}
+      {renderNavButtons("TIER")}
     </div>
   );
 
   const renderMainMenu = () => (
-    <div className={`flex flex-col gap-2 w-full mt-2 ${theme.text} ${theme.font}`}>
+    <div className={`flex flex-col gap-2 w-full mt-2 ${theme.text} ${theme.font} pt-12`}>
       <h3 className="font-black uppercase tracking-widest mb-4 opacity-50 text-[10px] pl-12">SYSTEM_ROOT:</h3>
       {menus.map((menu, idx) => {
         const friendlyNames = ["Bio", "Projects", "Stack", "Contact"];

@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useMotionValue } from "framer-motion";
+import { motion, useMotionValue } from "framer-motion";
 import { useConsoleStore } from "./useConsoleStore";
 import { LCDDisplay } from "./components/LCDDisplay";
 import { Knob } from "./components/Knob";
@@ -10,6 +10,7 @@ import { VCABank } from "./components/VCABank";
 import { VerticalMeter } from "./components/VerticalMeter";
 import { DiagnosticsPanel } from "./components/DiagnosticsPanel";
 import { GitHubDisplay } from "./components/GitHubDisplay";
+import { PROJECTS } from "./constants";
 
 export default function AudioConsolePage() {
   const {
@@ -25,30 +26,41 @@ export default function AudioConsolePage() {
     panDepth,
     setPanDepth,
     addLogMessage,
+    activePreset,
+    triggerTabSpike,
   } = useConsoleStore();
 
-  const menus = ["BIO", "PROJECTS", " STACK", "CONTACT"];
-  const tabs = ["OVERVIEW", "BREACH", "DEPLOY", "RESULT", "ASSETS"];
-  const projectIds = [
-    "SCORM AUTO",
-    "MEDICAL GUIDELINES MOBILE APP",
-    "CSA TRAINING CENTER SKILLJAR REDESIGN",
-    "AUTO IMAGE OPTIMIZATION PIPELINE",
-    "DYNAMIC CONTRIBUTOR PAGES FOR CSA WEBSITE",
-  ];
+  const menus = ["BIO", "PROJECTS", "STACK", "CONTACT"];
+  const tabsCount = selectedProject 
+    ? (PROJECTS.find(p => p.id === selectedProject)?.details.length || 0) + 1
+    : 0;
 
   const leftMeterActivity = useMotionValue(0);
   const rightMeterActivity = useMotionValue(0);
 
+  // Sync panDepth with tabIndex for hardware dial rotation
+  React.useEffect(() => {
+    if (selectedProject && tabsCount > 1) {
+      const targetPan = (tabIndex / (tabsCount - 1)) * 100;
+      if (Math.abs(panDepth - targetPan) > 1) {
+        setPanDepth(targetPan);
+      }
+    }
+  }, [tabIndex, selectedProject, tabsCount, panDepth, setPanDepth]);
+
   return (
     <main className="fixed inset-0 w-screen h-screen overflow-hidden bg-[#0a0a0a] flex items-center justify-center p-4 lg:p-8 font-sans select-none touch-none overscroll-none">
-      <div className="w-full max-w-7xl h-full max-h-[90vh] flex flex-col rounded-2xl bg-brushed-metal border-[3px] border-[#181a1f] shadow-[inset_0_15px_30px_rgba(255,255,255,0.03),inset_0_-10px_20px_rgba(0,0,0,0.6),0_40px_80px_rgba(0,0,0,1)] relative overflow-hidden">
+      <div className="w-full max-w-7xl h-full max-h-[90vh] flex flex-col rounded-2xl bg-brushed-metal border-[3px] border-[#181a1f] shadow-[inset:0_15px_30px_rgba(255,255,255,0.03),inset_0_-10px_20px_rgba(0,0,0,0.6),0_40px_80px_rgba(0,0,0,1)] relative overflow-hidden">
         {/* Branding Header */}
         <div className="h-14 shrink-0 flex items-center justify-between px-8 z-20 border-b border-black/20">
           <div className="flex items-center gap-4">
-            <div className="w-4 h-4 rounded-full bg-cyan-500 shadow-[0_0_10px_#06b6d4] border border-black" />
+            <div className={`w-4 h-4 rounded-full border border-black shadow-[0_0_10px] transition-all duration-500 ${
+              activePreset === "HACKER" ? "bg-[#00f3ff] shadow-[#00f3ff]" :
+              activePreset === "RETRO" ? "bg-[#ffb000] shadow-[#ffb000]" :
+              "bg-cyan-500 shadow-[#06b6d4]"
+            }`} />
             <div className="flex flex-col">
-              <span className="text-black font-bold tracking-[0.2em] text-sm uppercase">
+              <span className="text-white font-bold tracking-[0.2em] text-sm uppercase">
                 Jerod Hollen
               </span>
               <span className="text-gray-500 font-bold tracking-[0.1em] text-[10px] uppercase">
@@ -58,7 +70,7 @@ export default function AudioConsolePage() {
           </div>
           <div className="hidden md:block text-right">
             <span className="text-gray-600 font-bold tracking-[0.3em] text-[9px] uppercase">
-              PORTFOLIO COMPRESSOR V2.0
+              PORTFOLIO COMPRESSOR V3.1
             </span>
           </div>
         </div>
@@ -81,24 +93,24 @@ export default function AudioConsolePage() {
                     isActive={true}
                     activityMv={leftMeterActivity}
                     steps={
-                      activeSelection === "02_CASE_STUDIES" && !selectedProject
-                        ? projectIds.length
+                      activeSelection === "PROJECTS" && !selectedProject
+                        ? PROJECTS.length
                         : menus.length
                     }
                     value={menuIndex}
                     onChange={(newIdx) => {
                       setMenuIndex(newIdx);
                       if (
-                        activeSelection === "02_CASE_STUDIES" &&
+                        activeSelection === "PROJECTS" &&
                         !selectedProject
                       ) {
                         addLogMessage(
-                          `NAVIGATOR: [PROJECT_PREVIEW: ${projectIds[newIdx]}]`,
+                          `NAVIGATOR: [PROJECT_PREVIEW: ${PROJECTS[newIdx].title}]`,
                         );
                       } else {
                         addLogMessage(`NAVIGATOR: ${menus[newIdx]}`);
                         if (!activeSelection) {
-                          setActiveSelection(menus[newIdx] || "01_WHO_AM_I");
+                          setActiveSelection(menus[newIdx]);
                         }
                       }
                     }}
@@ -119,12 +131,16 @@ export default function AudioConsolePage() {
                     maxLabel="RIGHT"
                     isActive={!!selectedProject}
                     activityMv={leftMeterActivity}
-                    steps={tabs.length}
+                    steps={tabsCount}
                     value={tabIndex}
                     onChange={(newIndex) => {
                       if (selectedProject) {
                         setTabIndex(newIndex);
-                        addLogMessage(`INFO_GAIN: ${tabs[newIndex]}`);
+                        const p = PROJECTS.find(proj => proj.id === selectedProject);
+                        const label = newIndex < (p?.details.length || 0) 
+                          ? p?.details[newIndex].label 
+                          : "ASSETS";
+                        addLogMessage(`INFO_GAIN: ${label}`);
                       }
                     }}
                   />
@@ -170,28 +186,55 @@ export default function AudioConsolePage() {
                       }}
                       activityMv={rightMeterActivity}
                       isActive={
-                        activeSelection === "BIO" || activeSelection === "STACK"
+                        (activeSelection === "BIO" || activeSelection === "STACK") && !selectedProject
                       }
                       isDisabled={
-                        activeSelection === "CONTACT" ||
-                        activeSelection === "PROJECTS"
+                        activeSelection === "CONTACT" || 
+                        activeSelection === "PROJECTS" ||
+                        !!selectedProject
                       }
                     />
                   </div>
-                  <div className="flex flex-col items-center gap-2">
+                  <div className="flex flex-col items-center gap-2 relative">
                     <Knob
                       label="PAN"
                       minLabel="LEFT"
-                      centerLabel="CAROUSEL"
+                      centerLabel="TAB"
                       maxLabel="RIGHT"
-                      value={panDepth}
+                      value={selectedProject ? tabIndex : panDepth}
+                      steps={selectedProject ? tabsCount : 0}
                       onChange={(val) => {
-                        setPanDepth(val);
+                        if (selectedProject) {
+                          setTabIndex(val);
+                          triggerTabSpike();
+                        } else {
+                          setPanDepth(val);
+                        }
                       }}
                       activityMv={rightMeterActivity}
                       isActive={activeSelection === "PROJECTS"}
                       isDisabled={activeSelection !== "PROJECTS"}
                     />
+                    {/* Carousel Progress LED */}
+                    <div className="absolute -bottom-8 w-1 h-6 bg-black/40 rounded-full overflow-hidden border border-white/5">
+                      <motion.div 
+                        className={`w-full ${
+                          activePreset === "HACKER" ? "bg-[#00f3ff] shadow-[0_0_5px_#00f3ff]" :
+                          activePreset === "RETRO" ? "bg-[#ffb000] shadow-[0_0_5px_#ffb000]" :
+                          "bg-cyan-500 shadow-[0_0_5px_#06b6d4]"
+                        }`}
+                        style={{ 
+                          height: `${selectedProject ? (tabIndex / (tabsCount - 1)) * 100 : panDepth}%`,
+                        }}
+                        animate={{ 
+                          opacity: activeSelection === "PROJECTS" ? 1 : 0.2,
+                          scaleX: [1, 1.2, 1],
+                        }}
+                        transition={{ 
+                          scaleX: { repeat: Infinity, duration: 0.1, ease: "linear" } 
+                        }}
+                      />
+                    </div>
                   </div>
                 </div>
 
