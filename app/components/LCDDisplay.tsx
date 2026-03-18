@@ -631,7 +631,7 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
 
   return (
     <div
-      className={`w-full aspect-[16/9] max-h-[400px] ${theme.bg} border-[25px] border-[#1a1a1a] p-3 md:p-6 relative shadow-[0_10px_50px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col shrink-0 transition-all duration-700`}
+      className={`w-full aspect-[16/9] max-h-[400px] ${theme.bg} border-[25px] border-black p-3 md:p-6 relative shadow-[0_10px_50px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col shrink-0 transition-all duration-700`}
     >
       <div
         className={`absolute inset-0 pointer-events-none ${isKindle ? "shadow-[inset:0_0_100px_rgba(0,0,0,0.05)]" : "shadow-[inset:0_0_150px_rgba(0,0,0,0.3)]"} z-20`}
