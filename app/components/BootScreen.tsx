@@ -40,7 +40,7 @@ export const BootScreen: React.FC<{ theme: ThemeStyles }> = ({ theme }) => {
   React.useEffect(() => {
     if (phase === 4) {
       const interval = setInterval(() => {
-        setLoadProgress(prev => (prev < 100 ? prev + 5 : 100));
+        setLoadProgress((prev) => (prev < 100 ? prev + 5 : 100));
       }, 30);
       return () => clearInterval(interval);
     }
@@ -51,7 +51,9 @@ export const BootScreen: React.FC<{ theme: ThemeStyles }> = ({ theme }) => {
   const barText = `[${"|".repeat(filled).padEnd(barWidth, " ")}]`;
 
   return (
-    <div className={`flex flex-col items-center justify-center h-full text-center p-6 relative overflow-hidden font-inter`}>
+    <div
+      className={`flex flex-col items-center justify-center h-full text-center p-6 relative overflow-hidden font-inter`}
+    >
       <AnimatePresence mode="wait">
         {phase < 7 ? (
           <motion.div
@@ -61,16 +63,36 @@ export const BootScreen: React.FC<{ theme: ThemeStyles }> = ({ theme }) => {
             exit={{ opacity: 0 }}
             className="flex flex-col items-center w-full max-w-md"
           >
+            {/* Slot 2: Avatar (Fixed size container) */}
+            <div className="h-40 flex items-center justify-center mb-6">
+              {phase >= 3 && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="relative"
+                >
+                  <Image
+                    src={avatarSrc}
+                    alt="Avatar"
+                    width={100}
+                    height={100}
+                    className={`border-4 ${theme.border} p-1 grayscale contrast-125 bg-white/5`}
+                    unoptimized
+                  />
+                </motion.div>
+              )}
+            </div>
+
             {/* Slot 1: Name & Subtitles (Fixed Height to prevent shift) */}
-            <div className="h-20 flex flex-col justify-center mb-4">
-              <motion.h1 
+            <div className=" text-black flex flex-col justify-center mb-4">
+              <motion.h1
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 className="text-4xl font-black uppercase tracking-tight font-playfair mb-1"
               >
                 Jerod Hollen
               </motion.h1>
-              
+
               <div className="h-4">
                 {phase >= 2 && (
                   <motion.p
@@ -84,31 +106,8 @@ export const BootScreen: React.FC<{ theme: ThemeStyles }> = ({ theme }) => {
               </div>
             </div>
 
-            {/* Slot 2: Avatar (Fixed size container) */}
-            <div className="h-40 flex items-center justify-center mb-6">
-              {phase >= 3 && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="relative"
-                >
-                  <Image
-                    src={avatarSrc}
-                    alt="Avatar"
-                    width={130}
-                    height={140}
-                    className={`border-4 ${theme.border} p-1 grayscale contrast-125 bg-white/5`}
-                    unoptimized
-                  />
-                  <div className="absolute -bottom-2 -right-2 bg-white px-2 py-0.5 border-2 border-current text-[9px] font-black uppercase tracking-widest">
-                    JH_OS v3.2
-                  </div>
-                </motion.div>
-              )}
-            </div>
-
             {/* Slot 3: Loading Bar */}
-            <div className="h-12 flex flex-col items-center justify-center">
+            <div className="h-12 text-black flex flex-col items-center justify-center">
               {phase >= 4 && (
                 <motion.div
                   initial={{ opacity: 0 }}
@@ -116,9 +115,13 @@ export const BootScreen: React.FC<{ theme: ThemeStyles }> = ({ theme }) => {
                   className="font-mono text-[9px] space-y-1"
                 >
                   <p className="tracking-[0.2em] font-bold opacity-60">
-                    {loadProgress < 100 ? "INITIALIZING_SYSTEM" : "SYSTEM_READY"}
+                    {loadProgress < 100
+                      ? "INITIALIZING_SYSTEM"
+                      : "SYSTEM_READY"}
                   </p>
-                  <p className="font-bold tracking-tighter">{barText} {loadProgress}%</p>
+                  <p className="font-bold tracking-tighter">
+                    {barText} {loadProgress}%
+                  </p>
                 </motion.div>
               )}
             </div>
@@ -131,15 +134,15 @@ export const BootScreen: React.FC<{ theme: ThemeStyles }> = ({ theme }) => {
             exit={{ opacity: 0 }}
             className="flex flex-col items-center space-y-4"
           >
-            <motion.div 
+            <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ type: "spring", damping: 15 }}
-              className="text-7xl font-black text-emerald-500"
+              className="text-7xl font-black text-black"
             >
               [✔]
             </motion.div>
-            <motion.h2 
+            <motion.h2
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               className="text-3xl font-black uppercase tracking-[0.4em] font-playfair"

@@ -115,15 +115,19 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
     setTabIndex((tabIndex + 1) % tabsCount);
   };
 
+  const renderReturnButton = () => (
+    <button 
+      onClick={handleReturnToSystem}
+      className={`absolute top-4 left-4 z-50 p-2 border-2 ${theme.border} ${theme.font} text-sm font-black hover:scale-110 active:scale-90 transition-all shadow-[2px_2px_0_rgba(0,0,0,0.2)] bg-white/10 backdrop-blur-md ${theme.text}`}
+      title="Return to System"
+    >
+      &lt;
+    </button>
+  );
+
   const renderNavButtons = (mode: "TIER" | "PROJECT" | "TAB") => (
-    <div className="absolute bottom-4 left-4 z-50 flex gap-2">
-      <button 
-        onClick={handleReturnToSystem}
-        className={`px-3 py-1.5 border-2 ${theme.border} ${theme.font} text-[10px] font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-[4px_4px_0_rgba(0,0,0,0.2)] bg-white/10 backdrop-blur-md ${theme.text}`}
-      >
-        [ &lt; RETURN ]
-      </button>
-      {mode === "PROJECT" && (
+    <div className="absolute bottom-4 right-4 z-50 flex gap-2">
+      {mode === "TAB" && (
         <button 
           onClick={handleProjectBack}
           className={`px-3 py-1.5 border-2 ${theme.border} ${theme.font} text-[10px] font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-[4px_4px_0_rgba(0,0,0,0.2)] bg-white/10 backdrop-blur-md ${theme.text}`}
@@ -141,7 +145,7 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
   );
 
   const renderBio = () => (
-    <div className={`space-y-6 ${theme.font} ${theme.text} text-[16px] leading-relaxed relative h-full`}>
+    <div className={`space-y-6 ${theme.font} ${theme.text} text-[16px] leading-relaxed relative h-full pt-12`}>
       <h3 className="text-xl font-black border-b-2 border-current pb-2 flex justify-between items-end text-lg uppercase tracking-tighter">
         <TypewriterText text="01_BIO" speed={30} />
         <span className="text-[10px] opacity-40 uppercase tracking-[0.2em]">Zoom: Tier {tier}</span>
@@ -174,6 +178,7 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
         )}
       </div>
 
+      {renderReturnButton()}
       {renderNavButtons("TIER")}
 
       <div className="sr-only">
@@ -183,7 +188,7 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
   );
 
   const renderStack = () => (
-    <div className={`space-y-6 ${theme.font} ${theme.text} text-[15px] leading-relaxed relative h-full`}>
+    <div className={`space-y-6 ${theme.font} ${theme.text} text-[15px] leading-relaxed relative h-full pt-12`}>
       <h3 className="text-xl font-black border-b-2 border-current pb-2 flex justify-between items-end text-lg uppercase tracking-tighter">
         <TypewriterText text="03_STACK" speed={30} />
         <span className="text-[10px] opacity-40 uppercase tracking-[0.2em]">Timeline: Tier {tier}</span>
@@ -228,6 +233,7 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
         )}
       </div>
 
+      {renderReturnButton()}
       {renderNavButtons("TIER")}
 
       <div className="sr-only">
@@ -242,7 +248,7 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
       const p = PROJECTS[currentProjIdx];
       
       return (
-        <div className={`flex flex-col h-full w-full relative overflow-hidden ${theme.text} ${theme.font}`}>
+        <div className={`flex flex-col h-full w-full relative overflow-hidden ${theme.text} ${theme.font} pt-12`}>
           <h3 className="text-xl font-black border-b-2 border-current pb-2 mb-4 pl-12 text-lg uppercase tracking-tighter">
             <TypewriterText text="02_PROJECTS" speed={30} />
           </h3>
@@ -276,6 +282,7 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
               </motion.button>
             </AnimatePresence>
           </div>
+          {renderReturnButton()}
           {renderNavButtons("PROJECT")}
         </div>
       );
@@ -288,8 +295,8 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
     const currentTabIdx = Math.min(tabIndex, tabsCount - 1);
     
     return (
-      <div className={`flex flex-col h-full w-full relative ${theme.text} ${theme.font}`}>
-        <div className="flex justify-between items-end border-b-2 border-current pb-2 mb-4 pl-12">
+      <div className={`flex flex-col h-full w-full relative ${theme.text} ${theme.font} pt-12`}>
+        <div className="flex justify-between items-end border-b-2 border-current pb-2 mb-4 pl-12 pr-4">
           <h3 className="text-xl font-black truncate max-w-[70%] text-lg uppercase tracking-tighter">
             <TypewriterText text={p.title} speed={20} />
           </h3>
@@ -390,13 +397,14 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
           </AnimatePresence>
         </div>
         
+        {renderReturnButton()}
         {renderNavButtons("TAB")}
       </div>
     );
   };
 
   const renderContact = () => (
-    <div className={`space-y-6 ${theme.font} ${theme.text} text-[15px] leading-relaxed relative h-full`}>
+    <div className={`space-y-6 ${theme.font} ${theme.text} text-[15px] leading-relaxed relative h-full pt-12`}>
       <h3 className="text-xl font-black border-b-2 border-current pb-2 text-lg uppercase tracking-tighter"><TypewriterText text="04_CONTACT" speed={30} /></h3>
       <div className="space-y-6 py-4">
         <div className="border-4 border-current/30 p-6 bg-current/5 space-y-4 shadow-[8px_8px_0_rgba(0,0,0,0.1)]">
@@ -414,7 +422,7 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
         </div>
         <div className="sr-only">Contact Jerod Hollen: jerod.a.hollen@gmail.com. Expertise in React, Node, Python, AWS, Cloud Security.</div>
       </div>
-      {renderNavButtons("TIER")}
+      {renderReturnButton()}
     </div>
   );
 
