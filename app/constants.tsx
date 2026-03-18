@@ -1,8 +1,24 @@
-import * as React from "react";
-
 // ==========================================
 // HOLLEN OS v3.1 - CORE DATA STATE
 // ==========================================
+
+export interface ProjectMedia {
+  type: "diagram" | "screenshot" | "todo";
+  label: string;
+  description: string;
+}
+
+export interface Project {
+  id: string;
+  title: string;
+  category: string;
+  overview: string;
+  breach: string;
+  deploy: string;
+  result: string;
+  stack: string[];
+  media?: ProjectMedia[];
+}
 
 export const BIO_DATA = {
   tier1_base: "Full Stack Engineer & Creative Technologist. Western Washington University CS Grad (Dec 2022). Former Culinary Professional turned Solutions Engineer. Passionate about bridging the gap between complex engineering systems and human-centered design.",
@@ -12,7 +28,7 @@ export const BIO_DATA = {
   tier3_deepDive: "I pride myself on 'Operational Empathy.' Because I've built training content, fielded Tier-1 support tickets, and architected automated deployment pipelines, I know how to translate technical constraints into business value. I am a fast learner and a highly empathetic communicator who excels at bridging the engineering department with stakeholders. I am currently seeking a structured, enterprise-scale environment where cross-functional communication and systems thinking are core requirements."
 };
 
-export const PROJECTS_DATA = [
+export const PROJECTS_DATA: Project[] = [
   {
     id: "SCORM_PIPELINE",
     title: "LXP AUTOMATION ENGINE",

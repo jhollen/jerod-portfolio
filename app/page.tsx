@@ -187,20 +187,20 @@ export default function AudioConsolePage() {
 
               <div className="hidden xl:block w-px bg-black/50 shadow-[1px_0_0_rgba(255,255,255,0.05)] my-12" />
 
-              <div className="flex flex-col flex-1 max-w-[800px] w-full mx-auto gap-4 items-center">
-                <div className="w-full flex flex-col pt-1 h-full gap-4">
+              <div className="flex flex-col flex-1 max-w-[800px] w-full mx-auto gap-0 items-center">
+                <div className="w-full flex flex-col pt-1 h-full gap-0">
                   {/* LCD Displays */}
                   <div className="relative flex-1 flex flex-col">
                     <LCDDisplay menus={menus} />
                   </div>
 
-                  {/* Diagnostics Panel */}
-                  <div className="w-full">
+                  {/* Diagnostics Panel (Signal Path) */}
+                  <div className="w-full mt-1">
                     <DiagnosticsPanel />
                   </div>
 
-                  {/* GitHub Secondary Display */}
-                  <div className="w-full">
+                  {/* GitHub Secondary Display (Live Feed) */}
+                  <div className="w-full mt-2">
                     <GitHubDisplay />
                   </div>
                 </div>
@@ -272,7 +272,7 @@ export default function AudioConsolePage() {
                           if (activeSelection !== "PROJECTS" || !selectedProject || tabIndex !== 4) return null;
 
                           const p = PROJECTS_DATA.find(proj => proj.id === selectedProject);
-                          const count = (p as any)?.media?.length || 0;
+                          const count = p?.media?.length || 0;
                           const activeIdx = Math.min(Math.floor((panDepth / 100) * count), count - 1);
 
                           return Array.from({ length: count }).map((_, i) => (

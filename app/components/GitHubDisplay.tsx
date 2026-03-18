@@ -128,7 +128,8 @@ export const GitHubDisplay = () => {
   const formatRepoName = (name: string) => name.split("/")[1] || name;
 
   return (
-    <div className={`w-full h-32 border-2 border-[#1a1a1a] rounded p-2 overflow-hidden flex flex-col font-mono text-[10px] shadow-[inset:0_2px_10px_rgba(0,0,0,0.8)] transition-colors duration-500 ${themeColors.text} bg-[#050505]`}>
+    <div className={`w-full h-48 border-2 border-[#1a1a1a] rounded p-2 overflow-hidden flex flex-col font-mono text-[10px] shadow-[inset:0_2px_10px_rgba(0,0,0,0.8)] transition-colors duration-500 ${themeColors.text} bg-[#050505]`}>
+
       <div className={`flex justify-between items-center border-b ${themeColors.border} pb-1 mb-1 opacity-70`}>
         <div className="flex gap-2 text-[9px]">
           <button 

@@ -33,7 +33,7 @@ export const DiagnosticsPanel = () => {
         opacity: { duration: 0.01 }
       }
     }
-  };
+  } as const;
 
   const shapePop = {
     hidden: { scale: 0, opacity: 0 },
@@ -42,12 +42,12 @@ export const DiagnosticsPanel = () => {
       opacity: 1,
       transition: { type: "spring", stiffness: 300, damping: 20 }
     }
-  };
+  } as const;
 
   return (
     <div className="w-full h-24 bg-[#0a0a0a] border-2 border-black/80 rounded p-3 shadow-[inset:0_3px_10px_rgba(0,0,0,0.8)] flex gap-4">
-      <div className="w-[45%] h-full border border-gray-700/50 rounded-sm p-2 flex flex-col items-center justify-center text-gray-600 overflow-hidden">
-        <svg viewBox="0 0 120 50" className="w-full h-full transition-colors duration-500">
+      <div className="w-[55%] h-full border border-gray-700/50 rounded-sm p-2 flex flex-col items-center justify-center text-gray-600 overflow-hidden">
+        <svg viewBox="0 0 140 50" className="w-full h-full transition-colors duration-500">
           <text
             x="2"
             y="10"
@@ -58,39 +58,26 @@ export const DiagnosticsPanel = () => {
             SIGNAL PATH
           </text>
 
-          {/* NODE 1: SYSTEM (Always visible) */}
+          {/* NODE 1: MENU (Always visible) */}
           <motion.path
-            d="M 10 25 L 22 25"
+            d="M 5 25 L 15 25"
             stroke="currentColor"
             strokeWidth="1.5"
             initial="visible"
             animate="visible"
             variants={draw}
           />
-          <text x="5" y="42" fontSize="6" fill="currentColor" className="font-bold">
-            SYS
+          <text x="2" y="42" fontSize="6" fill="currentColor" className="font-bold">
+            MENU
           </text>
 
-          {/* NODE 2: MENU SELECTION */}
+          {/* NODE 2: SELECTION (Square) */}
           <AnimatePresence>
             {activeSelection && (
               <>
-                <motion.circle
-                  key="cat-node"
-                  cx="28"
-                  cy="25"
-                  r="5"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  variants={shapePop}
-                  initial="hidden"
-                  animate="visible"
-                  exit="hidden"
-                />
                 <motion.path
-                  key="cat-path"
-                  d="M 33 25 L 48 25"
+                  key="sel-path"
+                  d="M 15 25 L 25 25"
                   stroke="currentColor"
                   strokeWidth="1.5"
                   variants={draw}
@@ -98,23 +85,9 @@ export const DiagnosticsPanel = () => {
                   animate="visible"
                   exit="hidden"
                 />
-                <motion.text 
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  x="22" y="42" fontSize="6" fill="currentColor" className="font-black uppercase">
-                  {activeSelection.slice(0, 4)}
-                </motion.text>
-              </>
-            )}
-          </AnimatePresence>
-
-          {/* NODE 3: PROJECT SELECTION */}
-          <AnimatePresence>
-            {selectedProject && (
-              <>
                 <motion.rect
-                  key="proj-node"
-                  x="50"
+                  key="sel-node"
+                  x="25"
                   y="20"
                   width="10"
                   height="10"
@@ -126,63 +99,135 @@ export const DiagnosticsPanel = () => {
                   animate="visible"
                   exit="hidden"
                 />
-                <motion.path
-                  key="proj-path"
-                  d="M 60 25 L 75 25"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  variants={draw}
-                  initial="hidden"
-                  animate="visible"
-                  exit="hidden"
-                />
                 <motion.text 
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  x="50" y="42" fontSize="6" fill="currentColor" className="font-black uppercase">
-                  {selectedProject.split('_')[0].slice(0, 4)}
+                  x="25" y="42" fontSize="6" fill="currentColor" className="font-black uppercase">
+                  {activeSelection.slice(0, 4)}
                 </motion.text>
               </>
             )}
           </AnimatePresence>
 
-          {/* NODE 4: TIER LEVEL */}
+          {/* ZOOM NODES: T0 -> T1 -> T2 */}
           <AnimatePresence>
-            {(activeSelection) && (
+            {activeSelection && (
               <>
+                {/* T0 Node */}
                 <motion.path
-                  key="tier-path"
-                  d="M 77 25 L 90 25"
+                  key="t0-path"
+                  d="M 35 25 L 45 25"
                   stroke="currentColor"
                   strokeWidth="1.5"
                   variants={draw}
                   initial="hidden"
                   animate="visible"
-                  exit="hidden"
                 />
-                <motion.polygon
-                  key="tier-node"
-                  points="95,20 101,30 89,30"
+                <motion.circle
+                  key="t0-node"
+                  cx="50"
+                  cy="25"
+                  r="3"
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="1.5"
                   variants={shapePop}
                   initial="hidden"
                   animate="visible"
-                  exit="hidden"
                 />
                 <motion.text 
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  x="92" y="42" fontSize="6" fill="currentColor" className="font-bold">
-                  T{tier}
+                  x="47" y="42" fontSize="5" fill="currentColor" className="font-bold">
+                  T0
                 </motion.text>
-                <motion.text 
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  x="105" y="27" fontSize="6" fill="currentColor" className="font-black">
-                  RDY
-                </motion.text>
+
+                {/* T1 Node */}
+                {tier >= 1 && (
+                  <>
+                    <motion.path
+                      key="t1-path"
+                      d="M 53 25 L 63 25"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      variants={draw}
+                      initial="hidden"
+                      animate="visible"
+                    />
+                    <motion.circle
+                      key="t1-node"
+                      cx="68"
+                      cy="25"
+                      r="4"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      variants={shapePop}
+                      initial="hidden"
+                      animate="visible"
+                    />
+                    <motion.text 
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      x="65" y="42" fontSize="5" fill="currentColor" className="font-bold">
+                      T1
+                    </motion.text>
+                  </>
+                )}
+
+                {/* T2 Node */}
+                {tier >= 2 && (
+                  <>
+                    <motion.path
+                      key="t2-path"
+                      d="M 72 25 L 82 25"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      variants={draw}
+                      initial="hidden"
+                      animate="visible"
+                    />
+                    <motion.circle
+                      key="t2-node"
+                      cx="87"
+                      cy="25"
+                      r="5"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      variants={shapePop}
+                      initial="hidden"
+                      animate="visible"
+                    />
+                    <motion.text 
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      x="84" y="42" fontSize="5" fill="currentColor" className="font-bold">
+                      T2
+                    </motion.text>
+                  </>
+                )}
+
+                {/* PROJECT NAME (If selected) */}
+                {selectedProject && (
+                  <>
+                    <motion.path
+                      key="proj-path"
+                      d="M 92 25 L 105 25"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      variants={draw}
+                      initial="hidden"
+                      animate="visible"
+                    />
+                    <motion.text 
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      x="108" y="27" fontSize="6" fill="currentColor" className="font-black uppercase">
+                      {selectedProject.split('_')[0].slice(0, 6)}
+                    </motion.text>
+                  </>
+                )}
               </>
             )}
           </AnimatePresence>
