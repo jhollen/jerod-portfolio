@@ -103,6 +103,11 @@ export const PROJECTS_DATA: Project[] = [
   }
 ];
 
+export const PROJECT_CATEGORIES = [
+  "ALL",
+  ...Array.from(new Set(PROJECTS_DATA.map((p) => p.category.split(" / ")[0]))),
+];
+
 export const STACK_DATA = [
   {
     era: "FOUNDATION",

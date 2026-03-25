@@ -10,7 +10,11 @@ export interface ConsoleState {
   tabIndex: number;
   activeSelection: string | null;
   selectedProject: string | null;
-  contentDepth: number; // 0-100
+  // Individual Tier Persistence
+  bioTier: number;      // 1, 2, or 3
+  projectsTier: number; // 1, 2, or 3
+  stackTier: number;    // 1, 2, or 3
+  activeCategoryIndex: number; // For filtering projects index
   panDepth: number; // 0-100
   theme: ThemeMode;
   logMessages: string[];
@@ -24,7 +28,8 @@ export interface ConsoleState {
   setTabIndex: (index: number) => void;
   setActiveSelection: (id: string | null) => void;
   setSelectedProject: (id: string | null) => void;
-  setContentDepth: (depth: number) => void;
+  setTier: (tier: number) => void; // Updates active selection's tier
+  setActiveCategoryIndex: (index: number) => void;
   setPanDepth: (depth: number) => void;
   applyPreset: (preset: PresetMode) => void;
   toggleTheme: () => void;
@@ -36,14 +41,17 @@ export interface ConsoleState {
   setTabActivity: (val: number) => void;
 }
 
-export const useConsoleStore = create<ConsoleState>((set) => ({
+export const useConsoleStore = create<ConsoleState>((set, get) => ({
   isBooting: true,
   activePreset: null,
   menuIndex: 0,
   tabIndex: 0,
   activeSelection: null,
   selectedProject: null,
-  contentDepth: 0,
+  bioTier: 1,
+  projectsTier: 1,
+  stackTier: 1,
+  activeCategoryIndex: 0,
   panDepth: 0,
   theme: "DARK",
   logMessages: ["SYSTEM BOOT..."],
@@ -55,13 +63,19 @@ export const useConsoleStore = create<ConsoleState>((set) => ({
   setActivePreset: (preset) => set({ activePreset: preset }),
   setMenuIndex: (index) => set({ menuIndex: index }),
   setTabIndex: (index) =>
-    set({ tabIndex: index, contentDepth: 0, panDepth: 0 }),
+    set({ tabIndex: index, panDepth: 0 }),
   setActiveSelection: (id) =>
-    set({ activeSelection: id, contentDepth: 0, tabIndex: 0, panDepth: 0, selectedProject: null }),
+    set({ activeSelection: id, tabIndex: 0, panDepth: 0, selectedProject: null, activeCategoryIndex: 0 }),
   setSelectedProject: (id) =>
-    set({ selectedProject: id, tabIndex: 0, contentDepth: 0 }),
-  setContentDepth: (depth) =>
-    set({ contentDepth: Math.max(0, Math.min(100, depth)) }),
+    set({ selectedProject: id, tabIndex: 0 }),
+  setTier: (tier) => {
+    const { activeSelection } = get();
+    const clampedTier = Math.max(1, Math.min(3, tier));
+    if (activeSelection === "BIO") set({ bioTier: clampedTier });
+    if (activeSelection === "PROJECTS") set({ projectsTier: clampedTier });
+    if (activeSelection === "STACK") set({ stackTier: clampedTier });
+  },
+  setActiveCategoryIndex: (index) => set({ activeCategoryIndex: index }),
   setPanDepth: (depth) => set({ panDepth: Math.max(0, Math.min(100, depth)) }),
 
   toggleTheme: () =>
@@ -83,7 +97,10 @@ export const useConsoleStore = create<ConsoleState>((set) => ({
           activeSelection: null,
           menuIndex: 0,
           tabIndex: 0,
-          contentDepth: 0,
+          bioTier: 1,
+          projectsTier: 1,
+          stackTier: 1,
+          activeCategoryIndex: 0,
         };
       }
       return { activePreset: preset };

@@ -11,7 +11,7 @@ import { VerticalMeter } from "./components/VerticalMeter";
 import { DiagnosticsPanel } from "./components/DiagnosticsPanel";
 import { GitHubDisplay } from "./components/GitHubDisplay";
 import { StompSwitches } from "./components/StompSwitches";
-import { PROJECTS_DATA } from "./constants";
+import { PROJECTS_DATA, PROJECT_CATEGORIES, STACK_DATA } from "./constants";
 
 export default function AudioConsolePage() {
   const {
@@ -22,8 +22,10 @@ export default function AudioConsolePage() {
     activeSelection,
     setActiveSelection,
     selectedProject,
-    contentDepth,
-    setContentDepth,
+    bioTier,
+    projectsTier,
+    stackTier,
+    setTier,
     panDepth,
     setPanDepth,
     addLogMessage,
@@ -31,8 +33,14 @@ export default function AudioConsolePage() {
   } = useConsoleStore();
 
   const menus = ["BIO", "PROJECTS", "STACK", "CONTACT"];
-  const tabsCount = selectedProject ? 4 : 0;
-  const tier = contentDepth < 34 ? 0 : contentDepth < 67 ? 1 : 2;
+  const tabsCount = selectedProject 
+    ? 5 
+    : (activeSelection === "PROJECTS" ? PROJECT_CATEGORIES.length : 0);
+  
+  const currentTier = 
+    activeSelection === "BIO" ? bioTier :
+    activeSelection === "PROJECTS" ? projectsTier :
+    activeSelection === "STACK" ? stackTier : 1;
 
   const leftMeterActivity = useMotionValue(0);
   const rightMeterActivity = useMotionValue(0);
@@ -48,7 +56,7 @@ export default function AudioConsolePage() {
   }, [tabIndex, selectedProject, tabsCount, panDepth, setPanDepth]);
 
   return (
-    <main className="fixed inset-0 w-screen h-screen overflow-hidden bg-[#0a0a0a] flex items-center justify-center p-0 md:p-4 lg:p-8 font-sans select-none touch-none overscroll-none">
+    <main className="fixed inset-0 w-screen h-screen overflow-hidden bg-[#0a0a0a] flex items-center justify-center p-0 md:p-4 lg:p-8 font-sans">
       <div className="w-full max-w-7xl h-full md:max-h-[90vh] flex flex-col md:rounded-2xl bg-brushed-metal md:border-[3px] border-[#181a1f] shadow-[inset:0_15px_30px_rgba(255,255,255,0.03),inset_0_-10px_20px_rgba(0,0,0,0.6),0_40px_80px_rgba(0,0,0,1)] relative overflow-hidden">
         
         {/* MOBILE VIEW (max-width: 768px) */}
@@ -129,21 +137,28 @@ export default function AudioConsolePage() {
                       isActive={true}
                       activityMv={leftMeterActivity}
                       steps={
-                        activeSelection === "PROJECTS" && !selectedProject
+                        (activeSelection === "PROJECTS" && !selectedProject
                           ? PROJECTS_DATA.length
-                          : menus.length
+                          : activeSelection === "STACK"
+                            ? STACK_DATA.length
+                            : menus.length) + 1
                       }
-                      value={menuIndex}
+                      value={menuIndex + 1}
                       onChange={(newIdx) => {
-                        setMenuIndex(newIdx);
+                        const actualIdx = Math.max(0, newIdx - 1);
+                        setMenuIndex(actualIdx);
                         if (activeSelection === "PROJECTS" && !selectedProject) {
                           addLogMessage(
-                            `NAVIGATOR: [PROJECT_PREVIEW: ${PROJECTS_DATA[newIdx].title}]`,
+                            `NAVIGATOR: [PROJECT_PREVIEW: ${PROJECTS_DATA[actualIdx].title}]`,
+                          );
+                        } else if (activeSelection === "STACK") {
+                          addLogMessage(
+                            `NAVIGATOR: [STACK_ERA: ${STACK_DATA[actualIdx].era}]`,
                           );
                         } else {
-                          addLogMessage(`NAVIGATOR: ${menus[newIdx]}`);
+                          addLogMessage(`NAVIGATOR: ${menus[actualIdx]}`);
                           if (!activeSelection) {
-                            setActiveSelection(menus[newIdx]);
+                            setActiveSelection(menus[actualIdx]);
                           }
                         }
                       }}
@@ -164,19 +179,27 @@ export default function AudioConsolePage() {
                       maxLabel="RIGHT"
                       isActive={!!selectedProject || activeSelection === "PROJECTS"}
                       activityMv={rightMeterActivity}
-                      steps={tabsCount}
-                      value={tabIndex}
+                      steps={tabsCount + 1}
+                      value={tabIndex + 1}
                       onChange={(newIndex) => {
+                        const actualIdx = Math.max(0, newIndex - 1);
                         if (selectedProject) {
-                          setTabIndex(newIndex);
+                          setTabIndex(actualIdx);
                           const labels = [
                             "OVERVIEW",
                             "THE BREACH",
                             "DEPLOYMENT",
                             "RESULTS",
+                            "MEDIA",
                           ];
                           addLogMessage(
-                            `INFO_GAIN: ${labels[newIndex] || "UNKNOWN"}`,
+                            `INFO_GAIN: ${labels[actualIdx] || "UNKNOWN"}`,
+                          );
+                        } else if (activeSelection === "PROJECTS") {
+                          // ONLY update tabIndex (highlight), NOT activeCategoryIndex (filter)
+                          setTabIndex(actualIdx);
+                          addLogMessage(
+                            `FOCUS: ${PROJECT_CATEGORIES[actualIdx] || "UNKNOWN"}`,
                           );
                         }
                       }}
@@ -217,9 +240,10 @@ export default function AudioConsolePage() {
                         minLabel="UP"
                         centerLabel="SCROLL"
                         maxLabel="DOWN"
-                        value={contentDepth}
+                        steps={3}
+                        value={currentTier - 1}
                         onChange={(val) => {
-                          setContentDepth(val);
+                          setTier(val + 1);
                         }}
                         activityMv={rightMeterActivity}
                         isActive={
@@ -238,11 +262,11 @@ export default function AudioConsolePage() {
                       {/* Tier Indicator LEDs (SCRUB) */}
                       <div className="flex gap-1.5 mt-2 h-1.5 items-center justify-center">
                         {(activeSelection === "BIO" || activeSelection === "STACK" || activeSelection === "PROJECTS") && !selectedProject ? (
-                          [0, 1, 2].map((i) => (
+                          [1, 2, 3].map((i) => (
                             <div
                               key={i}
                               className={`w-1.5 h-1.5 rounded-full border border-black/40 transition-all duration-300 ${
-                                i === tier
+                                i === currentTier
                                   ? (activePreset === "HACKER" ? "bg-[#00f3ff] shadow-[0_0_5px_#00f3ff]" : activePreset === "RETRO" ? "bg-[#ffb000] shadow-[0_0_5px_#ffb000]" : "bg-emerald-500 shadow-[0_0_5px_#10b981]")
                                   : "bg-black/40"
                               }`}

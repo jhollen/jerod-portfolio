@@ -6,6 +6,7 @@ import { BootScreen } from "./BootScreen";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   PROJECTS_DATA,
+  PROJECT_CATEGORIES,
   BIO_DATA,
   STACK_DATA,
   ProjectMedia,
@@ -26,12 +27,14 @@ interface ThemeStyles {
 
 const NavigationHeader = ({
   title,
+  subtitle,
   backLabel,
   onBack,
   theme,
   children,
 }: {
   title: string;
+  subtitle?: string;
   backLabel: string;
   onBack: () => void;
   theme: ThemeStyles;
@@ -71,7 +74,7 @@ const NavigationHeader = ({
       </motion.button>
 
       <div
-        className={`flex flex-1 items-center gap-4 min-w-0 border-b-2 border-current h-8 overflow-hidden ${theme.text}`}
+        className={`flex flex-1 items-center gap-3 min-w-0 border-b-2 border-current h-8 overflow-hidden ${theme.text}`}
       >
         <motion.h3
           layout
@@ -79,6 +82,16 @@ const NavigationHeader = ({
         >
           {title}
         </motion.h3>
+
+        {subtitle && (
+          <motion.span
+            initial={{ opacity: 0, x: -5 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="text-[8px] md:text-[9px] font-black opacity-40 uppercase tracking-widest border-l-2 border-current pl-2 whitespace-nowrap overflow-hidden text-ellipsis"
+          >
+            {subtitle}
+          </motion.span>
+        )}
 
         {children && (
           <div className="flex flex-1 overflow-x-auto [&::-webkit-scrollbar]:hidden items-end h-full">
@@ -102,8 +115,11 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
     setActiveSelection,
     selectedProject,
     setSelectedProject,
-    contentDepth,
-    setContentDepth,
+    bioTier,
+    projectsTier,
+    stackTier,
+    setTier,
+    activeCategoryIndex,
     panDepth,
     setPanDepth,
     addLogMessage,
@@ -187,12 +203,14 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
     };
   }, [isRetro, isHacker]);
 
-  const tier = contentDepth < 34 ? 0 : contentDepth < 67 ? 1 : 2;
+  const currentTier = 
+    activeSelection === "BIO" ? bioTier :
+    activeSelection === "PROJECTS" ? projectsTier :
+    activeSelection === "STACK" ? stackTier : 1;
 
   const handleReturnToSystem = () => {
     setActiveSelection(null);
     setMenuIndex(0);
-    setContentDepth(0);
     setPanDepth(0);
     setTabIndex(0);
     addLogMessage("SYSTEM: RESET_TO_ROOT");
@@ -206,17 +224,15 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
   };
 
   const zoomIn = () => {
-    const nextTier = Math.min(2, tier + 1);
-    if (nextTier === 1) setContentDepth(50);
-    if (nextTier === 2) setContentDepth(100);
+    const nextTier = Math.min(3, currentTier + 1);
+    setTier(nextTier);
     addLogMessage(`SYSTEM: ZOOM_IN_LEVEL_${nextTier}`);
     triggerTabSpike();
   };
 
   const zoomOut = () => {
-    const nextTier = Math.max(0, tier - 1);
-    if (nextTier === 0) setContentDepth(0);
-    if (nextTier === 1) setContentDepth(50);
+    const nextTier = Math.max(1, currentTier - 1);
+    setTier(nextTier);
     addLogMessage(`SYSTEM: ZOOM_OUT_LEVEL_${nextTier}`);
     triggerTabSpike();
   };
@@ -234,37 +250,32 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
       <button
         onClick={zoomIn}
         onMouseEnter={() => triggerNavSpike()}
-        disabled={tier === 2}
+        disabled={currentTier === 3}
         className={`w-full py-2 border-2 ${theme.border} ${theme.font} text-[8px] font-black uppercase tracking-tighter hover:scale-105 active:scale-95 transition-all disabled:opacity-20 shadow-[1px_1px_0_rgba(0,0,0,0.1)] ${theme.text}`}
       >
         [ + ]
       </button>
       <div
-        className={`flex flex-col gap-1.5 opacity-40 text-[7px] font-black uppercase tracking-widest pointer-events-none items-center ${theme.text}`}
+        className={`flex flex-col gap-2 opacity-40 text-[8px] font-black uppercase tracking-widest pointer-events-none items-center ${theme.text}`}
       >
-        <div
-          onMouseEnter={() => triggerNavSpike()}
-          className={`transition-all duration-300 ${tier === 0 ? "opacity-100 scale-110 font-black" : ""}`}
-        >
-          T0
-        </div>
-        <div
-          onMouseEnter={() => triggerNavSpike()}
-          className={`transition-all duration-300 ${tier === 1 ? "opacity-100 scale-110 font-black" : ""}`}
-        >
-          T1
-        </div>
-        <div
-          onMouseEnter={() => triggerNavSpike()}
-          className={`transition-all duration-300 ${tier === 2 ? "opacity-100 scale-110 font-black" : ""}`}
-        >
-          T2
-        </div>
+        {[1, 2, 3].map((t) => (
+          <div
+            key={t}
+            onMouseEnter={() => triggerNavSpike()}
+            className={`transition-all duration-300 w-8 h-5 flex items-center justify-center border-2 ${
+              currentTier === t
+                ? `opacity-100 scale-110 font-black ${theme.highlight} ${theme.border}`
+                : `opacity-20 ${theme.border} border-transparent`
+            }`}
+          >
+            T{t}
+          </div>
+        ))}
       </div>
       <button
         onClick={zoomOut}
         onMouseEnter={() => triggerNavSpike()}
-        disabled={tier === 0}
+        disabled={currentTier === 1}
         className={`w-full py-2 border-2 ${theme.border} ${theme.font} text-[8px] font-black uppercase tracking-tighter hover:scale-105 active:scale-95 transition-all disabled:opacity-20 shadow-[1px_1px_0_rgba(0,0,0,0.1)] ${theme.text}`}
       >
         [ - ]
@@ -272,59 +283,61 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
     </div>
   );
 
-  const renderBio = () => (
-    <div
-      className={`space-y-6 ${theme.font} ${theme.text} text-[14px] md:text-[16px] leading-relaxed relative h-full pt-4 flex pl-4 md:pl-10`}
-    >
-      <div className="flex-1 flex flex-col pr-4">
-        <NavigationHeader
-          title="BIO"
-          backLabel="Return to System"
-          onBack={handleReturnToSystem}
-          theme={theme}
-        />
+  const renderBio = () => {
+    const subtitles = ["", "Career Timeline Expansion", "OPERATIONAL EMPATHY & CURRENT STATUS"];
+    return (
+      <div
+        className={`space-y-6 ${theme.font} ${theme.text} text-[14px] md:text-[16px] leading-relaxed relative h-full pt-4 flex pl-4 md:pl-10`}
+      >
+        <div className="flex-1 flex flex-col pr-4">
+          <NavigationHeader
+            title="BIO"
+            subtitle={subtitles[currentTier - 1]}
+            backLabel="Return to System"
+            onBack={handleReturnToSystem}
+            theme={theme}
+          />
 
-        <div className="flex-1 overflow-y-auto md:overflow-y-auto custom-scrollbar pr-4">
-          {tier === 0 && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="space-y-4"
-            >
-              <p>{BIO_DATA.tier1_base}</p>
-            </motion.div>
-          )}
+          <div 
+            ref={scrollRef}
+            onMouseMove={handleEdgeScroll}
+            className="flex-1 overflow-y-auto md:overflow-y-auto custom-scrollbar pr-4"
+          >
+            {currentTier === 1 && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="space-y-4"
+              >
+                <p>{BIO_DATA.tier1_base}</p>
+              </motion.div>
+            )}
 
-          {tier === 1 && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="space-y-4"
-            >
-              <p className="border-l-4 border-current pl-4 italic text-sm font-black underline decoration-dotted">
-                Career Timeline Expansion:
-              </p>
-              <p>{BIO_DATA.tier2_timeline}</p>
-            </motion.div>
-          )}
+            {currentTier === 2 && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="space-y-4"
+              >
+                <p>{BIO_DATA.tier2_timeline}</p>
+              </motion.div>
+            )}
 
-          {tier === 2 && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="space-y-4"
-            >
-              <p className="font-bold uppercase tracking-widest text-xs opacity-50 underline decoration-dotted">
-                Operational Empathy & Current Status
-              </p>
-              <p>{BIO_DATA.tier3_deepDive}</p>
-            </motion.div>
-          )}
+            {currentTier === 3 && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="space-y-4"
+              >
+                <p>{BIO_DATA.tier3_deepDive}</p>
+              </motion.div>
+            )}
+          </div>
         </div>
+        {renderControlColumn()}
       </div>
-      {renderControlColumn()}
-    </div>
-  );
+    );
+  };
 
   const renderStack = () => (
     <div
@@ -338,18 +351,25 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
           theme={theme}
         />
 
-        <div className="flex-1 overflow-y-auto md:overflow-y-auto custom-scrollbar pr-4">
-          {tier === 0 && (
+        <div 
+          ref={scrollRef}
+          onMouseMove={handleEdgeScroll}
+          className="flex-1 overflow-y-auto md:overflow-y-auto custom-scrollbar pr-4"
+        >
+          {currentTier === 1 && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               className="space-y-6 py-4"
             >
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {STACK_DATA.map((s) => (
+                {STACK_DATA.map((s, idx) => (
                   <div
                     key={s.era}
-                    onMouseEnter={() => triggerNavSpike()}
+                    onMouseEnter={() => {
+                      setMenuIndex(idx);
+                      triggerNavSpike();
+                    }}
                     className={`border border-current p-3 text-center bg-current/5`}
                   >
                     <p className="text-[10px] opacity-50 font-black">{s.era}</p>
@@ -360,15 +380,18 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
             </motion.div>
           )}
 
-          {tier === 1 && (
+          {currentTier === 2 && (
             <div className="space-y-4">
               <p className="text-xs uppercase tracking-widest font-black opacity-50 underline decoration-dotted mb-4">
                 Languages & Telemetry:
               </p>
-              {STACK_DATA.map((s) => (
+              {STACK_DATA.map((s, idx) => (
                 <div
                   key={s.era}
-                  onMouseEnter={() => triggerNavSpike()}
+                  onMouseEnter={() => {
+                    setMenuIndex(idx);
+                    triggerNavSpike();
+                  }}
                   className="border-l-2 border-current pl-4 mb-4"
                 >
                   <p className="text-xs font-black uppercase">{s.title}</p>
@@ -383,16 +406,19 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
             </div>
           )}
 
-          {tier === 2 && (
+          {currentTier === 3 && (
             <div className="space-y-4 text-sm">
               <p className="text-xs uppercase tracking-widest font-black opacity-50 underline decoration-dotted mb-4">
                 The Grit (Challenges Overcome):
               </p>
               <div className="space-y-4">
-                {STACK_DATA.map((s) => (
+                {STACK_DATA.map((s, idx) => (
                   <div
                     key={s.era}
-                    onMouseEnter={() => triggerNavSpike()}
+                    onMouseEnter={() => {
+                      setMenuIndex(idx);
+                      triggerNavSpike();
+                    }}
                     className="border-b border-current/10 pb-2"
                   >
                     <p className="text-[9px] font-black opacity-40 uppercase tracking-tighter">
@@ -411,18 +437,13 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
   );
 
   const renderProjects = () => {
-    const categories = [
-      "ALL",
-      ...Array.from(
-        new Set(PROJECTS_DATA.map((p) => p.category.split(" / ")[0])),
-      ),
-    ];
-    const activeCategory = categories[tabIndex % categories.length];
+    const categories = PROJECT_CATEGORIES;
+    const confirmedCategory = categories[activeCategoryIndex % categories.length];
 
     const filteredProjects =
-      activeCategory === "ALL"
+      confirmedCategory === "ALL"
         ? PROJECTS_DATA
-        : PROJECTS_DATA.filter((p) => p.category.startsWith(activeCategory));
+        : PROJECTS_DATA.filter((p) => p.category.startsWith(confirmedCategory));
 
     if (selectedProject) {
       const p = PROJECTS_DATA.find((proj) => proj.id === selectedProject);
@@ -433,7 +454,7 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
 
       return (
         <div
-          className={`flex flex-col h-full w-full relative pt-4 pl-4 md:pl-10 ${theme.text}`}
+          className={`flex h-full w-full relative pt-4 pl-4 md:pl-10 ${theme.text}`}
         >
           <div className="flex-1 flex flex-col pr-4">
             <NavigationHeader
@@ -445,7 +466,10 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
               {tabs.map((label, i) => (
                 <button
                   key={label}
-                  onMouseEnter={() => triggerTabSpike()}
+                  onMouseEnter={() => {
+                    setTabIndex(i);
+                    triggerTabSpike();
+                  }}
                   onClick={() => {
                     setTabIndex(i);
                     triggerTabSpike();
@@ -470,7 +494,11 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
                   exit={{ opacity: 0, x: -20 }}
                   className="h-full flex flex-col"
                 >
-                  <div className="text-[14px] leading-relaxed flex-1 overflow-y-auto pr-2 custom-scrollbar">
+                  <div 
+                    ref={scrollRef}
+                    onMouseMove={handleEdgeScroll}
+                    className="text-[14px] leading-relaxed flex-1 overflow-y-auto pr-2 custom-scrollbar"
+                  >
                     {currentTabIdx === 0 && <p>{p.overview}</p>}
                     {currentTabIdx === 1 && <p>{p.breach}</p>}
                     {currentTabIdx === 2 && <p>{p.deploy}</p>}
@@ -526,13 +554,14 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
               </AnimatePresence>
             </div>
           </div>
+          {renderControlColumn()}
         </div>
       );
     }
 
     return (
       <div
-        className={`flex flex-col h-full w-full relative overflow-hidden pt-2 px-4 md:px-0 ${theme.text} ${theme.font} flex pl-4 md:pl-10`}
+        className={`flex h-full w-full relative overflow-hidden pt-2 px-4 md:px-0 ${theme.text} ${theme.font} flex pl-4 md:pl-10`}
       >
         <div className="flex-1 flex flex-col pr-4">
           <NavigationHeader
@@ -544,14 +573,18 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
             {categories.map((cat, i) => (
               <button
                 key={cat}
-                onMouseEnter={() => triggerTabSpike()}
+                onMouseEnter={() => {
+                  setTabIndex(i);
+                  triggerTabSpike();
+                }}
                 onClick={() => {
                   setTabIndex(i);
+                  useConsoleStore.getState().setActiveCategoryIndex(i);
                   triggerTabSpike();
                 }}
                 className={`px-2 py-1 text-[8px] md:text-[9px] font-black uppercase tracking-widest whitespace-nowrap transition-all duration-300 outline-none ${
                   i === tabIndex
-                    ? "opacity-100 scale-105 font-black"
+                    ? "opacity-100 scale-105 font-black underline"
                     : "opacity-30 hover:opacity-60 font-medium"
                 }`}
               >
@@ -573,7 +606,10 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: idx * 0.05 }}
-                  onMouseEnter={() => triggerNavSpike()}
+                  onMouseEnter={() => {
+                    setMenuIndex(idx);
+                    triggerNavSpike();
+                  }}
                   onClick={() => {
                     setSelectedProject(p.id);
                     setTabIndex(0);
@@ -586,7 +622,7 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
                     <h4 className="font-black uppercase tracking-tight text-sm md:text-base leading-none">
                       {p.title}
                     </h4>
-                    {tier > 0 && (
+                    {currentTier > 1 && (
                       <span
                         className={`text-[8px] font-bold border ${theme.border} px-1.5 py-0.5 ${theme.highlight} uppercase tracking-tighter`}
                       >
@@ -595,13 +631,13 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
                     )}
                   </div>
 
-                  {tier >= 1 && (
+                  {currentTier >= 2 && (
                     <p className="text-[11px] md:text-[12px] italic opacity-70 border-l border-current/30 pl-3 py-0.5 line-clamp-1">
                       {p.overview}
                     </p>
                   )}
 
-                  {tier === 2 && (
+                  {currentTier === 3 && (
                     <div className="flex flex-wrap gap-x-3 gap-y-1 pt-2 border-t border-current/10 mt-1">
                       {p.stack.slice(0, 5).map((item) => (
                         <span
@@ -641,7 +677,11 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
           theme={theme}
         />
 
-        <div className="space-y-6 py-4 pr-4 overflow-y-auto custom-scrollbar h-full pb-20">
+        <div 
+          ref={scrollRef}
+          onMouseMove={handleEdgeScroll}
+          className="space-y-6 py-4 pr-4 overflow-y-auto custom-scrollbar h-full pb-20"
+        >
           <div className="border-4 border-current/30 p-4 md:p-6 bg-current/5 space-y-4 shadow-[8px_8px_0_rgba(0,0,0,0.1)]">
             <p className="font-black text-center border-b border-current/20 pb-4 tracking-[0.2em] uppercase text-[10px] md:text-xs underline decoration-dotted">
               UPLINK_STABLE: AWAITING_INPUT
@@ -687,7 +727,9 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
 
   const renderMainMenu = () => (
     <div
-      className={`flex flex-col gap-2 w-full mt-2 ${theme.text} ${theme.font} px-4 md:px-0`}
+      ref={scrollRef}
+      onMouseMove={handleEdgeScroll}
+      className={`flex flex-col gap-2 w-full h-full mt-2 ${theme.text} ${theme.font} px-4 md:px-0 overflow-y-auto custom-scrollbar pb-10`}
     >
       <h3 className="font-black uppercase tracking-widest mb-4 opacity-50 text-[10px]">
         Main Menu:
@@ -743,7 +785,7 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
       <div
         className={`flex-1 h-full overflow-hidden leading-relaxed tracking-wide relative z-10`}
       >
-        <div className="absolute inset-0 overflow-y-auto md:overflow-visible text-[14px]">
+        <div className="absolute inset-0 overflow-hidden text-[14px]">
           {renderMainContent()}
         </div>
       </div>

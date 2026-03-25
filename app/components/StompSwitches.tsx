@@ -15,6 +15,7 @@ export const StompSwitches = () => {
     setActiveSelection,
     selectedProject,
     setSelectedProject,
+    setActiveCategoryIndex,
     addLogMessage,
     triggerNavSpike,
     triggerTabSpike,
@@ -41,6 +42,9 @@ export const StompSwitches = () => {
         triggerNavSpike();
         addLogMessage(`EXEC: [${name}]`);
       } else if (isProjectIndex) {
+        // If focusing a category (from dial/hover), confirm it
+        setActiveCategoryIndex(tabIndex);
+        
         const currentProjIdx = Math.min(
           Math.floor((panDepth / 100) * PROJECTS_DATA.length),
           PROJECTS_DATA.length - 1
