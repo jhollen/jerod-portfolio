@@ -5,10 +5,21 @@ import { useConsoleStore } from "@/app/useConsoleStore";
 import { motion, AnimatePresence } from "framer-motion";
 
 export const DiagnosticsPanel = () => {
-  const { logMessages, activePreset, activeSelection, selectedProject, contentDepth } = useConsoleStore();
+  const { 
+    logMessages, 
+    activePreset, 
+    activeSelection, 
+    selectedProject, 
+    bioTier, 
+    projectsTier, 
+    stackTier 
+  } = useConsoleStore();
   const scrollRef = React.useRef<HTMLDivElement>(null);
 
-  const tier = contentDepth < 34 ? 0 : contentDepth < 67 ? 1 : 2;
+  const currentTier = 
+    activeSelection === "BIO" ? bioTier :
+    activeSelection === "PROJECTS" ? projectsTier :
+    activeSelection === "STACK" ? stackTier : 1;
 
   React.useEffect(() => {
     if (scrollRef.current) {
@@ -109,13 +120,13 @@ export const DiagnosticsPanel = () => {
             )}
           </AnimatePresence>
 
-          {/* ZOOM NODES: T0 -> T1 -> T2 */}
+          {/* ZOOM NODES: T1 -> T2 -> T3 */}
           <AnimatePresence>
             {activeSelection && (
               <>
-                {/* T0 Node */}
+                {/* T1 Node */}
                 <motion.path
-                  key="t0-path"
+                  key="t1-path"
                   d="M 35 25 L 45 25"
                   stroke="currentColor"
                   strokeWidth="1.5"
@@ -124,7 +135,7 @@ export const DiagnosticsPanel = () => {
                   animate="visible"
                 />
                 <motion.circle
-                  key="t0-node"
+                  key="t1-node"
                   cx="50"
                   cy="25"
                   r="3"
@@ -139,14 +150,14 @@ export const DiagnosticsPanel = () => {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   x="47" y="42" fontSize="5" fill="currentColor" className="font-bold">
-                  T0
+                  T1
                 </motion.text>
 
-                {/* T1 Node */}
-                {tier >= 1 && (
+                {/* T2 Node */}
+                {currentTier >= 2 && (
                   <>
                     <motion.path
-                      key="t1-path"
+                      key="t2-path"
                       d="M 53 25 L 63 25"
                       stroke="currentColor"
                       strokeWidth="1.5"
@@ -155,7 +166,7 @@ export const DiagnosticsPanel = () => {
                       animate="visible"
                     />
                     <motion.circle
-                      key="t1-node"
+                      key="t2-node"
                       cx="68"
                       cy="25"
                       r="4"
@@ -170,16 +181,16 @@ export const DiagnosticsPanel = () => {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       x="65" y="42" fontSize="5" fill="currentColor" className="font-bold">
-                      T1
+                      T2
                     </motion.text>
                   </>
                 )}
 
-                {/* T2 Node */}
-                {tier >= 2 && (
+                {/* T3 Node */}
+                {currentTier >= 3 && (
                   <>
                     <motion.path
-                      key="t2-path"
+                      key="t3-path"
                       d="M 72 25 L 82 25"
                       stroke="currentColor"
                       strokeWidth="1.5"
@@ -188,7 +199,7 @@ export const DiagnosticsPanel = () => {
                       animate="visible"
                     />
                     <motion.circle
-                      key="t2-node"
+                      key="t3-node"
                       cx="87"
                       cy="25"
                       r="5"
@@ -203,7 +214,7 @@ export const DiagnosticsPanel = () => {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       x="84" y="42" fontSize="5" fill="currentColor" className="font-bold">
-                      T2
+                      T3
                     </motion.text>
                   </>
                 )}
