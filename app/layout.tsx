@@ -56,7 +56,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${roboto.variable} ${merriweather.variable} ${inter.variable} ${playfair.variable}`}>
       <head></head>
-      <body className="bg-[#121212] m-0 p-0 text-white antialiased">
+      <body className="bg-white m-0 p-0 text-ink antialiased">
         {children}
       </body>
     </html>
