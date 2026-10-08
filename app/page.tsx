@@ -165,42 +165,45 @@ export default function EditorialHome() {
             {PROJECTS_DATA.map((p) => (
               <article
                 key={p.id}
-                className="border border-border-subtle rounded-2xl bg-card p-5 md:p-7 shadow-subtle"
+                className="border border-border-subtle rounded-2xl bg-card shadow-subtle overflow-hidden"
               >
-                <div className="flex flex-wrap items-start justify-between gap-3 mb-3">
-                  <div>
-                    <p className="font-mono text-[10px] tracking-[0.2em] text-text-faint font-bold mb-1.5">
-                      {p.category}
+                <details className="group">
+                  <summary className="cursor-pointer list-none [&::-webkit-details-marker]:hidden select-none p-5 md:p-7">
+                    <div className="flex flex-wrap items-start justify-between gap-3 mb-3">
+                      <div>
+                        <p className="font-mono text-[10px] tracking-[0.2em] text-text-faint font-bold mb-1.5">
+                          {p.category}
+                        </p>
+                        <h3 className="font-black text-xl md:text-2xl tracking-tight">
+                          {p.title}
+                        </h3>
+                      </div>
+                      {METRICS[p.id] && (
+                        <span className="font-mono text-[11px] font-bold bg-ink text-surface-base px-3 py-1.5 rounded-full whitespace-nowrap">
+                          {METRICS[p.id]}
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-text leading-relaxed mb-4">{p.result}</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {p.stack.map((s) => (
+                        <span
+                          key={s}
+                          className="text-[11px] font-bold text-text-subtle bg-surface-muted border border-border-subtle px-2.5 py-1 rounded-full"
+                        >
+                          {s}
+                        </span>
+                      ))}
+                    </div>
+                    <p className="mt-4 flex items-center gap-2 text-[13px] font-bold text-accent-blue">
+                      <span className="group-open:rotate-90 transition-transform inline-block" aria-hidden="true">
+                        ▸
+                      </span>
+                      <span className="group-open:hidden">How it was built</span>
+                      <span className="hidden group-open:inline">Show less</span>
                     </p>
-                    <h3 className="font-black text-xl md:text-2xl tracking-tight">
-                      {p.title}
-                    </h3>
-                  </div>
-                  {METRICS[p.id] && (
-                    <span className="font-mono text-[11px] font-bold bg-ink text-surface-base px-3 py-1.5 rounded-full whitespace-nowrap">
-                      {METRICS[p.id]}
-                    </span>
-                  )}
-                </div>
-                <p className="text-text leading-relaxed mb-4">{p.result}</p>
-                <div className="flex flex-wrap gap-1.5 mb-4">
-                  {p.stack.map((s) => (
-                    <span
-                      key={s}
-                      className="text-[11px] font-bold text-text-subtle bg-surface-muted border border-border-subtle px-2.5 py-1 rounded-full"
-                    >
-                      {s}
-                    </span>
-                  ))}
-                </div>
-                <details className="group border-t border-border-subtle pt-3">
-                  <summary className="cursor-pointer text-[13px] font-bold text-accent-blue list-none [&::-webkit-details-marker]:hidden flex items-center gap-2 select-none">
-                    <span className="group-open:rotate-90 transition-transform inline-block" aria-hidden="true">
-                      ▸
-                    </span>
-                    How it was built
                   </summary>
-                  <div className="mt-3 space-y-3 text-[14px] text-text leading-relaxed">
+                  <div className="px-5 md:px-7 pb-5 md:pb-7 pt-4 border-t border-border-subtle space-y-3 text-[14px] text-text leading-relaxed">
                     <p>
                       <strong className="text-ink">The problem: </strong>
                       {p.breach}
