@@ -34,6 +34,30 @@ interface GitHubPR {
 
 type ViewMode = "FEED" | "REPOS" | "REPO_DETAIL";
 
+// Static cache shown when the GitHub API is unreachable (rate-limited,
+// offline, or blocked). Seeded from the real repo list so the panel
+// always renders something useful instead of a LINK_FAILURE.
+const FALLBACK_REPOS: GitHubRepo[] = [
+  { id: 1, name: "half-dollars", description: "Repo for my freelance shop website", stargazers_count: 0, language: "TypeScript", updated_at: "2026-07-03T00:00:00Z" },
+  { id: 2, name: "jerod-portfolio", description: "This site — hardware-emulated portfolio console", stargazers_count: 1, language: "TypeScript", updated_at: "2026-03-25T00:00:00Z" },
+  { id: 3, name: "LeetCode-Practice", description: "Data structures and algorithms practice", stargazers_count: 0, language: "C++", updated_at: "2026-03-24T00:00:00Z" },
+  { id: 4, name: "bogardt", description: "Band website", stargazers_count: 0, language: "TypeScript", updated_at: "2026-03-23T00:00:00Z" },
+  { id: 5, name: "rails-image-optimizer-demo", description: "Build-time image optimization pipeline demo", stargazers_count: 0, language: "HTML", updated_at: "2025-10-22T00:00:00Z" },
+  { id: 6, name: "OurCalendSQL", description: "Addition of SQL database", stargazers_count: 1, language: "Java", updated_at: "2025-10-13T00:00:00Z" },
+  { id: 7, name: "multi", description: "Multi-purpose JavaScript experiments", stargazers_count: 0, language: "JavaScript", updated_at: "2025-10-13T00:00:00Z" },
+  { id: 8, name: "task-manager", description: "A simple task manager app with Vue.js", stargazers_count: 0, language: "Vue", updated_at: "2024-03-19T00:00:00Z" },
+  { id: 9, name: "Jerodhollen.github.io", description: "Personal landing page", stargazers_count: 0, language: "HTML", updated_at: "2021-12-03T00:00:00Z" },
+  { id: 10, name: "OurCalendarApp", description: "Native Android calendar app", stargazers_count: 0, language: "Java", updated_at: "2020-05-15T00:00:00Z" },
+];
+
+const FALLBACK_EVENTS: GitHubEvent[] = [
+  { id: "c1", type: "PushEvent", repo: { name: "jhollen/half-dollars" }, created_at: "2026-07-03T00:00:00Z", payload: {} },
+  { id: "c2", type: "PushEvent", repo: { name: "jhollen/jerod-portfolio" }, created_at: "2026-03-25T00:00:00Z", payload: {} },
+  { id: "c3", type: "PushEvent", repo: { name: "jhollen/LeetCode-Practice" }, created_at: "2026-03-24T00:00:00Z", payload: {} },
+  { id: "c4", type: "PushEvent", repo: { name: "jhollen/bogardt" }, created_at: "2026-03-23T00:00:00Z", payload: {} },
+  { id: "c5", type: "CreateEvent", repo: { name: "jhollen/rails-image-optimizer-demo" }, created_at: "2025-10-22T00:00:00Z", payload: {} },
+];
+
 export const GitHubDisplay = () => {
   const { activePreset, addLogMessage } = useConsoleStore();
   const [viewMode, setViewMode] = React.useState<ViewMode>("FEED");
@@ -43,6 +67,7 @@ export const GitHubDisplay = () => {
   const [repoDetails, setRepoDetails] = React.useState<GitHubPR[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
+  const [isLive, setIsLive] = React.useState(true);
   const scrollRef = React.useRef<HTMLDivElement>(null);
 
   // Dynamic Theme Colors
@@ -72,8 +97,12 @@ export const GitHubDisplay = () => {
       const data = await res.json();
       setEvents(data);
       setError(null);
+      setIsLive(true);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "COMM_FAILURE");
+      // API unreachable — serve the static cache instead of an error state.
+      setEvents(FALLBACK_EVENTS);
+      setError(null);
+      setIsLive(false);
     } finally {
       setLoading(false);
     }
@@ -89,8 +118,12 @@ export const GitHubDisplay = () => {
       const data = await res.json();
       setRepos(data);
       setError(null);
+      setIsLive(true);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "COMM_FAILURE");
+      // API unreachable — serve the static cache instead of an error state.
+      setRepos(FALLBACK_REPOS);
+      setError(null);
+      setIsLive(false);
     } finally {
       setLoading(false);
     }
@@ -106,8 +139,11 @@ export const GitHubDisplay = () => {
       const data = await res.json();
       setRepoDetails(data);
       setError(null);
+      setIsLive(true);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "COMM_FAILURE");
+      setRepoDetails([]);
+      setError(null);
+      setIsLive(false);
     } finally {
       setLoading(false);
     }
@@ -148,7 +184,7 @@ export const GitHubDisplay = () => {
         </div>
         <div className="flex items-center gap-2">
           {loading && <span className="animate-spin opacity-50 text-[8px]">⟳</span>}
-          <span className={`${error ? "text-red-900 animate-pulse" : `animate-pulse ${themeColors.text}`}`}>● {error ? "LINK_FAILURE" : "LIVE_SYNC"}</span>
+          <span className={isLive ? `animate-pulse ${themeColors.text}` : "text-amber-500/80"}>● {isLive ? "LIVE_SYNC" : "CACHED_SYNC"}</span>
         </div>
       </div>
       
@@ -196,7 +232,6 @@ export const GitHubDisplay = () => {
           </div>
         )}
 
-        {error && <p className="text-red-900 font-bold opacity-80 uppercase text-[8px]">Comm_Link_Error: {error}</p>}
       </div>
     </div>
   );

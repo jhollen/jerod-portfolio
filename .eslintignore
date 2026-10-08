@@ -1,3 +1,0 @@
-# Ignore generated Prisma and other generated files
-app/generated/
-prisma/generated/

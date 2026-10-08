@@ -44,7 +44,7 @@ export interface ConsoleState {
 export const useConsoleStore = create<ConsoleState>((set, get) => ({
   isBooting: true,
   activePreset: null,
-  menuIndex: 0,
+  menuIndex: -1,
   tabIndex: 0,
   activeSelection: null,
   selectedProject: null,
@@ -95,7 +95,7 @@ export const useConsoleStore = create<ConsoleState>((set, get) => ({
         return {
           activePreset: null,
           activeSelection: null,
-          menuIndex: 0,
+          menuIndex: -1,
           tabIndex: 0,
           bioTier: 1,
           projectsTier: 1,

@@ -26,8 +26,26 @@ const playfair = Playfair_Display({
 
 // Import Next.js Metadata type for SEO and page info
 export const metadata: Metadata = {
-  title: "Jerod Hollen - Portfolio",
-  description: "Portfolio of Jerod Hollen - Developer, Designer, and Creative",
+  title: "Jerod Hollen — Full-Stack Engineer",
+  description:
+    "Portfolio of Jerod Hollen, full-stack engineer (React, Next.js, TypeScript, Ruby on Rails). Automation, edtech, and creative systems — open to frontend, solutions, and AI engineering roles.",
+  keywords: [
+    "Jerod Hollen",
+    "Full-Stack Engineer",
+    "React",
+    "Next.js",
+    "TypeScript",
+    "Ruby on Rails",
+    "Portfolio",
+  ],
+  authors: [{ name: "Jerod Hollen" }],
+  openGraph: {
+    title: "Jerod Hollen — Full-Stack Engineer",
+    description:
+      "Full-stack engineer specializing in React, Next.js, TypeScript, and Ruby on Rails. I turn manual bottlenecks into automated systems.",
+    type: "website",
+    url: "https://www.jerodhollen.com",
+  },
 };
 
 export default function RootLayout({

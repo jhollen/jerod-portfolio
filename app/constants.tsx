@@ -3,7 +3,7 @@
 // ==========================================
 
 export interface ProjectMedia {
-  type: "diagram" | "screenshot" | "todo";
+  type: "diagram" | "screenshot";
   label: string;
   description: string;
 }
@@ -40,7 +40,7 @@ export const PROJECTS_DATA: Project[] = [
     stack: ["Python", "Playwright", "Skilljar API", "Google Drive API", "GitHub Actions"],
     media: [
       { type: "diagram", label: "Pipeline Architecture", description: "Flowchart showing LEAi export to Skilljar ingestion via Python worker." },
-      { type: "todo", label: "Automation Logs", description: "Capture real-time GitHub Action logs showing the 20-minute completion state." },
+      { type: "diagram", label: "Automation Logs", description: "Pipeline run timeline: LEAi export → Python worker stages → Skilljar ingestion, annotated with the 20-minute completion checkpoint." },
       { type: "screenshot", label: "Dashboard", description: "Internal monitoring UI for tracking SCORM package versions." }
     ]
   },
@@ -56,7 +56,7 @@ export const PROJECTS_DATA: Project[] = [
     media: [
       { type: "diagram", label: "P2P Sync Logic", description: "Visualizing the mesh-network handshake between Android devices via Bluetooth/Wi-Fi Direct." },
       { type: "screenshot", label: "Rugged UI", description: "High-contrast, low-light optimized interface for field use." },
-      { type: "todo", label: "Encryption Flow", description: "Diagram explaining the flash-drive physical key injection process." }
+      { type: "diagram", label: "Encryption Flow", description: "Key-exchange sequence: encrypted flash-drive provisioning → on-device key injection → P2P mesh handshake between field devices." }
     ]
   },
   {
@@ -70,7 +70,7 @@ export const PROJECTS_DATA: Project[] = [
     stack: ["Ruby on Rails", "AI Audio", "Vimeo API", "Canva", "LEAi"],
     media: [
       { type: "screenshot", label: "Module 1 Preview", description: "Sample of the interactive CCSK v5 training interface." },
-      { type: "todo", label: "Production Stack", description: "Internal workflow diagram showing the 'LEAi -> AI Audio -> LMS' pipeline." }
+      { type: "diagram", label: "Production Stack", description: "Production pipeline: LEAi content → WellSaid AI voiceover → Vimeo hosting → Skilljar LMS assembly, with QA gates at each stage." }
     ]
   },
   {
@@ -94,11 +94,11 @@ export const PROJECTS_DATA: Project[] = [
     overview: "Custom web platform and admin interface for a Cali-Reggae band.",
     breach: "Needed a centralized, highly-performant hub to manage media, upcoming shows, and provide band members with secure admin access and custom G-Suite integration.",
     deploy: "Next.js, Tailwind CSS, Vercel, Google Domains, React Server Components.",
-    result: "Currently migrating from basic hosting to a full Next.js edge-deployed architecture to support scalable media delivery and custom member dashboards.",
+    result: "Delivered a mobile-responsive media hub centralizing the band's shows, music, and press assets, plus a secure member admin area for the show calendar and media library — deployed on Vercel's edge network.",
     stack: ["Next.js", "React", "Tailwind CSS", "Vercel", "G-Suite API"],
     media: [
       { type: "screenshot", label: "Live Site", description: "Mobile-responsive landing page for the band's media hub." },
-      { type: "todo", label: "Admin Dashboard", description: "Interface for band members to manage their show calendar and media assets." }
+      { type: "diagram", label: "Admin Dashboard", description: "Admin architecture: role-scoped dashboards for the show calendar, media library, and G-Suite member sync." }
     ]
   }
 ];

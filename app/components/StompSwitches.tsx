@@ -36,9 +36,10 @@ export const StompSwitches = () => {
 
     if (type === "SELECT") {
       if (!activeSelection) {
+        if (menuIndex === -1) return;
         const name = menus[menuIndex];
         setActiveSelection(name);
-        setMenuIndex(0);
+        setMenuIndex(-1);
         triggerNavSpike();
         addLogMessage(`EXEC: [${name}]`);
       } else if (isProjectIndex) {
@@ -63,7 +64,7 @@ export const StompSwitches = () => {
       // Main Menu Navigation
       const newIdx = type === "NEXT" 
         ? (menuIndex + 1) % totalMenus 
-        : (menuIndex - 1 + totalMenus) % totalMenus;
+        : menuIndex <= 0 ? totalMenus - 1 : menuIndex - 1;
       setMenuIndex(newIdx);
       addLogMessage(`NAVIGATOR: ${menus[newIdx]}`);
     } else if (isProjectIndex) {

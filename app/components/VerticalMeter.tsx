@@ -79,7 +79,7 @@ export const VerticalMeter: React.FC<VerticalMeterProps> = ({
         </span>
       </div>
 
-      <div className="w-4 sm:w-5 h-full bg-[#0a0a0a] border-[1.5px] border-[#181a1f] rounded-sm flex flex-col justify-end p-[2px] gap-[2px] shadow-[inset:0_2px_5px_rgba(0,0,0,1),0_1px_1px_rgba(255,255,255,0.05)] overflow-hidden">
+      <div className="w-3 sm:w-4 h-full bg-[#0a0a0a] border-[1.5px] border-[#181a1f] rounded-sm flex flex-col justify-end p-[2px] gap-[2px] shadow-[inset:0_2px_5px_rgba(0,0,0,1),0_1px_1px_rgba(255,255,255,0.05)] overflow-hidden">
         {Array.from({ length: 40 }).map((_, i) => {
           const active = 40 - i <= combinedLevel;
           const isRed = i === 0;

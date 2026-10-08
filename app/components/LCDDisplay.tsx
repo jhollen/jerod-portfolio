@@ -87,7 +87,7 @@ const NavigationHeader = ({
           <motion.span
             initial={{ opacity: 0, x: -5 }}
             animate={{ opacity: 1, x: 0 }}
-            className="text-[8px] md:text-[9px] font-black opacity-40 uppercase tracking-widest border-l-2 border-current pl-2 whitespace-nowrap overflow-hidden text-ellipsis"
+            className="text-[8px] md:text-[9px] font-black opacity-60 uppercase tracking-widest border-l-2 border-current pl-2 whitespace-nowrap overflow-hidden text-ellipsis"
           >
             {subtitle}
           </motion.span>
@@ -203,14 +203,18 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
     };
   }, [isRetro, isHacker]);
 
-  const currentTier = 
-    activeSelection === "BIO" ? bioTier :
-    activeSelection === "PROJECTS" ? projectsTier :
-    activeSelection === "STACK" ? stackTier : 1;
+  const currentTier =
+    activeSelection === "BIO"
+      ? bioTier
+      : activeSelection === "PROJECTS"
+        ? projectsTier
+        : activeSelection === "STACK"
+          ? stackTier
+          : 1;
 
   const handleReturnToSystem = () => {
     setActiveSelection(null);
-    setMenuIndex(0);
+    setMenuIndex(-1);
     setPanDepth(0);
     setTabIndex(0);
     addLogMessage("SYSTEM: RESET_TO_ROOT");
@@ -241,6 +245,7 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
     scrollVelocity.current = 0; // Stop auto-scrolling
     useConsoleStore.getState().setNavActivity(0);
     useConsoleStore.getState().setTabActivity(0);
+    setMenuIndex(-1);
   };
 
   const renderControlColumn = () => (
@@ -256,7 +261,7 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
         [ + ]
       </button>
       <div
-        className={`flex flex-col gap-2 opacity-40 text-[8px] font-black uppercase tracking-widest pointer-events-none items-center ${theme.text}`}
+        className={`flex flex-col gap-2 opacity-60 text-[8px] font-black uppercase tracking-widest pointer-events-none items-center ${theme.text}`}
       >
         {[1, 2, 3].map((t) => (
           <div
@@ -284,7 +289,11 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
   );
 
   const renderBio = () => {
-    const subtitles = ["", "Career Timeline Expansion", "OPERATIONAL EMPATHY & CURRENT STATUS"];
+    const subtitles = [
+      "",
+      "Career Timeline Expansion",
+      "OPERATIONAL EMPATHY & CURRENT STATUS",
+    ];
     return (
       <div
         className={`space-y-6 ${theme.font} ${theme.text} text-[14px] md:text-[16px] leading-relaxed relative h-full pt-4 flex pl-4 md:pl-10`}
@@ -298,7 +307,7 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
             theme={theme}
           />
 
-          <div 
+          <div
             ref={scrollRef}
             onMouseMove={handleEdgeScroll}
             className="flex-1 overflow-y-auto md:overflow-y-auto custom-scrollbar pr-4"
@@ -339,78 +348,56 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
     );
   };
 
-  const renderStack = () => (
-    <div
-      className={`space-y-6 ${theme.font} ${theme.text} text-[14px] md:text-[15px] leading-relaxed relative h-full pt-4 flex pl-4 md:pl-10`}
-    >
-      <div className="flex-1 flex flex-col pr-4">
-        <NavigationHeader
-          title="STACK"
-          backLabel="Return to System"
-          onBack={handleReturnToSystem}
-          theme={theme}
-        />
+  const renderStack = () => {
+    const subtitles = [
+      "",
+      "Languages & Telemetry",
+      "Challenges Overcome",
+    ];
+    return (
+      <div
+        className={`space-y-6 ${theme.font} ${theme.text} text-[14px] md:text-[15px] leading-relaxed relative h-full pt-4 flex pl-4 md:pl-10`}
+      >
+        <div className="flex-1 flex flex-col pr-4">
+          <NavigationHeader
+            title="STACK"
+            subtitle={subtitles[currentTier - 1]}
+            backLabel="Return to System"
+            onBack={handleReturnToSystem}
+            theme={theme}
+          />
 
-        <div 
-          ref={scrollRef}
-          onMouseMove={handleEdgeScroll}
-          className="flex-1 overflow-y-auto md:overflow-y-auto custom-scrollbar pr-4"
-        >
-          {currentTier === 1 && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="space-y-6 py-4"
-            >
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {STACK_DATA.map((s, idx) => (
-                  <div
-                    key={s.era}
-                    onMouseEnter={() => {
-                      setMenuIndex(idx);
-                      triggerNavSpike();
-                    }}
-                    className={`border border-current p-3 text-center bg-current/5`}
-                  >
-                    <p className="text-[10px] opacity-50 font-black">{s.era}</p>
-                    <p className="font-black text-xs">{s.title}</p>
-                  </div>
-                ))}
-              </div>
-            </motion.div>
-          )}
-
-          {currentTier === 2 && (
-            <div className="space-y-4">
-              <p className="text-xs uppercase tracking-widest font-black opacity-50 underline decoration-dotted mb-4">
-                Languages & Telemetry:
-              </p>
-              {STACK_DATA.map((s, idx) => (
-                <div
-                  key={s.era}
-                  onMouseEnter={() => {
-                    setMenuIndex(idx);
-                    triggerNavSpike();
-                  }}
-                  className="border-l-2 border-current pl-4 mb-4"
-                >
-                  <p className="text-xs font-black uppercase">{s.title}</p>
-                  <p className="text-[11px] font-bold opacity-80">
-                    {s.languages.join(" • ")}
-                  </p>
-                  <p className="text-[9px] italic font-mono opacity-40 mt-1">
-                    {s.telemetry}
-                  </p>
+          <div
+            ref={scrollRef}
+            onMouseMove={handleEdgeScroll}
+            onMouseLeave={() => setMenuIndex(-1)}
+            className="flex-1 overflow-y-auto md:overflow-y-auto custom-scrollbar pr-4"
+          >
+            {currentTier === 1 && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="space-y-6 py-4"
+              >
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {STACK_DATA.map((s, idx) => (
+                    <div
+                      key={s.era}
+                      onMouseEnter={() => {
+                        setMenuIndex(idx);
+                        triggerNavSpike();
+                      }}
+                      className={`border border-current p-3 text-center bg-current/5`}
+                    >
+                      <p className="text-[10px] opacity-50 font-black">{s.era}</p>
+                      <p className="font-black text-xs">{s.title}</p>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          )}
+              </motion.div>
+            )}
 
-          {currentTier === 3 && (
-            <div className="space-y-4 text-sm">
-              <p className="text-xs uppercase tracking-widest font-black opacity-50 underline decoration-dotted mb-4">
-                The Grit (Challenges Overcome):
-              </p>
+            {currentTier === 2 && (
               <div className="space-y-4">
                 {STACK_DATA.map((s, idx) => (
                   <div
@@ -419,26 +406,54 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
                       setMenuIndex(idx);
                       triggerNavSpike();
                     }}
-                    className="border-b border-current/10 pb-2"
+                    className="border-l-2 border-current pl-4 mb-4"
                   >
-                    <p className="text-[9px] font-black opacity-40 uppercase tracking-tighter">
-                      {s.title}
+                    <p className="text-xs font-black uppercase">{s.title}</p>
+                    <p className="text-[11px] font-bold opacity-80">
+                      {s.languages.join(" • ")}
                     </p>
-                    <p className="italic font-medium leading-tight">{s.grit}</p>
+                    <p className="text-[9px] italic font-mono opacity-60 mt-1">
+                      {s.telemetry}
+                    </p>
                   </div>
                 ))}
               </div>
-            </div>
-          )}
+            )}
+
+            {currentTier === 3 && (
+              <div className="space-y-4 text-sm">
+                <div className="space-y-4">
+                  {STACK_DATA.map((s, idx) => (
+                    <div
+                      key={s.era}
+                      onMouseEnter={() => {
+                        setMenuIndex(idx);
+                        triggerNavSpike();
+                      }}
+                      className="border-b border-current/10 pb-2"
+                    >
+                      <p className="text-[9px] font-black opacity-60 uppercase tracking-tighter">
+                        {s.title}
+                      </p>
+                      <p className="italic font-medium leading-tight">
+                        {s.grit}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
+        {renderControlColumn()}
       </div>
-      {renderControlColumn()}
-    </div>
-  );
+    );
+  };
 
   const renderProjects = () => {
     const categories = PROJECT_CATEGORIES;
-    const confirmedCategory = categories[activeCategoryIndex % categories.length];
+    const confirmedCategory =
+      categories[activeCategoryIndex % categories.length];
 
     const filteredProjects =
       confirmedCategory === "ALL"
@@ -477,7 +492,7 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
                   className={`px-2 py-1 text-[8px] md:text-[9px] font-black uppercase tracking-widest whitespace-nowrap transition-all ${
                     i === currentTabIdx
                       ? "opacity-100 scale-105 font-black"
-                      : "opacity-40 hover:opacity-60 font-medium"
+                      : "opacity-60 hover:opacity-60 font-medium"
                   }`}
                 >
                   {label}
@@ -494,7 +509,7 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
                   exit={{ opacity: 0, x: -20 }}
                   className="h-full flex flex-col"
                 >
-                  <div 
+                  <div
                     ref={scrollRef}
                     onMouseMove={handleEdgeScroll}
                     className="text-[14px] leading-relaxed flex-1 overflow-y-auto pr-2 custom-scrollbar"
@@ -517,7 +532,7 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
                               <div
                                 key={i}
                                 onMouseEnter={() => triggerTabSpike()}
-                                className={`min-w-[280px] border-2 ${theme.border} p-4 bg-white/5 snap-center transition-all ${isActive ? "scale-105 border-current shadow-[0_0_15px_rgba(0,0,0,0.2)]" : "opacity-40"}`}
+                                className={`min-w-[280px] border-2 ${theme.border} p-4 bg-white/5 snap-center transition-all ${isActive ? "scale-105 border-current shadow-[0_0_15px_rgba(0,0,0,0.2)]" : "opacity-60"}`}
                               >
                                 <div className="flex justify-between items-start mb-2">
                                   <span
@@ -525,7 +540,7 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
                                   >
                                     {m.type}
                                   </span>
-                                  <span className="text-[10px] font-black opacity-40">
+                                  <span className="text-[10px] font-black opacity-60">
                                     0{i + 1}
                                   </span>
                                 </div>
@@ -540,7 +555,7 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
                           })}
                         </div>
                         <div className="border-t border-current/10 pt-4">
-                          <p className="text-[10px] font-black opacity-40 uppercase tracking-widest mb-2">
+                          <p className="text-[10px] font-black opacity-60 uppercase tracking-widest mb-2">
                             Technical Telemetry:
                           </p>
                           <p className="text-[11px] font-mono opacity-60 bg-black/20 p-2 rounded whitespace-pre-wrap">
@@ -585,7 +600,7 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
                 className={`px-2 py-1 text-[8px] md:text-[9px] font-black uppercase tracking-widest whitespace-nowrap transition-all duration-300 outline-none ${
                   i === tabIndex
                     ? "opacity-100 scale-105 font-black underline"
-                    : "opacity-30 hover:opacity-60 font-medium"
+                    : "opacity-50 hover:opacity-60 font-medium"
                 }`}
               >
                 {cat}
@@ -597,6 +612,7 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
           <div
             ref={scrollRef}
             onMouseMove={handleEdgeScroll}
+            onMouseLeave={() => setMenuIndex(-1)}
             className="flex-1 overflow-y-auto custom-scrollbar pr-4 pb-10"
           >
             <div className="space-y-4">
@@ -653,7 +669,7 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
               ))}
 
               {filteredProjects.length === 0 && (
-                <div className="py-20 text-center opacity-30 italic text-xs uppercase tracking-widest">
+                <div className="py-20 text-center opacity-50 italic text-xs uppercase tracking-widest">
                   No projects in this category
                 </div>
               )}
@@ -677,7 +693,7 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
           theme={theme}
         />
 
-        <div 
+        <div
           ref={scrollRef}
           onMouseMove={handleEdgeScroll}
           className="space-y-6 py-4 pr-4 overflow-y-auto custom-scrollbar h-full pb-20"
@@ -689,30 +705,43 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-4">
                 <div onMouseEnter={() => triggerNavSpike()}>
-                  <p className="text-[9px] md:text-[10px] opacity-40 uppercase mb-1 font-black">
+                  <p className="text-[9px] md:text-[10px] opacity-60 uppercase mb-1 font-black">
                     Email
                   </p>
-                  <p className="font-bold underline decoration-dotted break-all">
+                  <a
+                    href="mailto:jerod.a.hollen@gmail.com"
+                    className="font-bold underline decoration-dotted break-all hover:opacity-70 transition-opacity"
+                  >
                     jerod.a.hollen@gmail.com
-                  </p>
+                  </a>
                 </div>
                 <div onMouseEnter={() => triggerNavSpike()}>
-                  <p className="text-[9px] md:text-[10px] opacity-40 uppercase mb-1 font-black">
+                  <p className="text-[9px] md:text-[10px] opacity-60 uppercase mb-1 font-black">
                     GitHub
                   </p>
-                  <p className="font-bold underline decoration-dotted">
+                  <a
+                    href="https://github.com/jhollen"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-bold underline decoration-dotted hover:opacity-70 transition-opacity"
+                  >
                     github.com/jhollen
-                  </p>
+                  </a>
                 </div>
               </div>
               <div className="space-y-4">
                 <div onMouseEnter={() => triggerNavSpike()}>
-                  <p className="text-[9px] md:text-[10px] opacity-40 uppercase mb-1 font-black">
+                  <p className="text-[9px] md:text-[10px] opacity-60 uppercase mb-1 font-black">
                     LinkedIn
                   </p>
-                  <p className="font-bold underline decoration-dotted">
-                    in/jerodhollen
-                  </p>
+                  <a
+                    href="https://www.linkedin.com/in/jerod-hollen"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-bold underline decoration-dotted hover:opacity-70 transition-opacity"
+                  >
+                    in/jerod-hollen
+                  </a>
                 </div>
                 <div className="pt-2 italic text-[11px] md:text-xs border-t border-current/10 opacity-60 font-medium">
                   &quot;Strategic high-impact engineering roles only.&quot;
@@ -729,9 +758,10 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
     <div
       ref={scrollRef}
       onMouseMove={handleEdgeScroll}
+      onMouseLeave={() => setMenuIndex(-1)}
       className={`flex flex-col gap-2 w-full h-full mt-2 ${theme.text} ${theme.font} px-4 md:px-0 overflow-y-auto custom-scrollbar pb-10`}
     >
-      <h3 className="font-black uppercase tracking-widest mb-4 opacity-50 text-[10px]">
+      <h3 className="font-black uppercase tracking-widest mb-4 text-[16px]">
         Main Menu:
       </h3>
       {menus.map((menu, idx) => {
@@ -746,16 +776,52 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
             }}
             onClick={() => {
               setActiveSelection(menu);
-              setMenuIndex(0);
+              setMenuIndex(-1);
               triggerNavSpike();
               addLogMessage(`EXEC: [${name}]`);
             }}
-            className={`p-3 md:p-3 transition-all duration-75 flex gap-3 cursor-pointer text-left w-full outline-none focus:ring-4 focus:ring-inset focus:ring-current/20 border-l-4 border-transparent ${idx === menuIndex ? `${theme.highlight} font-black border-current translate-x-2` : "opacity-60 hover:bg-black/5 hover:translate-x-1"}`}
+            className={`p-3 md:p-3 font-black transition-all duration-75 flex gap-3 cursor-pointer text-left w-full outline-none focus:ring-4 focus:ring-inset focus:ring-current/20 border-l-4 border-transparent ${idx === menuIndex ? `${theme.highlight} font-black border-current translate-x-2` : "opacity-60 hover:bg-black/5 hover:translate-x-1"}`}
           >
             {`${idx + 1}. ${name.toUpperCase()}`}
           </button>
         );
       })}
+
+      <div className="flex flex-wrap items-center gap-2 mt-6 pt-4 border-t border-current/20">
+        <span className="text-[9px] font-black uppercase tracking-widest opacity-50 mr-1">
+          Quick Links:
+        </span>
+        <a
+          href="/Jerod-Hollen-Resume.pdf"
+          target="_blank"
+          rel="noopener noreferrer"
+          className={`text-[9px] font-black uppercase tracking-widest px-2 py-1 border ${theme.border} ${theme.highlight} hover:scale-105 transition-transform`}
+        >
+          ↓ Resume
+        </a>
+        <a
+          href="mailto:jerod.a.hollen@gmail.com"
+          className={`text-[9px] font-black uppercase tracking-widest px-2 py-1 border ${theme.border} ${theme.text} opacity-70 hover:opacity-100 hover:scale-105 transition-all`}
+        >
+          Email
+        </a>
+        <a
+          href="https://github.com/jhollen"
+          target="_blank"
+          rel="noopener noreferrer"
+          className={`text-[9px] font-black uppercase tracking-widest px-2 py-1 border ${theme.border} ${theme.text} opacity-70 hover:opacity-100 hover:scale-105 transition-all`}
+        >
+          GitHub
+        </a>
+        <a
+          href="https://www.linkedin.com/in/jerod-hollen"
+          target="_blank"
+          rel="noopener noreferrer"
+          className={`text-[9px] font-black uppercase tracking-widest px-2 py-1 border ${theme.border} ${theme.text} opacity-70 hover:opacity-100 hover:scale-105 transition-all`}
+        >
+          LinkedIn
+        </a>
+      </div>
     </div>
   );
 
@@ -771,7 +837,7 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
 
   return (
     <div
-      className={`w-full h-full md:aspect-[16/9] md:max-h-[400px] ${theme.bg} md:border-[25px] border-black p-3 md:p-6 relative md:shadow-[0_10px_50px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col shrink-0 transition-colors duration-700`}
+      className={`w-full h-full md:aspect-[16/9] md:max-h-[480px] ${theme.bg} md:border-[25px] border-black p-3 md:p-6 relative md:shadow-[0_10px_50px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col shrink-0 transition-colors duration-700`}
       onMouseLeave={handleResetActivity}
     >
       <div
@@ -795,7 +861,7 @@ export const LCDDisplay: React.FC<LCDDisplayProps> = ({ menus }) => {
           ? "Hollen OS // Neural Link"
           : isRetro
             ? "WA76 // ANALOG INTERFACE"
-            : "Kindle Paperwhite"}
+            : "Hollen OS // Portfolio Compressor"}
       </div>
     </div>
   );

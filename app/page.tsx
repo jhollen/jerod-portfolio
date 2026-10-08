@@ -1,360 +1,269 @@
-"use client";
+import { PROJECTS_DATA, BIO_DATA } from "./constants";
 
-import * as React from "react";
-import { motion, useMotionValue } from "framer-motion";
-import { useConsoleStore } from "./useConsoleStore";
-import { LCDDisplay } from "./components/LCDDisplay";
-import { Knob } from "./components/Knob";
-import { SyncLed } from "./components/SyncLed";
-import { VCABank } from "./components/VCABank";
-import { VerticalMeter } from "./components/VerticalMeter";
-import { DiagnosticsPanel } from "./components/DiagnosticsPanel";
-import { GitHubDisplay } from "./components/GitHubDisplay";
-import { StompSwitches } from "./components/StompSwitches";
-import { PROJECTS_DATA, PROJECT_CATEGORIES, STACK_DATA } from "./constants";
+// One-line proof per project — the metric a recruiter remembers.
+const METRICS: Record<string, string> = {
+  SCORM_PIPELINE: "8 hrs → 20 min",
+  OFF_GRID_MED: "100% offline uptime",
+  CSA_TRAINING: "12 modules shipped",
+  DYNAMIC_CONTRIBUTOR: "2 days → 5 min",
+  BOGARDT_PLATFORM: "Edge-deployed",
+};
 
-export default function AudioConsolePage() {
-  const {
-    menuIndex,
-    setMenuIndex,
-    tabIndex,
-    setTabIndex,
-    activeSelection,
-    setActiveSelection,
-    selectedProject,
-    bioTier,
-    projectsTier,
-    stackTier,
-    setTier,
-    panDepth,
-    setPanDepth,
-    addLogMessage,
-    activePreset,
-  } = useConsoleStore();
+const NAV = [
+  { label: "Work", href: "#work" },
+  { label: "About", href: "#about" },
+  { label: "Contact", href: "#contact" },
+];
 
-  const menus = ["BIO", "PROJECTS", "STACK", "CONTACT"];
-  const tabsCount = selectedProject 
-    ? 5 
-    : (activeSelection === "PROJECTS" ? PROJECT_CATEGORIES.length : 0);
-  
-  const currentTier = 
-    activeSelection === "BIO" ? bioTier :
-    activeSelection === "PROJECTS" ? projectsTier :
-    activeSelection === "STACK" ? stackTier : 1;
+const CONTACTS = [
+  { label: "Resume", href: "/Jerod-Hollen-Resume.pdf", external: true, primary: true },
+  { label: "Email", href: "mailto:jerod.a.hollen@gmail.com", external: false, primary: false },
+  { label: "GitHub", href: "https://github.com/jhollen", external: true, primary: false },
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/jerod-hollen", external: true, primary: false },
+];
 
-  const leftMeterActivity = useMotionValue(0);
-  const rightMeterActivity = useMotionValue(0);
-
-  // Sync panDepth with tabIndex for hardware dial rotation
-  React.useEffect(() => {
-    if (selectedProject && tabsCount > 1) {
-      const targetPan = (tabIndex / (tabsCount - 1)) * 100;
-      if (Math.abs(panDepth - targetPan) > 1) {
-        setPanDepth(targetPan);
-      }
-    }
-  }, [tabIndex, selectedProject, tabsCount, panDepth, setPanDepth]);
-
+function SectionHeading({ index, title, blurb }: { index: string; title: string; blurb?: string }) {
   return (
-    <main className="fixed inset-0 w-screen h-screen overflow-hidden bg-[#0a0a0a] flex items-center justify-center p-0 md:p-4 lg:p-8 font-sans">
-      <div className="w-full max-w-7xl h-full md:max-h-[90vh] flex flex-col md:rounded-2xl bg-brushed-metal md:border-[3px] border-[#181a1f] shadow-[inset:0_15px_30px_rgba(255,255,255,0.03),inset_0_-10px_20px_rgba(0,0,0,0.6),0_40px_80px_rgba(0,0,0,1)] relative overflow-hidden">
-        
-        {/* MOBILE VIEW (max-width: 768px) */}
-        <div className="flex md:hidden flex-col h-full w-full">
-          {/* Top 60%: LCD Display */}
-          <div className="h-[60%] w-full bg-black relative">
-            <div className="absolute inset-0 p-1">
-              <div className="w-full h-full rounded-lg border-4 border-[#1a1c1f] shadow-[inset_0_0_20px_rgba(0,0,0,0.8)] overflow-hidden">
-                <LCDDisplay menus={menus} />
-              </div>
-            </div>
-          </div>
-
-          {/* Bottom 40%: Hardware Deck */}
-          <div className="h-[40%] w-full bg-[#1a1c1f] relative border-t-4 border-black/40 flex flex-col">
-            {/* Brushed Metal Effect Overlay */}
-            <div className="absolute inset-0 bg-brushed-metal opacity-30 pointer-events-none" />
-            
-            <div className="flex-1 z-10">
-              <StompSwitches />
-            </div>
-
-            {/* Bottom Status Bar */}
-            <div className="h-10 border-t border-white/5 bg-black/20 flex items-center justify-between px-6 z-10">
-               <SyncLed />
-               <div className="text-[8px] text-gray-500 font-black tracking-widest uppercase">
-                 Hollen OS // Neural Link
-               </div>
-            </div>
-          </div>
-        </div>
-
-        {/* DESKTOP VIEW (min-width: 769px) */}
-        <div className="hidden md:flex flex-col h-full w-full">
-          {/* Branding Header */}
-          <div className="h-14 shrink-0 flex items-center justify-between px-8 z-20 border-b border-black/20">
-            <div className="flex items-center gap-4">
-              <div
-                className={`w-4 h-4 rounded-full border border-black shadow-[0_0_10px] transition-all duration-500 ${
-                  activePreset === "HACKER"
-                    ? "bg-[#00f3ff] shadow-[#00f3ff]"
-                    : activePreset === "RETRO"
-                      ? "bg-[#ffb000] shadow-[#ffb000]"
-                      : "bg-cyan-500 shadow-[#06b6d4]"
-                }`}
-              />
-              <div className="flex flex-col">
-                <span className="text-white font-bold tracking-[0.2em] text-sm uppercase">
-                  Jerod Hollen
-                </span>
-                <span className="text-gray-500 font-bold tracking-[0.1em] text-[10px] uppercase">
-                  Full Stack Engineer | Systems Architect
-                </span>
-              </div>
-            </div>
-            <div className="hidden md:block text-right">
-              <span className="text-gray-600 font-bold tracking-[0.3em] text-[9px] uppercase">
-                PORTFOLIO COMPRESSOR V3.1
-              </span>
-            </div>
-          </div>
-
-          <div className="p-8 sm:p-12 pb-16 flex-1 flex flex-col relative z-10">
-            <div className="flex flex-col xl:flex-row gap-6 lg:gap-8 relative z-10 w-full justify-between items-stretch h-full max-w-[1200px] mx-auto">
-              {/* Left Section: Input/Output Meters & Navigation */}
-              <div className="hidden xl:flex flex-row gap-10 h-full shrink-0 relative">
-                {/* NAVIGATOR Column */}
-                <div className="flex flex-col items-center justify-between h-full w-20 pb-2">
-                  <div className="flex-1 w-full min-h-0 flex items-stretch justify-center pb-6 pt-2">
-                    <VerticalMeter activityMv1={leftMeterActivity} type="nav" />
-                  </div>
-                  <div className="flex flex-col items-center gap-4 shrink-0 w-full">
-                    <Knob
-                      label="NAVIGATOR"
-                      minLabel="-"
-                      centerLabel="NAV"
-                      maxLabel="+"
-                      isActive={true}
-                      activityMv={leftMeterActivity}
-                      steps={
-                        (activeSelection === "PROJECTS" && !selectedProject
-                          ? PROJECTS_DATA.length
-                          : activeSelection === "STACK"
-                            ? STACK_DATA.length
-                            : menus.length) + 1
-                      }
-                      value={menuIndex + 1}
-                      onChange={(newIdx) => {
-                        const actualIdx = Math.max(0, newIdx - 1);
-                        setMenuIndex(actualIdx);
-                        if (activeSelection === "PROJECTS" && !selectedProject) {
-                          addLogMessage(
-                            `NAVIGATOR: [PROJECT_PREVIEW: ${PROJECTS_DATA[actualIdx].title}]`,
-                          );
-                        } else if (activeSelection === "STACK") {
-                          addLogMessage(
-                            `NAVIGATOR: [STACK_ERA: ${STACK_DATA[actualIdx].era}]`,
-                          );
-                        } else {
-                          addLogMessage(`NAVIGATOR: ${menus[actualIdx]}`);
-                          if (!activeSelection) {
-                            setActiveSelection(menus[actualIdx]);
-                          }
-                        }
-                      }}
-                    />
-                  </div>
-                </div>
-
-                {/* INFO GAIN Column */}
-                <div className="flex flex-col items-center justify-between h-full w-20 pb-2">
-                  <div className="flex-1 w-full min-h-0 flex items-stretch justify-center pb-6 pt-2">
-                    <VerticalMeter activityMv1={rightMeterActivity} type="tab" />
-                  </div>
-                  <div className="flex flex-col items-center gap-4 shrink-0 w-full">
-                    <Knob
-                      label="INFO GAIN"
-                      minLabel="LEFT"
-                      centerLabel="TAB"
-                      maxLabel="RIGHT"
-                      isActive={!!selectedProject || activeSelection === "PROJECTS"}
-                      activityMv={rightMeterActivity}
-                      steps={tabsCount + 1}
-                      value={tabIndex + 1}
-                      onChange={(newIndex) => {
-                        const actualIdx = Math.max(0, newIndex - 1);
-                        if (selectedProject) {
-                          setTabIndex(actualIdx);
-                          const labels = [
-                            "OVERVIEW",
-                            "THE BREACH",
-                            "DEPLOYMENT",
-                            "RESULTS",
-                            "MEDIA",
-                          ];
-                          addLogMessage(
-                            `INFO_GAIN: ${labels[actualIdx] || "UNKNOWN"}`,
-                          );
-                        } else if (activeSelection === "PROJECTS") {
-                          // ONLY update tabIndex (highlight), NOT activeCategoryIndex (filter)
-                          setTabIndex(actualIdx);
-                          addLogMessage(
-                            `FOCUS: ${PROJECT_CATEGORIES[actualIdx] || "UNKNOWN"}`,
-                          );
-                        }
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="hidden xl:block w-px bg-black/50 shadow-[1px_0_0_rgba(255,255,255,0.05)] my-12" />
-
-              <div className="flex flex-col flex-1 max-w-[800px] w-full mx-auto gap-0 items-center">
-                <div className="w-full flex flex-col pt-1 h-full gap-0">
-                  {/* LCD Displays */}
-                  <div className="relative flex-1 flex flex-col">
-                    <LCDDisplay menus={menus} />
-                  </div>
-
-                  {/* Diagnostics Panel (Signal Path) */}
-                  <div className="w-full mt-1">
-                    <DiagnosticsPanel />
-                  </div>
-
-                  {/* GitHub Secondary Display (Live Feed) */}
-                  <div className="w-full mt-2">
-                    <GitHubDisplay />
-                  </div>
-                </div>
-              </div>
-
-              {/* Right Section: Auxiliary & Presets */}
-              <div className="w-48 hidden lg:flex flex-col justify-center items-center h-full shrink-0 relative">
-                <div className="flex flex-col items-center gap-12">
-                  {/* Traversal Dials - Vertically Centered */}
-                  <div className="flex flex-col gap-10">
-                    <div className="flex flex-col items-center gap-2">
-                      <Knob
-                        label="SCRUB"
-                        minLabel="UP"
-                        centerLabel="SCROLL"
-                        maxLabel="DOWN"
-                        steps={3}
-                        value={currentTier - 1}
-                        onChange={(val) => {
-                          setTier(val + 1);
-                        }}
-                        activityMv={rightMeterActivity}
-                        isActive={
-                          (activeSelection === "BIO" ||
-                            activeSelection === "STACK" ||
-                            activeSelection === "PROJECTS") &&
-                          !selectedProject
-                        }
-                        isDisabled={
-                          activeSelection === "CONTACT" ||
-                          !!selectedProject
-                        }
-                        hideStatusLed={true}
-                      />
-
-                      {/* Tier Indicator LEDs (SCRUB) */}
-                      <div className="flex gap-1.5 mt-2 h-1.5 items-center justify-center">
-                        {(activeSelection === "BIO" || activeSelection === "STACK" || activeSelection === "PROJECTS") && !selectedProject ? (
-                          [1, 2, 3].map((i) => (
-                            <div
-                              key={i}
-                              className={`w-1.5 h-1.5 rounded-full border border-black/40 transition-all duration-300 ${
-                                i === currentTier
-                                  ? (activePreset === "HACKER" ? "bg-[#00f3ff] shadow-[0_0_5px_#00f3ff]" : activePreset === "RETRO" ? "bg-[#ffb000] shadow-[0_0_5px_#ffb000]" : "bg-emerald-500 shadow-[0_0_5px_#10b981]")
-                                  : "bg-black/40"
-                              }`}
-                            />
-                          ))
-                        ) : null}
-                      </div>
-                      </div>
-                      <div className="flex flex-col items-center gap-2 relative">
-                      <Knob
-                        label="PAN"
-                        minLabel="LEFT"
-                        centerLabel="TAB"
-                        maxLabel="RIGHT"
-                        value={panDepth}
-                        onChange={(val) => {
-                          setPanDepth(val);
-                        }}
-                        activityMv={rightMeterActivity}
-                        isActive={activeSelection === "PROJECTS" && !!selectedProject && tabIndex === 4}
-                        isDisabled={!(activeSelection === "PROJECTS" && !!selectedProject && tabIndex === 4)}
-                        hideStatusLed={true}
-                      />
-                      {/* Dynamic Tab Indicator LEDs (PAN) */}
-                      <div className="flex gap-1.5 mt-2 h-1.5 items-center justify-center">
-                        {(() => {
-                          if (activeSelection !== "PROJECTS" || !selectedProject || tabIndex !== 4) return null;
-
-                          const p = PROJECTS_DATA.find(proj => proj.id === selectedProject);
-                          const count = p?.media?.length || 0;
-                          const activeIdx = Math.min(Math.floor((panDepth / 100) * count), count - 1);
-
-                          return Array.from({ length: count }).map((_, i) => (
-                            <div
-                              key={i}
-                              className={`w-1.5 h-1.5 rounded-full border border-black/40 transition-all duration-300 ${
-                                i === activeIdx
-                                  ? (activePreset === "HACKER" ? "bg-[#00f3ff] shadow-[0_0_5px_#00f3ff]" : activePreset === "RETRO" ? "bg-[#ffb000] shadow-[0_0_5px_#ffb000]" : "bg-emerald-500 shadow-[0_0_5px_#10b981]")
-                                  : "bg-black/40"
-                              }`}
-                            />
-                          ));
-                        })()}
-                      </div>
-                      {/* Carousel Progress LED */}
-                      <div className="absolute -bottom-12 w-1 h-6 bg-black/40 rounded-full overflow-hidden border border-white/5">
-
-                        <motion.div
-                          className={`w-full ${
-                            activePreset === "HACKER"
-                              ? "bg-[#00f3ff] shadow-[0_0_5px_#00f3ff]"
-                              : activePreset === "RETRO"
-                                ? "bg-[#ffb000] shadow-[0_0_5px_#ffb000]"
-                                : "bg-cyan-500 shadow-[0_0_5px_#06b6d4]"
-                          }`}
-                          style={{
-                            height: `${selectedProject ? (tabIndex / (tabsCount - 1)) * 100 : panDepth}%`,
-                          }}
-                          animate={{
-                            opacity: activeSelection === "PROJECTS" ? 1 : 0.2,
-                            scaleX: [1, 1.2, 1],
-                          }}
-                          transition={{
-                            scaleX: {
-                              repeat: Infinity,
-                              duration: 0.1,
-                              ease: "linear",
-                            },
-                          }}
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Hardware Control Section (Presets) - Positioned Beneath Knobs */}
-                  <div className="w-full flex flex-col gap-4">
-                    <VCABank />
-                  </div>
-                </div>
-
-                <div className="absolute bottom-0 w-full flex justify-center pt-4 border-t border-black/30 shadow-[0_-1px_0_rgba(255,255,255,0.05)]">
-                  <SyncLed />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+    <div className="mb-8 md:mb-10">
+      <p className="font-mono text-[11px] tracking-[0.25em] text-accent-blue font-bold mb-2">
+        SIG.{index}
+      </p>
+      <h2 className="font-playfair text-3xl md:text-4xl font-black text-ink tracking-tight">
+        {title}
+      </h2>
+      {blurb && <p className="mt-2 text-text-subtle max-w-2xl">{blurb}</p>}
+      <div className="signal-line mt-6" aria-hidden="true">
+        <span className="signal-pulse" />
       </div>
-    </main>
+    </div>
+  );
+}
+
+function CtaRow() {
+  return (
+    <div className="flex flex-wrap gap-2.5">
+      {CONTACTS.map((c) => (
+        <a
+          key={c.label}
+          href={c.href}
+          {...(c.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+          className={
+            c.primary
+              ? "inline-flex items-center gap-1.5 bg-ink text-white font-bold text-sm px-5 py-2.5 rounded-full hover:bg-ink-soft transition-colors"
+              : "inline-flex items-center gap-1.5 font-bold text-sm px-5 py-2.5 rounded-full border border-border-strong text-ink hover:bg-surface-muted transition-colors"
+          }
+        >
+          {c.primary && <span aria-hidden="true">↓</span>} {c.label}
+        </a>
+      ))}
+    </div>
+  );
+}
+
+export default function EditorialHome() {
+  return (
+    <div className="min-h-screen bg-surface-base text-ink font-sans antialiased">
+      {/* ---- Sticky header ---- */}
+      <header className="sticky top-0 z-50 bg-surface-base/90 backdrop-blur border-b border-border-subtle">
+        <div className="max-w-5xl mx-auto px-5 md:px-8 h-14 flex items-center justify-between gap-4">
+          <a href="#top" className="font-black tracking-tight text-[15px] whitespace-nowrap">
+            JEROD HOLLEN
+          </a>
+          <nav className="flex items-center gap-4 md:gap-6" aria-label="Primary">
+            {NAV.map((n) => (
+              <a
+                key={n.href}
+                href={n.href}
+                className="text-[13px] font-bold text-text-subtle hover:text-ink transition-colors"
+              >
+                {n.label}
+              </a>
+            ))}
+            <a
+              href="/Jerod-Hollen-Resume.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden sm:inline-flex text-[13px] font-bold bg-ink text-white px-4 py-1.5 rounded-full hover:bg-ink-soft transition-colors"
+            >
+              Resume
+            </a>
+          </nav>
+        </div>
+      </header>
+
+      <main id="top">
+        {/* ---- Hero: identity first, zero interaction required ---- */}
+        <section className="max-w-5xl mx-auto px-5 md:px-8 pt-12 md:pt-20 pb-10">
+          <p className="font-mono text-[11px] md:text-xs tracking-[0.25em] text-accent-blue font-bold mb-4">
+            FULL-STACK ENGINEER · BELLINGHAM, WA / REMOTE
+          </p>
+          <h1 className="font-playfair text-[42px] leading-[1.05] md:text-7xl font-black tracking-tight mb-5">
+            Jerod Hollen
+          </h1>
+          <p className="text-lg md:text-2xl text-text leading-relaxed max-w-2xl mb-8">
+            I turn manual bottlenecks into automated systems. I compress chaos
+            into working software.
+          </p>
+
+          <CtaRow />
+
+          {/* Proof strip */}
+          <dl className="grid grid-cols-1 sm:grid-cols-3 gap-px bg-border-subtle border border-border-subtle rounded-2xl overflow-hidden mt-10">
+            {[
+              ["~160 hrs", "of manual work saved per quarter"],
+              ["40–70 MB", "page weight cut across ~2,000 assets"],
+              ["4+ yrs", "shipping enterprise edtech & automation"],
+            ].map(([stat, label]) => (
+              <div key={label} className="bg-surface-base px-5 py-4">
+                <dt className="font-playfair text-2xl font-black">{stat}</dt>
+                <dd className="text-[13px] text-text-subtle mt-1">{label}</dd>
+              </div>
+            ))}
+          </dl>
+
+          {/* Hardware soul, pocket-sized: a live-feeling meter, decorative only */}
+          <div className="mt-10 flex items-center gap-4" aria-hidden="true">
+            <div className="flex items-end gap-1 h-10">
+              {[0.9, 0.5, 0.7, 1, 0.4, 0.8, 0.6, 1, 0.5, 0.75, 0.45, 0.9].map((d, i) => (
+                <span
+                  key={i}
+                  className="vu-bar w-1.5 rounded-sm bg-accent-blue/80"
+                  style={{ height: "100%", animationDelay: `${(d * 1.1).toFixed(2)}s` }}
+                />
+              ))}
+            </div>
+            <p className="font-mono text-[10px] tracking-[0.2em] text-text-faint">
+              INPUT: CHAOS — OUTPUT: SYSTEMS
+            </p>
+          </div>
+        </section>
+
+        {/* ---- Work ---- */}
+        <section id="work" className="max-w-5xl mx-auto px-5 md:px-8 py-12 md:py-16 scroll-mt-16">
+          <SectionHeading
+            index="01"
+            title="Selected Work"
+            blurb="Impact first. Tap any project for the full signal chain — the problem, the build, and the result."
+          />
+          <div className="space-y-5">
+            {PROJECTS_DATA.map((p) => (
+              <article
+                key={p.id}
+                className="border border-border-subtle rounded-2xl bg-card p-5 md:p-7 shadow-subtle"
+              >
+                <div className="flex flex-wrap items-start justify-between gap-3 mb-3">
+                  <div>
+                    <p className="font-mono text-[10px] tracking-[0.2em] text-text-faint font-bold mb-1.5">
+                      {p.category}
+                    </p>
+                    <h3 className="font-black text-xl md:text-2xl tracking-tight">
+                      {p.title}
+                    </h3>
+                  </div>
+                  {METRICS[p.id] && (
+                    <span className="font-mono text-[11px] font-bold bg-ink text-white px-3 py-1.5 rounded-full whitespace-nowrap">
+                      {METRICS[p.id]}
+                    </span>
+                  )}
+                </div>
+                <p className="text-text leading-relaxed mb-4">{p.result}</p>
+                <div className="flex flex-wrap gap-1.5 mb-4">
+                  {p.stack.map((s) => (
+                    <span
+                      key={s}
+                      className="text-[11px] font-bold text-text-subtle bg-surface-muted border border-border-subtle px-2.5 py-1 rounded-full"
+                    >
+                      {s}
+                    </span>
+                  ))}
+                </div>
+                <details className="group border-t border-border-subtle pt-3">
+                  <summary className="cursor-pointer text-[13px] font-bold text-accent-blue list-none [&::-webkit-details-marker]:hidden flex items-center gap-2 select-none">
+                    <span className="group-open:rotate-90 transition-transform inline-block" aria-hidden="true">
+                      ▸
+                    </span>
+                    How it was built
+                  </summary>
+                  <div className="mt-3 space-y-3 text-[14px] text-text leading-relaxed">
+                    <p>
+                      <strong className="text-ink">The problem: </strong>
+                      {p.breach}
+                    </p>
+                    <p>
+                      <strong className="text-ink">The build: </strong>
+                      {p.deploy}
+                    </p>
+                  </div>
+                </details>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        {/* ---- About ---- */}
+        <section id="about" className="bg-surface-muted/60 border-y border-border-subtle">
+          <div className="max-w-5xl mx-auto px-5 md:px-8 py-12 md:py-16 scroll-mt-16">
+            <SectionHeading
+              index="02"
+              title="About"
+              blurb="Non-traditional path, enterprise-grade output."
+            />
+            <div className="grid md:grid-cols-2 gap-10">
+              <div className="space-y-4 text-text leading-relaxed">
+                <p>{BIO_DATA.tier1_base}</p>
+                <p>{BIO_DATA.tier2_timeline}</p>
+                <p>{BIO_DATA.tier3_deepDive}</p>
+              </div>
+              <div>
+                <h3 className="font-mono text-[11px] tracking-[0.25em] font-bold text-text-subtle mb-4">
+                  EXPERIENCE
+                </h3>
+                <div className="border-l-2 border-ink pl-5 space-y-6">
+                  <div>
+                    <p className="font-black">Web Developer / Software Engineer I</p>
+                    <p className="text-[13px] text-text-subtle font-bold">
+                      Cloud Security Alliance · Jul 2021 – Oct 2025
+                    </p>
+                    <ul className="mt-2 space-y-1.5 text-[14px] text-text list-disc pl-4">
+                      <li>Image pipeline: ~2,000 assets, 40–70MB lighter pages</li>
+                      <li>SCORM automation: 8-hour process → 20-minute run</li>
+                      <li>Promoted from Junior Web Developer</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <p className="font-black">B.S. Computer Science</p>
+                    <p className="text-[13px] text-text-subtle font-bold">
+                      Western Washington University · 2022 · Minor in Mathematics
+                    </p>
+                    <p className="text-[13px] text-text-subtle mt-1">Eagle Scout</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ---- Contact ---- */}
+        <section id="contact" className="max-w-5xl mx-auto px-5 md:px-8 py-14 md:py-20 scroll-mt-16">
+          <SectionHeading index="03" title="Let's build something that ships." />
+          <p className="text-text-subtle max-w-xl mb-8 -mt-4">
+            Open to frontend, technical solutions, and AI engineering roles —
+            remote or Bellingham, WA.
+          </p>
+          <CtaRow />
+        </section>
+      </main>
+
+      <footer className="border-t border-border-subtle">
+        <div className="max-w-5xl mx-auto px-5 md:px-8 py-6 flex flex-wrap items-center justify-between gap-3">
+          <p className="font-mono text-[10px] tracking-[0.2em] text-text-faint">
+            © 2026 JEROD HOLLEN
+          </p>
+          <p className="font-mono text-[10px] tracking-[0.2em] text-text-faint">
+            TRANSMISSION ENDS
+          </p>
+        </div>
+      </footer>
+    </div>
   );
 }
