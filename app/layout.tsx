@@ -48,6 +48,34 @@ export const metadata: Metadata = {
   },
 };
 
+const personJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: "Jerod Hollen",
+  jobTitle: "Full-Stack Engineer",
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Bellingham",
+    addressRegion: "WA",
+  },
+  url: "https://www.jerodhollen.com",
+  sameAs: [
+    "https://www.linkedin.com/in/jerod-hollen",
+    "https://github.com/jhollen",
+  ],
+  knowsAbout: [
+    "React",
+    "Next.js",
+    "TypeScript",
+    "Ruby on Rails",
+    "Automation",
+    "Playwright",
+  ],
+};
+
+// Runs before first paint: applies the saved theme (or OS preference) with no flash.
+const themeInitScript = `(function(){try{var t=localStorage.getItem('jh-theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark')}}catch(e){}})()`;
+
 export default function RootLayout({
   children,
 }: {
@@ -55,8 +83,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${roboto.variable} ${merriweather.variable} ${inter.variable} ${playfair.variable}`}>
-      <head></head>
-      <body className="bg-white m-0 p-0 text-ink antialiased">
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+        />
+      </head>
+      <body className="bg-surface-base m-0 p-0 text-ink antialiased">
         {children}
       </body>
     </html>

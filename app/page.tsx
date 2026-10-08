@@ -1,4 +1,5 @@
-import { PROJECTS_DATA, BIO_DATA } from "./constants";
+import { PROJECTS_DATA, BIO_DATA, STACK_DATA } from "./constants";
+import { ThemeToggle, CopyEmail } from "./interactive";
 
 // One-line proof per project — the metric a recruiter remembers.
 const METRICS: Record<string, string> = {
@@ -22,6 +23,10 @@ const CONTACTS = [
   { label: "LinkedIn", href: "https://www.linkedin.com/in/jerod-hollen", external: true, primary: false },
 ];
 
+const TOOLBOX: string[] = Array.from(
+  new Set(STACK_DATA.flatMap((s) => s.languages))
+);
+
 function SectionHeading({ index, title, blurb }: { index: string; title: string; blurb?: string }) {
   return (
     <div className="mb-8 md:mb-10">
@@ -39,7 +44,7 @@ function SectionHeading({ index, title, blurb }: { index: string; title: string;
   );
 }
 
-function CtaRow() {
+function CtaRow({ includeCopy = false }: { includeCopy?: boolean }) {
   return (
     <div className="flex flex-wrap gap-2.5">
       {CONTACTS.map((c) => (
@@ -49,13 +54,14 @@ function CtaRow() {
           {...(c.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
           className={
             c.primary
-              ? "inline-flex items-center gap-1.5 bg-ink text-white font-bold text-sm px-5 py-2.5 rounded-full hover:bg-ink-soft transition-colors"
+              ? "inline-flex items-center gap-1.5 bg-ink text-surface-base font-bold text-sm px-5 py-2.5 rounded-full hover:opacity-90 transition-opacity"
               : "inline-flex items-center gap-1.5 font-bold text-sm px-5 py-2.5 rounded-full border border-border-strong text-ink hover:bg-surface-muted transition-colors"
           }
         >
           {c.primary && <span aria-hidden="true">↓</span>} {c.label}
         </a>
       ))}
+      {includeCopy && <CopyEmail />}
     </div>
   );
 }
@@ -69,7 +75,7 @@ export default function EditorialHome() {
           <a href="#top" className="font-black tracking-tight text-[15px] whitespace-nowrap">
             JEROD HOLLEN
           </a>
-          <nav className="flex items-center gap-4 md:gap-6" aria-label="Primary">
+          <nav className="flex items-center gap-3 md:gap-5" aria-label="Primary">
             {NAV.map((n) => (
               <a
                 key={n.href}
@@ -83,10 +89,11 @@ export default function EditorialHome() {
               href="/Jerod-Hollen-Resume.pdf"
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden sm:inline-flex text-[13px] font-bold bg-ink text-white px-4 py-1.5 rounded-full hover:bg-ink-soft transition-colors"
+              className="hidden sm:inline-flex text-[13px] font-bold bg-ink text-surface-base px-4 py-1.5 rounded-full hover:opacity-90 transition-opacity"
             >
               Resume
             </a>
+            <ThemeToggle />
           </nav>
         </div>
       </header>
@@ -94,6 +101,15 @@ export default function EditorialHome() {
       <main id="top">
         {/* ---- Hero: identity first, zero interaction required ---- */}
         <section className="max-w-5xl mx-auto px-5 md:px-8 pt-12 md:pt-20 pb-10">
+          <p className="inline-flex items-center gap-2.5 mb-4">
+            <span className="relative flex h-2.5 w-2.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-60" />
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500" />
+            </span>
+            <span className="font-mono text-[11px] tracking-[0.2em] font-bold text-text-subtle">
+              AVAILABLE FOR NEW ROLES
+            </span>
+          </p>
           <p className="font-mono text-[11px] md:text-xs tracking-[0.25em] text-accent-blue font-bold mb-4">
             FULL-STACK ENGINEER · BELLINGHAM, WA / REMOTE
           </p>
@@ -161,7 +177,7 @@ export default function EditorialHome() {
                     </h3>
                   </div>
                   {METRICS[p.id] && (
-                    <span className="font-mono text-[11px] font-bold bg-ink text-white px-3 py-1.5 rounded-full whitespace-nowrap">
+                    <span className="font-mono text-[11px] font-bold bg-ink text-surface-base px-3 py-1.5 rounded-full whitespace-nowrap">
                       {METRICS[p.id]}
                     </span>
                   )}
@@ -240,6 +256,21 @@ export default function EditorialHome() {
                 </div>
               </div>
             </div>
+            <div className="mt-10">
+              <h3 className="font-mono text-[11px] tracking-[0.25em] font-bold text-text-subtle mb-4">
+                TOOLBOX
+              </h3>
+              <div className="flex flex-wrap gap-1.5">
+                {TOOLBOX.map((t) => (
+                  <span
+                    key={t}
+                    className="text-[12px] font-bold text-text bg-surface-base border border-border-subtle px-3 py-1.5 rounded-full"
+                  >
+                    {t}
+                  </span>
+                ))}
+              </div>
+            </div>
           </div>
         </section>
 
@@ -250,7 +281,7 @@ export default function EditorialHome() {
             Open to frontend, technical solutions, and AI engineering roles —
             remote or Bellingham, WA.
           </p>
-          <CtaRow />
+          <CtaRow includeCopy />
         </section>
       </main>
 

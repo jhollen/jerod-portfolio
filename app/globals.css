@@ -62,6 +62,31 @@
   --font-sans: Roboto, system-ui, sans-serif;
 }
 
+/* ---- Dark mode: remap the same tokens so every component follows ---- */
+.dark {
+  --color-ink: #eef2fb;
+  --color-ink-soft: #1b2947;
+  --color-text: #c9d5ea;
+  --color-text-subtle: #93a3c0;
+  --color-text-faint: #5b6b86;
+  --color-card: #111a2e;
+  --color-surface-base: #0b1220;
+  --color-surface-muted: #13203b;
+  --color-surface-contrast: #f1f5f9;
+  --color-border-subtle: rgba(255, 255, 255, 0.14);
+  --color-border-strong: rgba(255, 255, 255, 0.24);
+  --color-accent-blue: #60a5fa;
+  --color-accent-deep: #93c5fd;
+}
+
+.dark .signal-line {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.dark .signal-pulse {
+  background: linear-gradient(90deg, transparent, #60a5fa, transparent);
+}
+
 @layer utilities {
   /* Authentic Brushed Aluminum Texture */
   .bg-brushed-metal {
