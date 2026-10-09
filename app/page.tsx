@@ -1,5 +1,5 @@
 import { PROJECTS_DATA, BIO_DATA, STACK_DATA } from "./constants";
-import { ThemeToggle, CopyEmail } from "./interactive";
+import { ThemeToggle, CopyEmail, Reveal, WordRotator, WorkSection } from "./interactive";
 
 // One-line proof per project — the metric a recruiter remembers.
 const METRICS: Record<string, string> = {
@@ -27,20 +27,38 @@ const TOOLBOX: string[] = Array.from(
   new Set(STACK_DATA.flatMap((s) => s.languages))
 );
 
+const ROTATOR_WORDS = ["bottlenecks", "busywork", "grunt work", "repetitive chaos"];
+
+function WaveDivider() {
+  return (
+    <div aria-hidden="true" className="text-sun overflow-hidden">
+      <svg viewBox="0 0 1440 70" preserveAspectRatio="none" className="block w-full h-10 md:h-14">
+        <path
+          d="M0,36 C240,66 480,6 720,32 C960,58 1200,10 1440,36 L1440,70 L0,70 Z"
+          fill="currentColor"
+          opacity="0.35"
+        />
+        <path
+          d="M0,50 C260,70 520,28 780,48 C1040,68 1240,36 1440,50 L1440,70 L0,70 Z"
+          fill="currentColor"
+          opacity="0.22"
+        />
+      </svg>
+    </div>
+  );
+}
+
 function SectionHeading({ index, title, blurb }: { index: string; title: string; blurb?: string }) {
   return (
-    <div className="mb-8 md:mb-10">
-      <p className="font-mono text-[11px] tracking-[0.25em] text-accent-blue font-bold mb-2">
-        SIG.{index}
+    <Reveal className="mb-8 md:mb-10">
+      <p className="font-mono text-[11px] tracking-[0.25em] text-sea font-bold mb-2">
+        TRACK {index}
       </p>
-      <h2 className="font-playfair text-3xl md:text-4xl font-black text-ink tracking-tight">
+      <h2 className="font-display text-3xl md:text-5xl text-ink">
         {title}
       </h2>
-      {blurb && <p className="mt-2 text-text-subtle max-w-2xl">{blurb}</p>}
-      <div className="signal-line mt-6" aria-hidden="true">
-        <span className="signal-pulse" />
-      </div>
-    </div>
+      {blurb && <p className="mt-3 text-text-subtle max-w-2xl">{blurb}</p>}
+    </Reveal>
   );
 }
 
@@ -54,8 +72,8 @@ function CtaRow({ includeCopy = false }: { includeCopy?: boolean }) {
           {...(c.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
           className={
             c.primary
-              ? "inline-flex items-center gap-1.5 bg-ink text-surface-base font-bold text-sm px-5 py-2.5 rounded-full hover:opacity-90 transition-opacity"
-              : "inline-flex items-center gap-1.5 font-bold text-sm px-5 py-2.5 rounded-full border border-border-strong text-ink hover:bg-surface-muted transition-colors"
+              ? "inline-flex items-center gap-1.5 bg-accent text-surface-base font-bold text-sm px-5 py-2.5 rounded-full border-2 border-ink hover:bg-accent-deep transition-colors badge-retro"
+              : "inline-flex items-center gap-1.5 font-bold text-sm px-5 py-2.5 rounded-full border-2 border-border-strong text-ink hover:bg-surface-muted transition-colors"
           }
         >
           {c.primary && <span aria-hidden="true">↓</span>} {c.label}
@@ -70,10 +88,10 @@ export default function EditorialHome() {
   return (
     <div className="min-h-screen bg-surface-base text-ink font-sans antialiased">
       {/* ---- Sticky header ---- */}
-      <header className="sticky top-0 z-50 bg-surface-base/90 backdrop-blur border-b border-border-subtle">
+      <header className="sticky top-0 z-50 bg-surface-base/90 backdrop-blur border-b-2 border-border-strong">
         <div className="max-w-5xl mx-auto px-5 md:px-8 h-14 flex items-center justify-between gap-4">
-          <a href="#top" className="font-black tracking-tight text-[15px] whitespace-nowrap">
-            JEROD HOLLEN
+          <a href="#top" className="font-display text-[17px] text-ink whitespace-nowrap">
+            Jerod Hollen
           </a>
           <nav className="flex items-center gap-3 md:gap-5" aria-label="Primary">
             {NAV.map((n) => (
@@ -101,145 +119,90 @@ export default function EditorialHome() {
       <main id="top">
         {/* ---- Hero: identity first, zero interaction required ---- */}
         <section className="max-w-5xl mx-auto px-5 md:px-8 pt-12 md:pt-20 pb-10">
-          <p className="inline-flex items-center gap-2.5 mb-4">
-            <span className="relative flex h-2.5 w-2.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-60" />
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500" />
-            </span>
-            <span className="font-mono text-[11px] tracking-[0.2em] font-bold text-text-subtle">
-              AVAILABLE FOR NEW ROLES
-            </span>
-          </p>
-          <p className="font-mono text-[11px] md:text-xs tracking-[0.25em] text-accent-blue font-bold mb-4">
-            FULL-STACK ENGINEER · BELLINGHAM, WA / REMOTE
-          </p>
-          <h1 className="font-playfair text-[42px] leading-[1.05] md:text-7xl font-black tracking-tight mb-5">
-            Jerod Hollen
-          </h1>
-          <p className="text-lg md:text-2xl text-text leading-relaxed max-w-2xl mb-8">
-            I turn manual bottlenecks into automated systems. I compress chaos
-            into working software.
-          </p>
+          <Reveal>
+            <div className="flex items-start justify-between gap-6">
+              <div>
+                <p className="inline-flex items-center gap-2.5 mb-4">
+                  <span className="relative flex h-2.5 w-2.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sea opacity-60" />
+                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-sea" />
+                  </span>
+                  <span className="font-mono text-[11px] tracking-[0.2em] font-bold text-text-subtle">
+                    AVAILABLE FOR NEW ROLES
+                  </span>
+                </p>
+                <p className="font-mono text-[11px] md:text-xs tracking-[0.25em] text-accent font-bold mb-4">
+                  FULL-STACK ENGINEER · BELLINGHAM, WA / REMOTE
+                </p>
+                <h1 className="font-display text-[44px] leading-[1.05] md:text-7xl text-ink mb-5">
+                  Jerod Hollen
+                </h1>
+              </div>
+              <div
+                className="vinyl w-20 h-20 md:w-28 md:h-28 shrink-0 mt-2"
+                aria-hidden="true"
+              />
+            </div>
+            <p className="text-lg md:text-2xl text-text leading-relaxed max-w-2xl mb-8">
+              I turn manual <WordRotator words={ROTATOR_WORDS} /> into automated
+              systems. I compress chaos into working software.
+            </p>
 
-          <CtaRow />
+            <CtaRow />
+          </Reveal>
 
           {/* Proof strip */}
-          <dl className="grid grid-cols-1 sm:grid-cols-3 gap-px bg-border-subtle border border-border-subtle rounded-2xl overflow-hidden mt-10">
-            {[
-              ["~160 hrs", "of manual work saved per quarter"],
-              ["40–70 MB", "page weight cut across ~2,000 assets"],
-              ["4+ yrs", "shipping enterprise edtech & automation"],
-            ].map(([stat, label]) => (
-              <div key={label} className="bg-surface-base px-5 py-4">
-                <dt className="font-playfair text-2xl font-black">{stat}</dt>
-                <dd className="text-[13px] text-text-subtle mt-1">{label}</dd>
-              </div>
-            ))}
-          </dl>
-
-          {/* Hardware soul, pocket-sized: a live-feeling meter, decorative only */}
-          <div className="mt-10 flex items-center gap-4" aria-hidden="true">
-            <div className="flex items-end gap-1 h-10">
-              {[0.9, 0.5, 0.7, 1, 0.4, 0.8, 0.6, 1, 0.5, 0.75, 0.45, 0.9].map((d, i) => (
-                <span
-                  key={i}
-                  className="vu-bar w-1.5 rounded-sm bg-accent-blue/80"
-                  style={{ height: "100%", animationDelay: `${(d * 1.1).toFixed(2)}s` }}
-                />
+          <Reveal delay={100}>
+            <dl className="grid grid-cols-1 sm:grid-cols-3 gap-px bg-border-subtle border-2 border-border-strong rounded-3xl overflow-hidden mt-10">
+              {[
+                ["~160 hrs", "of manual work saved per quarter"],
+                ["40–70 MB", "page weight cut across ~2,000 assets"],
+                ["4+ yrs", "shipping enterprise edtech & automation"],
+              ].map(([stat, label]) => (
+                <div key={label} className="bg-surface-base px-5 py-4">
+                  <dt className="font-display text-2xl text-ink">{stat}</dt>
+                  <dd className="text-[13px] text-text-subtle mt-1">{label}</dd>
+                </div>
               ))}
-            </div>
-            <p className="font-mono text-[10px] tracking-[0.2em] text-text-faint">
-              INPUT: CHAOS — OUTPUT: SYSTEMS
-            </p>
-          </div>
+            </dl>
+          </Reveal>
         </section>
+
+        <WaveDivider />
 
         {/* ---- Work ---- */}
         <section id="work" className="max-w-5xl mx-auto px-5 md:px-8 py-12 md:py-16 scroll-mt-16">
           <SectionHeading
             index="01"
             title="Selected Work"
-            blurb="Impact first. Tap any project for the full signal chain — the problem, the build, and the result."
+            blurb="Impact first. Open any project for the full case study — the problem, the build, and the result."
           />
-          <div className="space-y-5">
-            {PROJECTS_DATA.map((p) => (
-              <article
-                key={p.id}
-                className="border border-border-subtle rounded-2xl bg-card shadow-subtle overflow-hidden"
-              >
-                <details className="group">
-                  <summary className="cursor-pointer list-none [&::-webkit-details-marker]:hidden select-none p-5 md:p-7">
-                    <div className="flex flex-wrap items-start justify-between gap-3 mb-3">
-                      <div>
-                        <p className="font-mono text-[10px] tracking-[0.2em] text-text-faint font-bold mb-1.5">
-                          {p.category}
-                        </p>
-                        <h3 className="font-black text-xl md:text-2xl tracking-tight">
-                          {p.title}
-                        </h3>
-                      </div>
-                      {METRICS[p.id] && (
-                        <span className="font-mono text-[11px] font-bold bg-ink text-surface-base px-3 py-1.5 rounded-full whitespace-nowrap">
-                          {METRICS[p.id]}
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-text leading-relaxed mb-4">{p.result}</p>
-                    <div className="flex flex-wrap gap-1.5">
-                      {p.stack.map((s) => (
-                        <span
-                          key={s}
-                          className="text-[11px] font-bold text-text-subtle bg-surface-muted border border-border-subtle px-2.5 py-1 rounded-full"
-                        >
-                          {s}
-                        </span>
-                      ))}
-                    </div>
-                    <p className="mt-4 flex items-center gap-2 text-[13px] font-bold text-accent-blue">
-                      <span className="group-open:rotate-90 transition-transform inline-block" aria-hidden="true">
-                        ▸
-                      </span>
-                      <span className="group-open:hidden">How it was built</span>
-                      <span className="hidden group-open:inline">Show less</span>
-                    </p>
-                  </summary>
-                  <div className="px-5 md:px-7 pb-5 md:pb-7 pt-4 border-t border-border-subtle space-y-3 text-[14px] text-text leading-relaxed">
-                    <p>
-                      <strong className="text-ink">The problem: </strong>
-                      {p.breach}
-                    </p>
-                    <p>
-                      <strong className="text-ink">The build: </strong>
-                      {p.deploy}
-                    </p>
-                  </div>
-                </details>
-              </article>
-            ))}
-          </div>
+          <WorkSection projects={PROJECTS_DATA} metrics={METRICS} />
         </section>
 
+        <WaveDivider />
+
         {/* ---- About ---- */}
-        <section id="about" className="bg-surface-muted/60 border-y border-border-subtle">
-          <div className="max-w-5xl mx-auto px-5 md:px-8 py-12 md:py-16 scroll-mt-16">
+        <section id="about" className="bg-surface-muted/60 border-y-2 border-border-strong scroll-mt-16">
+          <div className="max-w-5xl mx-auto px-5 md:px-8 py-12 md:py-16">
             <SectionHeading
               index="02"
               title="About"
               blurb="Non-traditional path, enterprise-grade output."
             />
             <div className="grid md:grid-cols-2 gap-10">
-              <div className="space-y-4 text-text leading-relaxed">
+              <Reveal className="space-y-4 text-text leading-relaxed">
                 <p>{BIO_DATA.tier1_base}</p>
                 <p>{BIO_DATA.tier2_timeline}</p>
                 <p>{BIO_DATA.tier3_deepDive}</p>
-              </div>
-              <div>
+              </Reveal>
+              <Reveal delay={120}>
                 <h3 className="font-mono text-[11px] tracking-[0.25em] font-bold text-text-subtle mb-4">
                   EXPERIENCE
                 </h3>
-                <div className="border-l-2 border-ink pl-5 space-y-6">
+                <div className="border-l-2 border-accent pl-5 space-y-6">
                   <div>
-                    <p className="font-black">Web Developer / Software Engineer I</p>
+                    <p className="font-black text-ink">Web Developer / Software Engineer I</p>
                     <p className="text-[13px] text-text-subtle font-bold">
                       Cloud Security Alliance · Jul 2021 – Oct 2025
                     </p>
@@ -250,16 +213,16 @@ export default function EditorialHome() {
                     </ul>
                   </div>
                   <div>
-                    <p className="font-black">B.S. Computer Science</p>
+                    <p className="font-black text-ink">B.S. Computer Science</p>
                     <p className="text-[13px] text-text-subtle font-bold">
                       Western Washington University · 2022 · Minor in Mathematics
                     </p>
                     <p className="text-[13px] text-text-subtle mt-1">Eagle Scout</p>
                   </div>
                 </div>
-              </div>
+              </Reveal>
             </div>
-            <div className="mt-10">
+            <Reveal delay={80} className="mt-10">
               <h3 className="font-mono text-[11px] tracking-[0.25em] font-bold text-text-subtle mb-4">
                 TOOLBOX
               </h3>
@@ -267,34 +230,38 @@ export default function EditorialHome() {
                 {TOOLBOX.map((t) => (
                   <span
                     key={t}
-                    className="text-[12px] font-bold text-text bg-surface-base border border-border-subtle px-3 py-1.5 rounded-full"
+                    className="text-[12px] font-bold text-text bg-surface-base border-2 border-border-subtle px-3 py-1.5 rounded-full"
                   >
                     {t}
                   </span>
                 ))}
               </div>
-            </div>
+            </Reveal>
           </div>
         </section>
+
+        <WaveDivider />
 
         {/* ---- Contact ---- */}
         <section id="contact" className="max-w-5xl mx-auto px-5 md:px-8 py-14 md:py-20 scroll-mt-16">
           <SectionHeading index="03" title="Let's build something that ships." />
-          <p className="text-text-subtle max-w-xl mb-8 -mt-4">
-            Open to frontend, technical solutions, and AI engineering roles —
-            remote or Bellingham, WA.
-          </p>
-          <CtaRow includeCopy />
+          <Reveal delay={80}>
+            <p className="text-text-subtle max-w-xl mb-8 -mt-4">
+              Open to frontend, technical solutions, and AI engineering roles —
+              remote or Bellingham, WA.
+            </p>
+            <CtaRow includeCopy />
+          </Reveal>
         </section>
       </main>
 
-      <footer className="border-t border-border-subtle">
+      <footer className="border-t-2 border-border-strong">
         <div className="max-w-5xl mx-auto px-5 md:px-8 py-6 flex flex-wrap items-center justify-between gap-3">
           <p className="font-mono text-[10px] tracking-[0.2em] text-text-faint">
             © 2026 JEROD HOLLEN
           </p>
           <p className="font-mono text-[10px] tracking-[0.2em] text-text-faint">
-            TRANSMISSION ENDS
+            END OF SIDE A
           </p>
         </div>
       </footer>

@@ -1,186 +1,139 @@
 @import "tailwindcss";
 
 @theme {
-  --color-ink: #0b1220;
-  --color-ink-soft: #13203b;
-  --color-text: #25324a;
-  --color-text-subtle: #5b6b86;
-  --color-text-faint: #a7b4cc;
-  --color-card: #f8fafc;
-  --color-surface-base: #ffffff;
-  --color-surface-muted: #f1f5f9;
-  --color-surface-contrast: #0f172a;
-  --color-border-subtle: rgba(15, 23, 42, 0.14);
-  --color-border-strong: rgba(15, 23, 42, 0.2);
-  --color-cool-bg: #e4ecff;
-  --color-cool-base: #2563eb;
-  --color-cool-tint: #60a5fa;
-  --color-warm-bg: #ffe8d6;
-  --color-warm-base: #f97316;
-  --color-warm-tint: #fdba74;
-  --color-accent-blue: #2563eb;
-  --color-accent-orange: #f97316;
-  --color-accent-amber: #fdba74;
-  --color-accent-deep: #1e3a8a;
+  --color-ink: #2e1f16;
+  --color-ink-soft: #4a3428;
+  --color-text: #4a3428;
+  --color-text-subtle: #7a5f4d;
+  --color-text-faint: #a68b73;
+  --color-card: #fffdf7;
+  --color-surface-base: #faf4e8;
+  --color-surface-muted: #f1e7d3;
+  --color-surface-contrast: #2e1f16;
+  --color-border-subtle: rgba(46, 31, 22, 0.14);
+  --color-border-strong: rgba(46, 31, 22, 0.28);
+  --color-accent: #e06428;
+  --color-accent-deep: #b34a1a;
+  --color-sea: #1f7a78;
+  --color-sun: #e8a93d;
 
-  --radius-2\.5xl: 1.75rem;
-  --radius-3xl: 2.5rem;
+  --radius-2xl: 1rem;
+  --radius-3xl: 1.75rem;
 
   --shadow-subtle:
-    0 1px 0 rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.08);
+    0 1px 0 rgba(46, 31, 22, 0.06), 0 1px 2px rgba(46, 31, 22, 0.08);
   --shadow-card:
-    0 10px 22px rgba(15, 23, 42, 0.06), 0 2px 6px rgba(15, 23, 42, 0.04);
+    0 10px 22px rgba(46, 31, 22, 0.08), 0 2px 6px rgba(46, 31, 22, 0.05);
   --shadow-card-hover:
-    0 24px 56px -24px rgba(15, 23, 42, 0.45),
-    0 12px 28px -14px rgba(15, 23, 42, 0.24);
-  --shadow-floating: 0 40px 120px -40px rgba(15, 23, 42, 0.35);
-
-  --background-image-accent-gradient: linear-gradient(
-    120deg,
-    #2563eb 0%,
-    #f97316 100%
-  );
-  --background-image-cool-radial: radial-gradient(
-    circle at 18% 20%,
-    rgba(37, 99, 235, 0.32),
-    transparent 68%
-  );
-  --background-image-warm-radial: radial-gradient(
-    circle at 82% 22%,
-    rgba(249, 115, 22, 0.28),
-    transparent 70%
-  );
-  --background-image-noise-texture: url("/noise.png");
-  --background-image-noise: url("/noise.png");
-
-  --spacing-section: 6rem;
+    0 24px 56px -24px rgba(46, 31, 22, 0.35),
+    0 12px 28px -14px rgba(46, 31, 22, 0.2);
 
   --ease-out-cubic: cubic-bezier(0.22, 0.61, 0.36, 1);
 
-  --blur-2xs: 6px;
-
   --font-sans: Roboto, system-ui, sans-serif;
+  --font-display: Shrikhand, Roboto, system-ui, sans-serif;
 }
 
-/* ---- Dark mode: remap the same tokens so every component follows ---- */
 .dark {
-  --color-ink: #eef2fb;
-  --color-ink-soft: #1b2947;
-  --color-text: #c9d5ea;
-  --color-text-subtle: #93a3c0;
-  --color-text-faint: #5b6b86;
-  --color-card: #111a2e;
-  --color-surface-base: #0b1220;
-  --color-surface-muted: #13203b;
-  --color-surface-contrast: #f1f5f9;
-  --color-border-subtle: rgba(255, 255, 255, 0.14);
-  --color-border-strong: rgba(255, 255, 255, 0.24);
-  --color-accent-blue: #60a5fa;
-  --color-accent-deep: #93c5fd;
-}
-
-.dark .signal-line {
-  background: rgba(255, 255, 255, 0.14);
-}
-
-.dark .signal-pulse {
-  background: linear-gradient(90deg, transparent, #60a5fa, transparent);
+  --color-ink: #f7eddd;
+  --color-ink-soft: #e3d3bd;
+  --color-text: #e3d3bd;
+  --color-text-subtle: #b89f83;
+  --color-text-faint: #7a6455;
+  --color-card: #251913;
+  --color-surface-base: #1c1310;
+  --color-surface-muted: #2a1d17;
+  --color-surface-contrast: #f7eddd;
+  --color-border-subtle: rgba(247, 237, 221, 0.14);
+  --color-border-strong: rgba(247, 237, 221, 0.28);
+  --color-accent: #f0823c;
+  --color-accent-deep: #e06428;
+  --color-sea: #4fb3ae;
+  --color-sun: #f0be55;
 }
 
 @layer utilities {
-  /* Authentic Brushed Aluminum Texture */
-  .bg-brushed-metal {
-    background:
-      linear-gradient(
-        0deg,
-        rgba(255, 255, 255, 0.02) 0%,
-        rgba(255, 255, 255, 0) 20%,
-        rgba(0, 0, 0, 0.2) 80%,
-        rgba(255, 255, 255, 0.05) 100%
-      ),
-      repeating-linear-gradient(
-        90deg,
-        transparent 0 2px,
-        rgba(255, 255, 255, 0.01) 2px 4px,
-        rgba(0, 0, 0, 0.01) 4px 6px
-      ),
-      #272a30;
+  .badge-retro {
+    box-shadow: 3px 3px 0 rgba(46, 31, 22, 0.9);
   }
-
-  /* Hardware Button 'Pressed' Effect with Beveled Edge */
-  .btn-hardware {
-    @apply transition-all duration-75 outline-none;
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.15),
-      inset 0 -1px 0 rgba(0, 0, 0, 0.5),
-      0 3px 5px rgba(0, 0, 0, 0.5);
-  }
-  .btn-hardware:active {
-    @apply translate-y-[1px];
-    box-shadow:
-      inset 0 2px 4px rgba(0, 0, 0, 0.4),
-      0 1px 1px rgba(0, 0, 0, 0.2);
-  }
-
-  /* Retro CRT/LCD Scanlines */
-  .scanlines {
-    background: repeating-linear-gradient(
-      to bottom,
-      transparent 0px,
-      transparent 2px,
-      rgba(0, 0, 0, 0.15) 3px,
-      rgba(0, 0, 0, 0.15) 4px
-    );
-    pointer-events: none;
-  }
-
-  .glow-text {
-    text-shadow: 0 0 8px rgba(34, 211, 238, 0.5), 0 0 16px rgba(34, 211, 238, 0.3);
+  .dark .badge-retro {
+    box-shadow: 3px 3px 0 rgba(247, 237, 221, 0.9);
   }
 }
 
-/* ---- Signal / Editorial motif ---- */
 html {
   scroll-behavior: smooth;
 }
 
-/* Thin rule with a pulse of signal traveling across it */
-.signal-line {
-  position: relative;
-  height: 2px;
-  background: rgba(15, 23, 42, 0.12);
+.reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  transition:
+    opacity 0.7s ease,
+    transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1);
+  will-change: opacity, transform;
+}
+.reveal-visible {
+  opacity: 1;
+  transform: none;
+}
+
+.vinyl {
   border-radius: 9999px;
-  overflow: hidden;
+  background: repeating-radial-gradient(
+    circle at center,
+    #161009 0 2px,
+    #241b12 2px 4px
+  );
+  position: relative;
+  animation: vinyl-spin 16s linear infinite;
+  box-shadow: 0 8px 24px rgba(46, 31, 22, 0.25);
 }
-
-.signal-pulse {
+.vinyl::before {
+  content: "";
   position: absolute;
-  top: 0;
-  bottom: 0;
-  left: -80px;
-  width: 72px;
-  background: linear-gradient(90deg, transparent, #2563eb, transparent);
-  animation: signal-travel 2.8s linear infinite;
+  inset: 33%;
+  border-radius: 9999px;
+  background: #e06428;
+  border: 3px solid #faf4e8;
+}
+.vinyl::after {
+  content: "";
+  position: absolute;
+  inset: 48%;
+  border-radius: 9999px;
+  background: #faf4e8;
+  z-index: 1;
+}
+@keyframes vinyl-spin {
+  to { transform: rotate(360deg); }
 }
 
-@keyframes signal-travel {
-  from { left: -80px; }
-  to { left: 100%; }
+.word-rotator {
+  display: inline-block;
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+.word-rotator-fade {
+  opacity: 0;
+  transform: translateY(10px);
 }
 
-/* Pocket-sized VU meter bars (decorative) */
-.vu-bar {
-  transform-origin: bottom;
-  animation: vu-bounce 1.1s ease-in-out infinite;
+.modal-backdrop {
+  animation: modal-fade 0.25s ease;
 }
-
-@keyframes vu-bounce {
-  0%, 100% { transform: scaleY(0.25); }
-  50% { transform: scaleY(1); }
+.modal-panel {
+  animation: modal-rise 0.32s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+@keyframes modal-fade {
+  from { opacity: 0; }
+}
+@keyframes modal-rise {
+  from { opacity: 0; transform: translateY(28px) scale(0.98); }
 }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .signal-pulse,
-  .vu-bar { animation: none; }
+  .reveal { opacity: 1; transform: none; transition: none; }
+  .vinyl, .word-rotator, .modal-backdrop, .modal-panel { animation: none; }
+  .word-rotator { transition: none; }
 }
